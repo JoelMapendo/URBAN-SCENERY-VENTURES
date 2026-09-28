@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Battery care article">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4e6"/><stop offset="1" stop-color="#ffd8ab"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)"/>
+  <circle cx="110" cy="90" r="100" fill="#f68b1e" opacity=".12"/>
+  <rect x="230" y="80" width="34" height="34" rx="8" fill="#2b3648"/>
+  <rect x="200" y="112" width="140" height="210" rx="26" fill="#2b3648"/>
+  <rect x="218" y="134" width="104" height="166" rx="14" fill="#f68b1e"/>
+  <rect x="238" y="164" width="64" height="76" rx="8" fill="#fff" opacity=".92"/>
+  <path d="M272 202h-34M256 220l-20 20 20 20" fill="none" stroke="#f68b1e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M420 160l48 0M420 200l34 0M420 240l56 0" stroke="#2b3648" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+</svg>
