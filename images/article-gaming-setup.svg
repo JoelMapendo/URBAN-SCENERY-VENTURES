@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Gaming setup article">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4e6"/><stop offset="1" stop-color="#ffd8ab"/>
+    </linearGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffb03b"/><stop offset="1" stop-color="#f68b1e"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#bg)"/>
+  <circle cx="90" cy="80" r="100" fill="#f68b1e" opacity=".12"/>
+  <rect x="60" y="150" width="220" height="140" rx="12" fill="#2b3648"/>
+  <rect x="74" y="164" width="192" height="112" rx="6" fill="url(#s)"/>
+  <rect x="40" y="296" width="260" height="16" rx="8" fill="#2b3648"/>
+  <path d="M400 250h48c26 0 40 20 44 50 4 30-9 44-28 40l-24-4-22 30h-28l-22-30-24 4c-19 3-32-11-28-40 4-30 18-50 44-50h40Z" fill="url(#s)"/>
+  <rect x="396" y="268" width="34" height="12" rx="6" fill="#2b3648"/>
+  <rect x="407" y="257" width="12" height="34" rx="6" fill="#2b3648"/>
+</svg>

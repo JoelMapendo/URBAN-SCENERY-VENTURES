@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" role="img" aria-label="Warranty and support banner">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1c2431"/>
+      <stop offset="1" stop-color="#3a4a63"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="420" fill="url(#bg)"/>
+  <circle cx="760" cy="80" r="150" fill="#f68b1e" opacity=".18"/>
+  <circle cx="120" cy="360" r="120" fill="#f68b1e" opacity=".1"/>
+  <g transform="translate(600 110)">
+    <path d="M110 20 30 52v70c0 54 36 96 80 108 44-12 80-54 80-108V52L110 20Z" fill="#f68b1e"/>
+    <path d="m78 122 24 24 42-46" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
