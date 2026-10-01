@@ -26,7 +26,7 @@ class Order(Model):
     ordered_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),server_default= func.now())
     
     
-    user_id : Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.private_id"), nullable=False)
+    user_id : Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.private_id"), nullable=True)
     user : Mapped["User"] = relationship(back_populates="orders")
 
     product_id : Mapped[int] = mapped_column(ForeignKey("products.id"), nullable=False)

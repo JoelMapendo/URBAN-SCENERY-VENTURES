@@ -14,4 +14,4 @@ class User(Model,Timestamp):
     email : Mapped[str] = mapped_column(String(128),nullable=False,unique=True)
     orders : Mapped[list["Order"]] = relationship(back_populates="user")
     role : Mapped[UserRole] = mapped_column(default=UserRole.Guest)
-    contact : Mapped[str] = mapped_column(String(128))
+    contact : Mapped[str] = mapped_column(String(128), nullable=True)
