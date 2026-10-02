@@ -37,7 +37,8 @@ database.db
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+/apis
+/serializers
 # Unit test / coverage reports
 htmlcov/
 .tox/

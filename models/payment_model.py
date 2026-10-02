@@ -12,7 +12,7 @@ class Payment(Model):
     __tablename__="payments"
     
     id: Mapped[int] = mapped_column(primary_key=True , unique=True ,nullable=False)
-    payment_method : Mapped[str] = mapped_column(default=PaymentMethod.Bank)
+    payment_method : Mapped[str] = mapped_column(default=PaymentMethod.Bank.value)
     amount : Mapped[float] = mapped_column(DECIMAL)
     paid_at : Mapped[datetime] = mapped_column(DATETIME(timezone=True), server_default=func.now())
     order_id : Mapped[int] = mapped_column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)

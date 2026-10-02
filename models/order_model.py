@@ -15,9 +15,9 @@ class Order(Model):
     address : Mapped[str] = mapped_column(String(128) , nullable=False)
     contacs : Mapped[str] = mapped_column(String(16), nullable=False) # phone number 
     
-    order_status : Mapped[str] = mapped_column(default=OrderStatus.Pending)
-    payment_method : Mapped[str] = mapped_column(default=PaymentMethod.Bank)
-    payment_status : Mapped[str] = mapped_column(default=PaymentStatus.Not_yet_paid)
+    order_status : Mapped[str] = mapped_column(default=OrderStatus.Pending.value)
+    payment_method : Mapped[str] = mapped_column(default=PaymentMethod.Bank.value)
+    payment_status : Mapped[str] = mapped_column(default=PaymentStatus.Not_yet_paid.value)
     
     initial_price : Mapped[float] = mapped_column(DECIMAL)
     total_price : Mapped[float] = mapped_column(DECIMAL)

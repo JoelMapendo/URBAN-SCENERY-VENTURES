@@ -13,5 +13,5 @@ class Product(Model, Timestamp):
     description : Mapped[str] = mapped_column(TEXT)
     banner_image : Mapped[str]= mapped_column(TEXT)
     quantity : Mapped[int] = mapped_column(Integer)
-    status : Mapped[str] = mapped_column(default=ProductStatus.Available)
+    status : Mapped[str] = mapped_column(default=ProductStatus.Available.value)
     orders : Mapped[list["Order"]] = relationship(back_populates="product")
