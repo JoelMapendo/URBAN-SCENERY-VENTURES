@@ -6,7 +6,6 @@ load_dotenv()
 import os 
 
 DATABASE_URL = str(os.getenv("DATABASE_URL"))
-
 class Model(DeclarativeBase):
     pass
 

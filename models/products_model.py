@@ -11,6 +11,10 @@ if TYPE_CHECKING :
     from .order_model import Order
    
     
+from sqlalchemy import String , TEXT , DECIMAL , Integer
+from settings import Model 
+from .utils import ProductStatus , Timestamp
+
 class Product(Model, Timestamp):
     __tablename__= "products"
     
@@ -29,3 +33,5 @@ class Product(Model, Timestamp):
         "ProductStatus",
         back_populates="product"
     )
+    status : Mapped[str] = mapped_column(default=ProductStatus.Available.value)
+    orders : Mapped[list["Order"]] = relationship(back_populates="product")

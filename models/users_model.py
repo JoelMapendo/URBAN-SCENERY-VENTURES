@@ -10,6 +10,9 @@ if TYPE_CHECKING :
     from .utils import   UserRole
     from .order_model import Order
     
+from .utils import Timestamp , UserRole
+from sqlalchemy.orm import Mapped , mapped_column , relationship
+from sqlalchemy import String , Uuid
 
 class User(Model,Timestamp):
     
@@ -30,3 +33,6 @@ class User(Model,Timestamp):
     )
    
     orders : Mapped[list["Order"]] = relationship(back_populates="user")
+    orders : Mapped[list["Order"]] = relationship(back_populates="user")
+    role : Mapped[UserRole] = mapped_column(default=UserRole.Guest)
+    contact : Mapped[str] = mapped_column(String(128), nullable=True)
