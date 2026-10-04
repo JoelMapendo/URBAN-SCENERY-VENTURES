@@ -57,7 +57,7 @@ test.py
 # Translations
 *.mo
 *.pot
-
+database_v2.db
 # Django stuff:
 *.log
 local_settings.py

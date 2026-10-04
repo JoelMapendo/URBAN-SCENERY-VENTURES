@@ -1,8 +1,15 @@
 import uuid 
 from settings import Model 
-from .utils import Timestamp , UserRole
+from models.shared import Timestamp
+
 from sqlalchemy.orm import Mapped , mapped_column , relationship
-from sqlalchemy import String , Uuid
+from sqlalchemy import String , Uuid , ForeignKey
+from typing import TYPE_CHECKING 
+
+if TYPE_CHECKING :
+    from .utils import   UserRole
+    from .order_model import Order
+    
 
 class User(Model,Timestamp):
     
@@ -12,6 +19,14 @@ class User(Model,Timestamp):
     public_id : Mapped[uuid.UUID] = mapped_column(Uuid,unique=True,index=True,default=uuid.uuid4,nullable=False)
     name : Mapped[str] = mapped_column(String(32),nullable=False)
     email : Mapped[str] = mapped_column(String(128),nullable=False,unique=True)
-    orders : Mapped[list["Order"]] = relationship(back_populates="user")
-    role : Mapped[UserRole] = mapped_column(default=UserRole.Guest)
     contact : Mapped[str] = mapped_column(String(128), nullable=True)
+     
+    
+    role_id : Mapped[int] = mapped_column(ForeignKey("user_roles.id"))
+    
+    user_role : Mapped["UserRole"] = relationship(
+        "UserRole",
+        back_populates="user"
+    )
+   
+    orders : Mapped[list["Order"]] = relationship(back_populates="user")
