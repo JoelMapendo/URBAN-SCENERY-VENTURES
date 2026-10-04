@@ -9,10 +9,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING :
     from .utils import   UserRole
     from .order_model import Order
-    
-from .utils import Timestamp , UserRole
-from sqlalchemy.orm import Mapped , mapped_column , relationship
-from sqlalchemy import String , Uuid
 
 class User(Model,Timestamp):
     
