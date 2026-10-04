@@ -8,10 +8,6 @@ from datetime import datetime
 if TYPE_CHECKING :
     from .utils import PaymentMethod
     from .order_model import Order
-from .utils import PaymentMethod
-from datetime import datetime
-
-
 
 class Payment(Model):
     
@@ -22,6 +18,10 @@ class Payment(Model):
 
     order_id : Mapped[int] = mapped_column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
     payment_method_id : Mapped[int] = mapped_column(ForeignKey("payment_methods.id"))
+    amount : Mapped[float] = mapped_column(DECIMAL)
+    paid_at : Mapped[datetime] = mapped_column(DATETIME(timezone=True), server_default=func.now())
+    order_id : Mapped[int] = mapped_column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
+    order : Mapped["Order"] = relationship(back_populates="payment")
     
     paid_at : Mapped[datetime] = mapped_column(DATETIME(timezone=True), server_default=func.now())
    
@@ -33,8 +33,4 @@ class Payment(Model):
         back_populates="payment"
         
     )
-    payment_method : Mapped[str] = mapped_column(default=PaymentMethod.Bank.value)
-    amount : Mapped[float] = mapped_column(DECIMAL)
-    paid_at : Mapped[datetime] = mapped_column(DATETIME(timezone=True), server_default=func.now())
-    order_id : Mapped[int] = mapped_column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
-    order : Mapped["Order"] = relationship(back_populates="payment")
+    
