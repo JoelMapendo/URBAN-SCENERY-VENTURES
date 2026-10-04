@@ -1,44 +1,86 @@
-from datetime import datetime 
-from sqlalchemy import DateTime , func
-from sqlalchemy.orm import Mapped , mapped_column
-from enum import Enum 
+from models.shared import Timestamp
+from settings import Model
+from sqlalchemy import  Text , String
+from sqlalchemy.orm import Mapped , mapped_column , relationship
 
-class Timestamp :
-    
-    created_at : Mapped[datetime] = mapped_column(DateTime(timezone=True),server_default= func.now())
-    updated_at : Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default= func.now())
-    
-    
-class UserRole(Enum):
-    
-    Admin ="ADMIN"
-    Customer = "CUSTOMER"
-    Guest = "GUEST"
-    
-class OrderStatus(Enum):
-    
-    Pending ="PENDING"
-    Failed = "FAILED"
-    Cancelled = "CANCELLED"
-    Shipped  = "SHIPPED"
-    Refounded = "REFOUNDED"
-    Delivared = "DELIVARED"
+from typing import TYPE_CHECKING 
+
+if TYPE_CHECKING :
+    from users_model import User 
+    from products_model import Product 
+    from payment_model import Payment 
+    from order_model import Order 
     
 
-class PaymentStatus(Enum):
+class UserRole(Model , Timestamp):
     
-    Paid = "PAID"
-    pending = "PENDING"
-    Not_yet_paid = "NOT YET PAID"    
+    __tablename__="user_roles"
     
-class PaymentMethod(Enum):
+    id : Mapped[int] = mapped_column(primary_key=True , nullable=False)
+    name : Mapped[str] = mapped_column(String(32) , unique=True , nullable=False)
+    description : Mapped[str] = mapped_column(Text)
     
-    Mobile_money = "MOBILE MONEY"
-    Bank = "BANK"
-    Cripto = " CRIPTO"
+    user : Mapped["User"] = relationship(
+        "User",
+        back_populates="user_role"
+    )
     
-class ProductStatus(Enum):
+
+class OrderStatus(Model,Timestamp):
     
-    Available = "AVAILABLE"
-    SHIPPING = "SHIPPING"
-    EMPY = "EMPTY"
+    __tablename__="order_statuses"
+    
+    id : Mapped[int] = mapped_column(primary_key=True , nullable=False)
+    name : Mapped[str] = mapped_column(String(32) , unique=True , nullable=False)
+    description : Mapped[str] = mapped_column(Text)
+    
+    order : Mapped["Order"] = relationship(
+        "Order",
+        back_populates="order_status"
+    )
+
+class PaymentStatus(Model,Timestamp):
+    
+    __tablename__="payment_statuses"
+    
+    id : Mapped[int] = mapped_column(primary_key=True , nullable=False)
+    name : Mapped[str] = mapped_column(String(32) , unique=True , nullable=False)
+    description : Mapped[str] = mapped_column(Text)  
+    
+    order : Mapped["Order"] = relationship(
+            "Order",
+            back_populates="payment_status"
+        )
+    
+    
+class PaymentMethod(Model, Timestamp):
+    
+    __tablename__="payment_methods"
+    
+    id : Mapped[int] = mapped_column(primary_key=True , nullable=False)
+    name : Mapped[str] = mapped_column(String(32) , unique=True , nullable=False)
+    description : Mapped[str] = mapped_column(Text)  
+    
+    
+    order : Mapped["Payment"] = relationship(
+        "Payment",
+        back_populates="payment_method"
+    )
+    
+    payment : Mapped["Payment"] = relationship(
+            "Payment",
+            back_populates="payment_method"
+        )
+    
+class ProductStatus(Model , Timestamp):
+    
+    __tablename__="product_statuses"
+    
+    id : Mapped[int] = mapped_column(primary_key=True , nullable=False)
+    name : Mapped[str] = mapped_column(String(32) , unique=True , nullable=False)
+    description : Mapped[str] = mapped_column(Text)  
+    
+    product : Mapped["Product"] = relationship(
+        "Product",
+        back_populates="product_status"
+    )

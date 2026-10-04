@@ -1,8 +1,15 @@
 
 from sqlalchemy.orm import Mapped , mapped_column , relationship
-from sqlalchemy import String , TEXT , DECIMAL , Integer
+from sqlalchemy import String , TEXT , DECIMAL , Integer , ForeignKey
 from settings import Model 
-from .utils import ProductStatus , Timestamp
+from models.shared import  Timestamp
+from typing import TYPE_CHECKING 
+
+if TYPE_CHECKING :
+    
+    from .utils import ProductStatus 
+    from .order_model import Order
+   
 
 class Product(Model, Timestamp):
     __tablename__= "products"
@@ -13,5 +20,13 @@ class Product(Model, Timestamp):
     description : Mapped[str] = mapped_column(TEXT)
     banner_image : Mapped[str]= mapped_column(TEXT)
     quantity : Mapped[int] = mapped_column(Integer)
-    status : Mapped[str] = mapped_column(default=ProductStatus.Available.value)
+    product_status_id : Mapped[int] = mapped_column(ForeignKey("product_statuses.id"))
+    
+    orders : Mapped[list["Order"]] = relationship(
+        back_populates="product")
+    
+    payment_status : Mapped["ProductStatus"] = relationship(
+        "ProductStatus",
+        back_populates="product"
+    )
     orders : Mapped[list["Order"]] = relationship(back_populates="product")
