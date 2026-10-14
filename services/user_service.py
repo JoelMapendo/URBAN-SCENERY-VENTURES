@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from models.users_model import User
 from models.utils import UserRole
 from core.security import hash_password
+from services.lookup_service import get_lookup
 
-_UPDATABLE_FIELDS = {"name", "contact", "role"}
+_UPDATABLE_FIELDS = {"name", "contact"}
 
 
 class UserService:
@@ -18,7 +19,7 @@ class UserService:
         email: str,
         name: str,
         password: Optional[str] = None,
-        role: UserRole = UserRole.Customer,
+        role: str = "CUSTOMER",
         contact: Optional[str] = None,
     ) -> User:
         hashed = hash_password(password) if password else None
@@ -26,10 +27,19 @@ class UserService:
             email=email.strip().lower(),
             name=name.strip(),
             hashed_password=hashed,
-            role=role,
+            user_role=get_lookup(self.session, UserRole, role),
             contact=contact,
         )
         self.session.add(user)
+        self.session.commit()
+        self.session.refresh(user)
+        return user
+
+    def update_user_role(self, public_id: UUID, role: str) -> Optional[User]:
+        user = self.get_by_public_id(public_id)
+        if user is None:
+            return None
+        user.user_role = get_lookup(self.session, UserRole, role)
         self.session.commit()
         self.session.refresh(user)
         return user

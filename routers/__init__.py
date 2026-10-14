@@ -4,6 +4,8 @@ from .products import router as products_router
 from .orders import router as orders_router
 from .payments import router as payments_router
 from .ai import router as ai_router
+from .lookups import router as lookups_router
+from .ai_interactions import router as ai_interactions_router
 
 __all__ = [
     "auth_router",
@@ -12,4 +14,6 @@ __all__ = [
     "orders_router",
     "payments_router",
     "ai_router",
+    "lookups_router",
+    "ai_interactions_router",
 ]

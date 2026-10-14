@@ -25,8 +25,8 @@ A high-performance, AI-powered e-commerce backend for electronics, built with **
 URBAN-SCENERY-VENTURES/
 │
 ├── core/
-│   ├── config.py             # Settings, JWT config, CORS
-│   ├── database.py           # Database initialization and sessions
+│   ├── config.py             # Environment-backed app settings
+│   ├── database.py           # SQLAlchemy base, engine, sessions, lookup initialization
 │   └── security.py           # Password hashing, JWT, auth dependencies
 ├── models/
 │   ├── users_model.py        # User table (UUIDs, role, hashed_password)
@@ -34,7 +34,7 @@ URBAN-SCENERY-VENTURES/
 │   ├── order_model.py        # Order table (linked to user and product)
 │   ├── payment_model.py      # Payment table (1:1 with order)
 │   ├── ai_model.py           # AI interaction logs
-│   └── utils.py              # Timestamp mixin and system Enums
+│   └── utils.py              # Timestamp mixin and lookup-table relationships
 ├── schemas/
 │   ├── user_schema.py        # Pydantic schemas for authentication and users
 │   ├── product_schema.py     # Pydantic schemas for electronics products
@@ -48,13 +48,15 @@ URBAN-SCENERY-VENTURES/
 │   ├── orders.py             # /api/v1/orders (Order placement, inventory reservation)
 │   ├── payments.py           # /api/v1/payments (Payment processing & receipts)
 │   └── ai.py                 # /api/v1/ai (AI recommendation and smart search)
+│   ├── lookups.py            # /api/v1/lookups (Admin lookup-data CRUD)
+│   └── ai_interactions.py    # /api/v1/ai/interactions (Admin interaction-log CRUD)
 ├── services/
 │   ├── user_service.py       # User business logic
 │   ├── product_service.py    # Product business logic and inventory checks
 │   ├── order_service.py      # Order calculation and stock updates
 │   ├── payment_service.py    # Payment verification and order settlement
 │   └── ai_service.py         # AI scoring and semantic search logic
-├── settings.py               # Database engine & get_db dependency
+├── settings.py               # Compatibility exports for database objects
 ├── main.py                   # FastAPI application entry point
 ├── seed_data.py              # Seeds initial admin, customer, and sample electronics
 └── test_backend.py           # Complete test suite
@@ -63,6 +65,28 @@ URBAN-SCENERY-VENTURES/
 ---
 
 ## Getting Started
+
+## CRUD API
+
+Administrative CRUD routes require an account with the `ADMIN` role. User
+profile reads and edits require authentication and are limited to the owner or
+an administrator. Public product browsing and order placement remain available
+according to their existing authentication rules.
+
+| Model | CRUD routes |
+| --- | --- |
+| Users | `POST/GET /api/v1/users`, `GET/PUT/DELETE /api/v1/users/{public_id}`, `PATCH /api/v1/users/{public_id}/role` |
+| Products | `POST/GET /api/v1/products`, `GET/PUT/DELETE /api/v1/products/{product_id}` |
+| Orders | `POST/GET /api/v1/orders`, `GET/DELETE /api/v1/orders/{order_id}`, `PATCH /api/v1/orders/{order_id}/status` |
+| Payments | `POST /api/v1/payments/pay`, `GET /api/v1/payments`, `GET/PUT/DELETE /api/v1/payments/{payment_id}`, `GET /api/v1/payments/order/{order_id}` |
+| AI interactions | `POST/GET /api/v1/ai/interactions`, `GET/PUT/DELETE /api/v1/ai/interactions/{interaction_id}` |
+| Lookup data | `GET/POST /api/v1/lookups/{resource}`, `GET/PUT/DELETE /api/v1/lookups/{resource}/{lookup_id}` |
+
+Lookup resources are `user-roles`, `order-statuses`, `payment-statuses`,
+`payment-methods`, and `product-statuses`. Referenced lookup values cannot be
+deleted; the API returns `409 Conflict`. Payment amounts must match the
+associated order total. Deleting a payment resets the order to unpaid and
+returns an approved order to pending.
 
 ### 1. Activate Environment & Install Dependencies
 
@@ -80,6 +104,14 @@ DATABASE_URL=sqlite:///./urban_ventures.db
 SECRET_KEY=your-secure-secret-key
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 ```
+
+`core.database` creates the role, order, payment, and product lookup values at
+startup. For an existing database, startup adds the nullable `hashed_password`
+column if it is missing; existing accounts without a stored password must
+have credentials provisioned before they can log in.
+Startup also converts the legacy UUID-based `orders.id` schema when the orders
+and payments tables are empty. If either table contains data, startup stops
+with an error rather than risk breaking existing order/payment references.
 
 ### 3. Seed Sample Electronics & Admin Account
 
@@ -101,6 +133,11 @@ Open your browser to:
 - **Interactive OpenAPI Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **Alternative ReDoc UI**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 - **Root Health & Endpoint Index**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+In Swagger UI, select **Authorize** and enter your account email as the
+username and your password. Leave `client_id` and `client_secret` blank.
+Swagger exchanges these credentials at `/api/v1/auth/token`, then attaches
+the returned bearer token to protected requests such as `/api/v1/auth/me`.
 
 ### 5. Run the Test Suite
 

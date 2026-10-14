@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from settings import get_db
 from schemas.order_schema import OrderCreate, OrderStatusUpdate, OrderOut
@@ -41,11 +42,7 @@ def list_orders(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    is_admin = (
-        current_user.role.value == "ADMIN"
-        if hasattr(current_user.role, "value")
-        else str(current_user.role) == "ADMIN"
-    )
+    is_admin = current_user.user_role.name == "ADMIN"
     if is_admin:
         return order_service.get_all_orders(session=db, offset=offset, limit=limit)
     else:
@@ -66,11 +63,7 @@ def get_order_by_id(
         )
 
     if current_user:
-        is_admin = (
-            current_user.role.value == "ADMIN"
-            if hasattr(current_user.role, "value")
-            else str(current_user.role) == "ADMIN"
-        )
+        is_admin = current_user.user_role.name == "ADMIN"
         if order.user_id and order.user_id != current_user.private_id and not is_admin:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -97,7 +90,14 @@ def update_order_status(
 
 @router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_admin)])
 def cancel_order(order_id: int, db: Session = Depends(get_db)):
-    success = order_service.delete_order(order_id, db)
+    try:
+        success = order_service.delete_order(order_id, db)
+    except IntegrityError as error:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot delete this order because related records prevent it",
+        ) from error
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
