@@ -1,6 +1,4 @@
-
-from settings import Model 
-from datetime import datetime 
+from datetime import datetime
 import uuid
 
 from sqlalchemy.orm import Mapped , mapped_column , relationship 
@@ -14,7 +12,6 @@ if TYPE_CHECKING :
     from .payment_model import Payment
 
 class Order(Model):
-    
     __tablename__ = "orders"
     
     id : Mapped[uuid.UUID] = mapped_column(Uuid ,primary_key=True , nullable=False , index=True , default=uuid.uuid4)

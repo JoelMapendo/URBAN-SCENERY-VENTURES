@@ -1,3 +1,11 @@
+from typing import TYPE_CHECKING
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, TEXT, DECIMAL, Integer
+from settings import Model
+from .utils import ProductStatus, Timestamp
+
+if TYPE_CHECKING:
+    from .order_model import Order
 
 from sqlalchemy.orm import Mapped , mapped_column , relationship
 from sqlalchemy import String , TEXT , DECIMAL , Integer , ForeignKey

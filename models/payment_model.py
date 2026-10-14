@@ -4,6 +4,11 @@ from sqlalchemy.orm import Mapped , mapped_column , relationship
 from sqlalchemy import  DECIMAL, DATETIME , ForeignKey , Integer , func
 from typing import TYPE_CHECKING 
 from datetime import datetime
+from typing import TYPE_CHECKING
+from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from settings import Model
+from .utils import PaymentMethod
 
 if TYPE_CHECKING :
     from .utils import PaymentMethod
