@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from settings import get_db
-from schemas.payment_schema import PaymentCreate, PaymentOut
+from schemas.payment_schema import PaymentCreate, PaymentOut, PaymentUpdate
 from services import payment_service, order_service
 from core.security import get_current_admin
 
@@ -21,7 +21,7 @@ def process_order_payment(
             detail=f"Order #{payload.order_id} not found",
         )
 
-    if order.payment_status == "PAID":
+    if order.payment_status.name == "PAID":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Order #{payload.order_id} has already been paid for",
@@ -42,7 +42,43 @@ def process_order_payment(
         )
 
 
-@router.get("/{payment_id}", response_model=PaymentOut)
+@router.put("/{payment_id}", response_model=PaymentOut, dependencies=[Depends(get_current_admin)])
+def update_payment_details(
+    payment_id: int,
+    payload: PaymentUpdate,
+    db: Session = Depends(get_db),
+):
+    try:
+        payment = payment_service.update_payment(
+            payment_id,
+            payload.model_dump(exclude_unset=True),
+            db,
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(error),
+        ) from error
+    if payment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Payment #{payment_id} not found",
+        )
+    return payment
+
+
+@router.get("/order/{order_id}", response_model=PaymentOut, dependencies=[Depends(get_current_admin)])
+def get_payment_by_order(order_id: int, db: Session = Depends(get_db)):
+    payment = payment_service.get_payment_by_order_id(order_id, db)
+    if not payment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No payment recorded yet for Order #{order_id}",
+        )
+    return payment
+
+
+@router.get("/{payment_id}", response_model=PaymentOut, dependencies=[Depends(get_current_admin)])
 def get_payment_details(payment_id: int, db: Session = Depends(get_db)):
     payment = payment_service.get_payment(payment_id, db)
     if not payment:
@@ -53,16 +89,13 @@ def get_payment_details(payment_id: int, db: Session = Depends(get_db)):
     return payment
 
 
-@router.get("/order/{order_id}", response_model=PaymentOut)
-def get_payment_by_order(order_id: int, db: Session = Depends(get_db)):
-    payment = payment_service.get_payment_by_order_id(order_id, db)
-    if not payment:
+@router.delete("/{payment_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_admin)])
+def delete_payment_record(payment_id: int, db: Session = Depends(get_db)):
+    if not payment_service.delete_payment(payment_id, db):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No payment recorded yet for Order #{order_id}",
+            detail=f"Payment #{payment_id} not found",
         )
-    return payment
-
 
 @router.get("", response_model=List[PaymentOut], dependencies=[Depends(get_current_admin)])
 def list_payments(

@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import AliasPath, BaseModel, Field
 
 
 class ProductBase(BaseModel):
@@ -10,7 +10,9 @@ class ProductBase(BaseModel):
     description: Optional[str] = Field(None, description="Detailed product description and specs")
     banner_image: Optional[str] = Field(None, description="Product image URL or path")
     quantity: int = Field(default=0, ge=0, description="Available inventory stock")
-    status: Optional[str] = Field(default="AVAILABLE", description="Product availability status")
+    status: Literal["AVAILABLE", "EMPTY"] = Field(
+        default="AVAILABLE", description="Product availability status"
+    )
 
 
 class ProductCreate(ProductBase):
@@ -23,7 +25,7 @@ class ProductUpdate(BaseModel):
     description: Optional[str] = None
     banner_image: Optional[str] = None
     quantity: Optional[int] = Field(None, ge=0)
-    status: Optional[str] = None
+    status: Optional[Literal["AVAILABLE", "EMPTY"]] = None
 
 
 class ProductOut(BaseModel):
@@ -33,7 +35,7 @@ class ProductOut(BaseModel):
     description: Optional[str] = None
     banner_image: Optional[str] = None
     quantity: int
-    status: str
+    status: str = Field(validation_alias=AliasPath("product_status", "name"))
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

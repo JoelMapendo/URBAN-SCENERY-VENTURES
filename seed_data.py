@@ -1,15 +1,16 @@
 """Seed database with sample electronics products and initial admin user."""
 from decimal import Decimal
-from settings import sessionlocal, engine, Model
+from core.database import init_db, sessionlocal
 from models.users_model import User
 from models.products_model import Product
-from models.utils import UserRole, ProductStatus
+from models.utils import ProductStatus, UserRole
 from core.security import hash_password
+from services.lookup_service import get_lookup
 
 
 def seed():
     # Ensure tables exist
-    Model.metadata.create_all(bind=engine)
+    init_db()
     db = sessionlocal()
 
     try:
@@ -21,7 +22,7 @@ def seed():
                 name="Admin Manager",
                 email=admin_email,
                 hashed_password=hash_password("admin123"),
-                role=UserRole.Admin,
+                user_role=get_lookup(db, UserRole, "ADMIN"),
                 contact="+250788000001",
             )
             db.add(admin)
@@ -35,7 +36,7 @@ def seed():
                 name="John Techie",
                 email=customer_email,
                 hashed_password=hash_password("customer123"),
-                role=UserRole.Customer,
+                user_role=get_lookup(db, UserRole, "CUSTOMER"),
                 contact="+250788000002",
             )
             db.add(customer)
@@ -49,7 +50,7 @@ def seed():
                 "description": "14-inch Liquid Retina XDR display, 18GB Unified Memory, 512GB SSD, Space Black. Designed for high performance developers and creators.",
                 "banner_image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
                 "quantity": 15,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
             {
                 "name": "Sony WH-1000XM5 Wireless Headphones",
@@ -57,7 +58,7 @@ def seed():
                 "description": "Industry-leading noise canceling Bluetooth headphones with Auto NC Optimizer, crystal clear hands-free calling, and 30-hour battery life.",
                 "banner_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
                 "quantity": 30,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
             {
                 "name": "Samsung Galaxy S24 Ultra",
@@ -65,7 +66,7 @@ def seed():
                 "description": "Titanium Gray, 256GB, Galaxy AI powered smartphone with 200MP camera, Snapdragon 8 Gen 3, and built-in S Pen.",
                 "banner_image": "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c",
                 "quantity": 25,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
             {
                 "name": "Dell UltraSharp 27 4K USB-C Monitor (U2723QE)",
@@ -73,7 +74,7 @@ def seed():
                 "description": "IPS Black technology with 2000:1 contrast ratio, 98% DCI-P3 color gamut, 4K resolution, and 90W USB-C power delivery hub.",
                 "banner_image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf",
                 "quantity": 10,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
             {
                 "name": "Anker 737 Power Bank (PowerCore 24K)",
@@ -81,7 +82,7 @@ def seed():
                 "description": "24,000mAh 3-port portable charger with 140W fast output, smart digital display, compatible with laptops, phones, and tablets.",
                 "banner_image": "https://images.unsplash.com/photo-1609592424364-c78d53b27670",
                 "quantity": 50,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
             {
                 "name": "Sony PlayStation 5 Slim Console",
@@ -89,22 +90,26 @@ def seed():
                 "description": "Next-gen gaming console with 1TB SSD, ultra-high speed SSD, ray tracing, 4K-TV gaming, and DualSense wireless controller.",
                 "banner_image": "https://images.unsplash.com/photo-1606813907291-d86efa9b94db",
                 "quantity": 8,
-                "status": ProductStatus.Available.value,
+                "status": "AVAILABLE",
             },
         ]
 
         for item in sample_electronics:
             existing = db.query(Product).filter(Product.name == item["name"]).first()
             if not existing:
-                prod = Product(**item)
+                product_data = item.copy()
+                product_status = get_lookup(
+                    db, ProductStatus, product_data.pop("status")
+                )
+                prod = Product(**product_data, product_status=product_status)
                 db.add(prod)
                 print(f"Added electronics product: {item['name']}")
 
         db.commit()
         print("Database seeding completed successfully!")
-    except Exception as e:
+    except Exception:
         db.rollback()
-        print(f"Seeding failed: {e}")
+        raise
     finally:
         db.close()
 

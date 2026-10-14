@@ -5,7 +5,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from models.order_model import Order
 from models.products_model import Product
-from models.utils import OrderStatus, PaymentStatus, ProductStatus
+from models.utils import (
+    OrderStatus,
+    PaymentMethod,
+    PaymentStatus,
+    ProductStatus,
+)
+from services.lookup_service import get_lookup
 
 _UPDATABLE_FIELDS = {
     "address",
@@ -30,15 +36,16 @@ def create_order(
     if product is None:
         raise ValueError(f"Product with id {product_id} not found")
 
+    if quantity < 1:
+        raise ValueError("Order quantity must be at least 1")
     if product.quantity < quantity:
         raise ValueError(
             f"Insufficient stock for product '{product.name}'. Available: {product.quantity}, Requested: {quantity}"
         )
 
-    # Deduct stock
     product.quantity -= quantity
     if product.quantity == 0:
-        product.status = ProductStatus.Empty.value
+        product.product_status = get_lookup(session, ProductStatus, "EMPTY")
 
     unit_price = Decimal(str(product.price))
     total_price = unit_price * quantity
@@ -46,9 +53,9 @@ def create_order(
     order = Order(
         address=address.strip(),
         contacs=contact.strip(),
-        order_status=OrderStatus.Pending.value,
-        payment_method=payment_method,
-        payment_status=PaymentStatus.Not_yet_paid.value,
+        order_status=get_lookup(session, OrderStatus, "PENDING"),
+        payment_method=get_lookup(session, PaymentMethod, payment_method),
+        payment_status=get_lookup(session, PaymentStatus, "NOT YET PAID"),
         initial_price=unit_price,
         total_price=total_price,
         quantity=quantity,
@@ -81,7 +88,14 @@ def update_order(order_id: int, updates: dict[str, object], session: Session) ->
         return None
 
     for field, value in updates.items():
-        if field in _UPDATABLE_FIELDS and value is not None:
+        lookup_models = {
+            "order_status": OrderStatus,
+            "payment_method": PaymentMethod,
+            "payment_status": PaymentStatus,
+        }
+        if field in lookup_models and value is not None:
+            setattr(order, field, get_lookup(session, lookup_models[field], str(value)))
+        elif field in _UPDATABLE_FIELDS and value is not None:
             setattr(order, field, value)
 
     session.commit()
@@ -94,11 +108,12 @@ def delete_order(order_id: int, session: Session) -> bool:
     if order is None:
         return False
 
-    # Restore stock if order was pending or cancelled
-    if order.product and order.order_status in [OrderStatus.Pending.value, OrderStatus.Cancelled.value]:
+    if order.product and order.order_status.name in {"PENDING", "CANCELLED"}:
         order.product.quantity += order.quantity
-        if order.product.status == ProductStatus.Empty.value:
-            order.product.status = ProductStatus.Available.value
+        if order.product.product_status.name == "EMPTY":
+            order.product.product_status = get_lookup(
+                session, ProductStatus, "AVAILABLE"
+            )
 
     session.delete(order)
     session.commit()

@@ -1,11 +1,14 @@
 from decimal import Decimal
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from settings import get_db
 from models.products_model import Product
+from models.utils import ProductStatus
 from schemas.product_schema import ProductCreate, ProductUpdate, ProductOut
 from services import product_service
+from services.lookup_service import get_lookup
 from core.security import get_current_admin
 
 router = APIRouter(prefix="/products", tags=["Products (Electronics)"])
@@ -54,7 +57,11 @@ def create_new_product(
         description=payload.description,
         banner_image=payload.banner_image,
         quantity=payload.quantity,
-        status=payload.status or "AVAILABLE",
+        product_status=get_lookup(
+            db,
+            ProductStatus,
+            payload.status or ("EMPTY" if payload.quantity == 0 else "AVAILABLE"),
+        ),
     )
     return product_service.create_product(product, db)
 
@@ -77,7 +84,14 @@ def update_product_details(
 
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(get_current_admin)])
 def delete_product_item(product_id: int, db: Session = Depends(get_db)):
-    success = product_service.delete_product(product_id, db)
+    try:
+        success = product_service.delete_product(product_id, db)
+    except IntegrityError as error:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot delete a product referenced by existing orders",
+        ) from error
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

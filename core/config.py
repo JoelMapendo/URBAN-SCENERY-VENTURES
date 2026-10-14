@@ -18,7 +18,7 @@ class Settings:
     # Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "urbanventures-super-secret-jwt-key-2026-change-in-prod")
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
     
     # CORS
     CORS_ORIGINS: List[str] = [

@@ -1,3 +1,4 @@
+import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,8 @@ from routers import (
     orders_router,
     payments_router,
     ai_router,
+    lookups_router,
+    ai_interactions_router,
 )
 
 
@@ -48,6 +51,8 @@ app.include_router(products_router, prefix=settings.API_V1_STR)
 app.include_router(orders_router, prefix=settings.API_V1_STR)
 app.include_router(payments_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
+app.include_router(lookups_router, prefix=settings.API_V1_STR)
+app.include_router(ai_interactions_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/", tags=["Health & Info"])
@@ -65,6 +70,8 @@ def root():
             "orders": f"{settings.API_V1_STR}/orders",
             "payments": f"{settings.API_V1_STR}/payments",
             "ai": f"{settings.API_V1_STR}/ai",
+            "ai_interactions": f"{settings.API_V1_STR}/ai/interactions",
+            "lookups": f"{settings.API_V1_STR}/lookups",
         },
     }
 

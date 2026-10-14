@@ -4,6 +4,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import Session
 from models.products_model import Product
 from models.utils import ProductStatus
+from services.lookup_service import get_lookup
 
 _UPDATABLE_FIELDS = {"name", "price", "description", "banner_image", "quantity", "status"}
 
@@ -49,7 +50,9 @@ def get_all_products(
         statement = statement.where(Product.price <= max_price)
 
     if status:
-        statement = statement.where(Product.status == status)
+        statement = statement.where(
+            Product.product_status.has(ProductStatus.name == status.strip().upper())
+        )
 
     statement = statement.offset(offset).limit(limit)
     return list(session.scalars(statement).all())
@@ -65,14 +68,15 @@ def update_product(
         return None
 
     for field, value in updates.items():
-        if field in _UPDATABLE_FIELDS and value is not None:
+        if field == "status" and value is not None:
+            product.product_status = get_lookup(session, ProductStatus, str(value))
+        elif field in _UPDATABLE_FIELDS and value is not None:
             setattr(product, field, value)
 
-    # Automatically set status to EMPTY if quantity reaches 0
-    if product.quantity == 0 and product.status == ProductStatus.Available.value:
-        product.status = ProductStatus.Empty.value
-    elif product.quantity > 0 and product.status == ProductStatus.Empty.value:
-        product.status = ProductStatus.Available.value
+    if product.quantity == 0 and product.product_status.name != "EMPTY":
+        product.product_status = get_lookup(session, ProductStatus, "EMPTY")
+    elif product.quantity > 0 and product.product_status.name == "EMPTY":
+        product.product_status = get_lookup(session, ProductStatus, "AVAILABLE")
 
     session.commit()
     session.refresh(product)
@@ -90,7 +94,7 @@ def reduce_product_stock(
 
     product.quantity -= quantity_to_reduce
     if product.quantity == 0:
-        product.status = ProductStatus.Empty.value
+        product.product_status = get_lookup(session, ProductStatus, "EMPTY")
 
     session.commit()
     session.refresh(product)
