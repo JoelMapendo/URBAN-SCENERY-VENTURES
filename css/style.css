@@ -3442,6 +3442,208 @@ p {
   transform: none;
 }
 
+/* ---------- account ---------- */
+
+.account {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.account__card,
+.account__panel,
+.account__aside {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.4rem, 3vw, 2.2rem);
+  box-shadow: var(--shadow-sm);
+}
+
+.account__aside {
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+  background: var(--bg-2);
+  border-style: dashed;
+}
+
+.account__subtitle {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+
+.auth-tabs {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.3rem;
+  background: var(--surface-2);
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.6rem;
+}
+
+.auth-tabs__btn {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-2);
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+
+.auth-tabs__btn:hover {
+  color: var(--ink);
+}
+
+.auth-tabs__btn.is-active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+
+.auth-form {
+  display: grid;
+  gap: 1.05rem;
+}
+
+.auth-form .btn {
+  margin-top: 0.35rem;
+}
+
+.auth-form__alt {
+  font-size: 0.87rem;
+  color: var(--text-2);
+  text-align: center;
+}
+
+.auth-form__alt a {
+  color: var(--brand-dark);
+  font-weight: 600;
+}
+
+.auth-form .form-status {
+  margin-top: 1.2rem;
+}
+
+.account__profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.account__avatar {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--grad);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.account__hello {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.account__name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.account__email {
+  font-size: 0.9rem;
+  color: var(--text-2);
+}
+
+.account__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.account__meta div {
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+}
+
+.account__meta dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+.account__meta dd {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.account__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.account__orders {
+  margin-top: 1.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.account__empty {
+  margin-top: 0.6rem;
+  padding: 1.2rem;
+  background: var(--bg-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text-2);
+  text-align: center;
+}
+
+.account__note {
+  margin-top: 1.4rem;
+  font-size: 0.83rem;
+  color: var(--muted);
+}
+
+.linklike {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--brand-dark);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.hicon.is-on {
+  color: var(--brand-dark);
+  background: var(--brand-soft);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -3515,8 +3717,13 @@ p {
   .newsletter,
   .promo,
   .hero__inner,
+  .account,
   .footer__top {
     grid-template-columns: 1fr;
+  }
+
+  .account__aside {
+    position: static;
   }
 
   .filters,
@@ -3632,8 +3839,23 @@ p {
   .review-grid,
   .feature-grid,
   .trust-strip__grid,
+  .account__meta,
   .footer__cols {
     grid-template-columns: 1fr;
+  }
+
+  .auth-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .auth-tabs__btn {
+    text-align: center;
+  }
+
+  .account__actions .btn {
+    flex: 1 1 100%;
   }
 
   .stat-grid {

@@ -10,18 +10,20 @@ index.html      # home: hero, categories, featured, new arrivals, reviews, artic
 shop.html       # catalogue: category / brand / price / rating filters, sorting, pagination
 product.html    # product detail: gallery, buy box, spec tabs, reviews, related products
 cart.html       # cart lines, order summary, recently viewed
+account.html    # sign in / create account, profile panel
 about.html      # how the store operates
 contact.html    # contact form, details, FAQ
 css/style.css   # design tokens + every component style
 js/products.js  # categories, products, testimonials, articles, helpers (window.USV)
 js/cart.js      # cart / wishlist / recently viewed store (window.USVCart)
+js/auth.js      # local account store (window.USVAuth)
 js/main.js      # shared behaviour loaded on every page
 js/shop.js      # shop page only — URL-driven filters, sorting, pagination
 js/product.js   # product page only — gallery, buy box, tabs
 images/         # original SVG artwork, ready to be replaced with photography
 ```
 
-`js/main.js`, `js/products.js` and `js/cart.js` load on every page. `js/shop.js` and
+`js/main.js`, `js/products.js`, `js/cart.js` and `js/auth.js` load on every page. `js/shop.js` and
 `js/product.js` only load on the pages that need them, and both exit early when their page
 elements are absent, so they are safe to keep in the same bundle.
 
@@ -49,6 +51,11 @@ Then open <http://localhost:8000>.
 - **State** — the cart, wishlist and recently-viewed list live in `localStorage` under
   `usv.cart.v1`, `usv.wishlist.v1` and `usv.recent.v1`. All three are read and written through
   `window.USVCart`, so a real backend only has to replace that one module.
+- **Accounts** — sign-up and sign-in run entirely in the browser through `window.USVAuth`, with
+  accounts in `usv.users.v1` and the current session in `usv.session.v1`. Passwords are salted
+  and hashed with `crypto.subtle` (SHA-256) when the page is served over `https` or `localhost`,
+  and fall back to a non-cryptographic scramble on `file://`. Because there is no server, an
+  account exists only in the browser that created it — see *Not wired up yet*.
 - **Shop filters** — `shop.html` keeps its entire state in the URL (`?category=laptops&sort=price-asc&page=2`),
   which means any filtered view can be bookmarked or shared and the back button works.
 - **Images** — the SVGs in `images/` are original placeholders. Swap in real photography without
@@ -63,7 +70,9 @@ Then open <http://localhost:8000>.
 - Checkout. `data-checkout` shows a confirmation toast and stops there — there is no payment
   provider or order endpoint.
 - The contact and newsletter forms validate and confirm, but do not submit anywhere.
-- Accounts. The account icon in the header is a placeholder link.
+- Accounts are demo-grade. `USVAuth` stores users in the browser only, so an account created on
+  one device is invisible on another, and order history is a placeholder. Replacing it with a
+  real API means swapping the internals behind the same `USVAuth` methods.
 - `js/products.js` and the header search select are static data; there is no live inventory feed.
 
 ## Roadmap
@@ -73,6 +82,7 @@ Then open <http://localhost:8000>.
 - [x] Product detail page with gallery, specs and related products
 - [x] Cart with totals, delivery and tax
 - [x] About and contact pages with form validation
+- [x] Sign up / sign in with a browser-local account store
 - [ ] Checkout and payment integration
 - [ ] Backend API for products, stock and orders
 - [ ] Real product photography

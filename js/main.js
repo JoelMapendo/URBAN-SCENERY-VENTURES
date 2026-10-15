@@ -263,6 +263,26 @@ window.USVToast = (function () {
     });
   }
 
+  /* ---------- header account state ---------- */
+
+  function syncAccount() {
+    if (!window.USVAuth) return;
+    var user = window.USVAuth.current();
+
+    document.querySelectorAll("[data-account-link]").forEach(function (link) {
+      link.classList.toggle("is-on", !!user);
+      if (user) {
+        link.setAttribute("aria-label", "Your account — " + user.name);
+        link.setAttribute("title", "Signed in as " + user.name);
+      } else {
+        link.setAttribute("aria-label", "Sign in or create an account");
+        link.setAttribute("title", "Sign in");
+      }
+      var label = link.querySelector("[data-account-name]");
+      if (label) label.textContent = user ? user.name.split(/\s+/)[0] : "";
+    });
+  }
+
   function initCartDelegation() {
     document.addEventListener("click", function (event) {
       var addBtn = event.target.closest("[data-add]");
@@ -622,6 +642,14 @@ window.USVToast = (function () {
     markActiveNav();
     renderHomepage();
     renderBadges();
+    syncAccount();
+    if (window.USVAuth) {
+      window.USVAuth.onChange(function () {
+        syncAccount();
+        window.USVAuth.renderAccountPage();
+      });
+      window.USVAuth.initAccountPage();
+    }
     initCartDelegation();
     initForms();
     initReveals();
@@ -631,6 +659,7 @@ window.USVToast = (function () {
 
     Cart.onChange(function () {
       Cart.renderCartPage();
+      if (window.USVAuth) window.USVAuth.renderAccountPage();
     });
     Cart.renderCartPage();
     Cart.bindCartPage();
