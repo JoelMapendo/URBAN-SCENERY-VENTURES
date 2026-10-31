@@ -1,0 +1,36 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Production Service: Compiles all dependencies inside Docker & serves via Nginx
+  # Run: docker compose up --build
+  # ----------------------------------------------------------------------------
+  storefront:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: urban-scenery-prod
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+  # ----------------------------------------------------------------------------
+  # Development Service: Hot-reloading Vite dev server inside Docker
+  # Run: docker compose --profile dev up --build storefront-dev
+  # ----------------------------------------------------------------------------
+  storefront-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: urban-scenery-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    profiles:
+      - dev

@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Urban Scenery Ventures — Taking your business to the world</title>
+  <meta name="description" content="Shop Urban Scenery Ventures: curated metropolitan tech, acoustics, and everyday essentials. Taking your business to the world." />
+  <meta name="theme-color" content="#0B0F19" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/urban-scenery-logo.png" />
+  <!-- Theme immediate initialization to prevent flash -->
+  <script>
+    (function() {
+      try {
+        const stored = localStorage.getItem('urban:theme');
+        const isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (isDark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body class="bg-slate-50 dark:bg-[#070A12] font-sans text-slate-800 dark:text-slate-100 antialiased pb-20 md:pb-0 transition-colors duration-300">
+
+  <!-- ============================== HEADER / TOP NAV ============================== -->
+  <header id="site-header" class="fixed inset-x-0 top-0 z-50 bg-white/95 dark:bg-[#0B0F19] text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 backdrop-blur-md">
+    <!-- Top Auxiliary Bar -->
+    <div id="seller-top-banner" class="bg-slate-100 dark:bg-[#070A12] border-b border-slate-200 dark:border-slate-800/80 px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 transition-colors">
+      <div class="mx-auto flex max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 items-center justify-between gap-3 px-2 sm:px-4">
+        <!-- Left utility links -->
+        <div class="flex items-center gap-3 text-[11px] sm:text-xs">
+          <a href="seller.html" class="flex items-center gap-1.5 text-[#E6007E] hover:text-[#C8006E] dark:text-[#E6007E] dark:hover:text-pink-300 font-bold transition">
+            <i data-lucide="store" class="h-3.5 w-3.5"></i>
+            <span>Sell on Urban Scenery</span>
+          </a>
+          <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+          <a href="#retail-stores-section" class="hidden sm:flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-white transition">
+            <i data-lucide="truck" class="h-3 w-3"></i>
+            <span>Track order</span>
+          </a>
+          <span class="text-slate-300 dark:text-slate-700 hidden md:inline">|</span>
+          <a href="#footer" class="hidden md:flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-white transition">
+            <i data-lucide="help-circle" class="h-3 w-3"></i>
+            <span>Help & Support</span>
+          </a>
+          <span class="text-slate-300 dark:text-slate-700 hidden lg:inline">|</span>
+          <span class="hidden lg:flex items-center gap-1 text-slate-600 dark:text-slate-400">
+            <i data-lucide="smartphone" class="h-3 w-3 text-emerald-500"></i>
+            <span>Mobile app</span>
+          </span>
+        </div>
+
+        <!-- Right utility links -->
+        <div class="flex items-center gap-3 text-[11px] sm:text-xs">
+          <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+            <span class="text-sm">🇺🇬</span>
+            <span class="hidden sm:inline">Delivering across Uganda</span>
+          </div>
+          <span class="text-slate-300 dark:text-slate-700">|</span>
+          <!-- Currency selector -->
+          <div class="flex items-center gap-1">
+            <select id="currency-select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-bold text-[#E6007E] dark:text-accent-400 focus:outline-none cursor-pointer">
+              <option value="UGX">UGX (USh)</option>
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+            </select>
+          </div>
+          <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
+          <button type="button" data-open-welcome-modal class="text-[#E6007E] dark:text-accent-300 hover:underline flex items-center gap-1 font-bold transition">
+            <i data-lucide="tag" class="h-3 w-3 text-accent-500"></i>
+            <span>15% Off Promo</span>
+          </button>
+          
+          <!-- Dark / Light Mode Switch in top bar -->
+          <button type="button" data-theme-toggle class="inline-flex items-center gap-1 rounded-full p-1 text-slate-600 dark:text-slate-300 hover:text-[#E6007E] dark:hover:text-accent-400 transition" aria-label="Toggle dark/light mode" title="Toggle theme">
+            <!-- Icon is dynamically inserted by theme.js -->
+          </button>
+
+          <a href="seller.html" class="hidden sm:inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-brand-500 to-accent-500 hover:from-brand-600 hover:to-accent-600 text-white font-bold px-3 py-0.5 text-[11px] shadow-sm transition">
+            <i data-lucide="store" class="h-3 w-3"></i>
+            <span>Become a Seller</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <div class="mx-auto flex h-16 sm:h-20 max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <!-- Official Logo Lockup -->
+      <a href="#" id="logo-link" class="flex shrink-0 items-center transition-transform duration-300 hover:scale-[1.02]" aria-label="Urban Scenery home">
+        <img src="/urban-scenery-logo.png" alt="Urban Scenery · Taking your business to the world" class="h-10 sm:h-12 w-auto max-w-[210px] sm:max-w-[250px] object-contain drop-shadow-sm" />
+      </a>
+
+      <!-- Full-Width Desktop Search with Category Dropdown & Camera Button -->
+      <form id="desktop-search-form" class="hidden md:flex flex-1 max-w-2xl lg:max-w-3xl items-center" role="search">
+        <div class="relative flex w-full items-center rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 p-1 shadow-inner focus-within:border-[#E6007E] dark:focus-within:border-accent-400 focus-within:ring-2 focus-within:ring-brand-500/20 transition">
+          <i data-lucide="search" class="pointer-events-none absolute left-3.5 h-4 w-4 text-slate-400"></i>
+          
+          <input id="desktop-search" data-search type="search" autocomplete="off"
+            placeholder="Search products, brands and categories..."
+            class="w-full bg-transparent py-2.5 pl-10 pr-36 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none" />
+
+          <!-- Category dropdown within search bar -->
+          <div class="absolute right-28 sm:right-32 flex items-center pr-2 border-r border-slate-200 dark:border-slate-700/80">
+            <select id="search-category-select" class="bg-transparent text-xs text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer pr-1">
+              <option value="all" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Categories</option>
+              <option value="Computers" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Computers</option>
+              <option value="Phones & Tablets" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Phones & Tablets</option>
+              <option value="Audio & Sound" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Audio & Sound</option>
+              <option value="Jewelry" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Jewelry</option>
+              <option value="Computer Accessories" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Accessories</option>
+              <option value="Beauty & Personal Care" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Beauty</option>
+              <option value="Home & Living" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Home & Living</option>
+            </select>
+          </div>
+
+          <!-- Camera Visual Search Button -->
+          <button type="button" data-visual-search class="absolute right-20 sm:right-24 grid h-8 w-8 place-items-center rounded-full text-slate-400 hover:text-brand-500 dark:hover:text-accent-400 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition" aria-label="Search with image" title="Visual Search with Camera">
+            <i data-lucide="camera" class="h-4 w-4"></i>
+          </button>
+
+          <!-- Submit Button in Brand Gradient -->
+          <button type="submit" id="desktop-search-btn"
+            class="ml-auto rounded-full bg-gradient-to-r from-brand-500 to-accent-500 hover:from-brand-600 hover:to-accent-600 px-5 sm:px-6 py-2 text-xs sm:text-sm font-bold text-white transition active:scale-95 shadow-md shadow-brand-500/25">
+            Search
+          </button>
+        </div>
+      </form>
+
+      <!-- Desktop Action Buttons -->
+      <div class="hidden md:flex items-center gap-2 lg:gap-3">
+        <!-- Shops -->
+        <a href="#shops-section" id="desktop-shops-link" class="flex items-center gap-1.5 rounded-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition" title="Explore independent seller shops">
+          <i data-lucide="store" class="h-5 w-5 text-accent-500"></i>
+          <span class="text-xs font-semibold">Shops</span>
+        </a>
+
+        <!-- Wishlist -->
+        <button id="desktop-wishlist-btn" data-open-wishlist class="relative flex items-center gap-1.5 rounded-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition" aria-label="View saved items">
+          <i data-lucide="heart" class="h-5 w-5 text-brand-500"></i>
+          <span class="text-xs font-semibold">Wishlist</span>
+          <span data-wish-count class="count-badge -right-0.5 -top-0.5 hidden bg-brand-500 text-[10px]">0</span>
+        </button>
+
+        <!-- Cart -->
+        <button id="desktop-cart-btn" data-open-cart data-cart-label class="relative flex items-center gap-1.5 rounded-full bg-brand-50 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-slate-700/80 border border-brand-200 dark:border-slate-700 px-3.5 py-2 text-slate-900 dark:text-white transition active:scale-95" aria-label="Open cart, 0 items">
+          <i data-lucide="shopping-bag" class="h-5 w-5 text-brand-500"></i>
+          <span class="text-xs font-bold">Cart</span>
+          <span data-cart-count class="ml-1 rounded-full bg-accent-500 px-1.5 py-0.2 text-[10px] font-extrabold text-slate-950">0</span>
+        </button>
+
+        <!-- Theme Toggle Button (Sun / Moon) -->
+        <button type="button" data-theme-toggle class="grid h-10 w-10 place-items-center rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-90" aria-label="Toggle dark/light mode" title="Toggle theme">
+          <!-- Icon injected by theme.js -->
+        </button>
+
+        <!-- Seller / Sign In -->
+        <a href="seller.html" id="desktop-account-btn" class="flex items-center gap-1.5 rounded-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition" aria-label="Sign in / Seller Portal">
+          <i data-lucide="user" class="h-5 w-5"></i>
+          <span class="text-xs font-semibold">Sign in</span>
+        </a>
+      </div>
+
+      <!-- Mobile Top Actions -->
+      <div class="flex items-center gap-1.5 md:hidden">
+        <!-- Theme Toggle on Mobile -->
+        <button type="button" data-theme-toggle class="grid h-9 w-9 place-items-center rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95" aria-label="Toggle theme">
+        </button>
+        <button type="button" data-visual-search class="grid h-9 w-9 place-items-center rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-500 active:scale-95" aria-label="Search with image">
+          <i data-lucide="camera" class="h-5 w-5"></i>
+        </button>
+        <button type="button" data-open-wishlist class="relative grid h-9 w-9 place-items-center rounded-full text-slate-600 dark:text-slate-300 hover:text-brand-500 active:scale-95" aria-label="View saved items">
+          <i data-lucide="heart" class="h-5 w-5"></i>
+          <span data-wish-count class="count-badge -right-0.5 -top-0.5 hidden bg-brand-500 text-[10px]">0</span>
+        </button>
+        <button type="button" data-open-cart data-cart-label class="relative grid h-9 w-9 place-items-center rounded-full bg-brand-50 dark:bg-slate-800 text-brand-600 dark:text-accent-400 active:scale-95" aria-label="Open cart">
+          <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+          <span data-cart-count class="count-badge -right-0.5 -top-0.5 bg-accent-500 text-slate-950 text-[10px] font-bold">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Sub-Nav Ribbon -->
+    <div class="bg-slate-50 dark:bg-[#0B0F19] border-t border-slate-200 dark:border-slate-800/90 py-2 transition-colors">
+      <div class="mx-auto flex max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 items-center justify-between gap-3 px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar">
+        <!-- Discover Pill & All Categories -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" id="ribbon-discover-btn" class="inline-flex items-center gap-1.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white font-bold px-3.5 py-1 text-xs transition active:scale-95 shadow-sm shadow-brand-500/20">
+            <i data-lucide="compass" class="h-3.5 w-3.5"></i>
+            <span>Discover</span>
+          </button>
+          <button type="button" id="ribbon-all-cats-btn" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-white hover:text-brand-500 dark:hover:text-accent-400 transition px-2 py-1">
+            <i data-lucide="layers" class="h-3.5 w-3.5 text-slate-400"></i>
+            <span>All Categories</span>
+          </button>
+        </div>
+
+        <!-- Category Link Chips -->
+        <div id="ribbon-category-links" class="flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-300 shrink-0">
+          <button type="button" data-cat-link="Computers" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computers</button>
+          <button type="button" data-cat-link="Beauty & Personal Care" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Beauty & Personal Care</button>
+          <button type="button" data-cat-link="Audio & Sound" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Audio & Sound</button>
+          <button type="button" data-cat-link="Babies & Kids" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Babies & Kids</button>
+          <button type="button" data-cat-link="Phones & Tablets" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Phones & Tablets</button>
+          <button type="button" data-cat-link="Office Supplies" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Office Supplies</button>
+          <button type="button" data-cat-link="Computer Accessories" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computer Accessories</button>
+          <button type="button" data-cat-link="Jewelry" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Jewelry</button>
+          <button type="button" data-cat-link="all" class="text-slate-400 hover:text-brand-500 dark:hover:text-white transition whitespace-nowrap flex items-center gap-1">
+            <span>More</span>
+            <i data-lucide="chevron-down" class="h-3 w-3"></i>
+          </button>
+        </div>
+
+        <!-- Become a Seller Pill -->
+        <a href="seller.html" class="hidden xl:inline-flex items-center gap-1.5 rounded-full border border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 hover:bg-brand-100 dark:hover:bg-brand-500/20 text-brand-600 dark:text-brand-300 px-3.5 py-1 text-xs font-semibold transition shrink-0">
+          <i data-lucide="store" class="h-3.5 w-3.5 text-brand-500"></i>
+          <span>Become a Seller</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Mobile Search Dropdown Bar -->
+    <div id="mobile-search-panel" class="hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0d131f] px-4 py-3 md:hidden">
+      <form id="mobile-search-form" role="search">
+        <label for="mobile-search" class="sr-only">Search products</label>
+        <div class="relative">
+          <i data-lucide="search" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+          <input id="mobile-search" data-search type="search" autocomplete="off" placeholder="Search products, brands and categories…"
+            class="w-full rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 py-2.5 pl-11 pr-12 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 dark:focus:border-accent-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+          <button type="button" data-visual-search class="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-slate-400 hover:text-brand-500" aria-label="Search using pictures" title="Search by image">
+            <i data-lucide="camera" class="h-4 w-4"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <main class="pt-32 sm:pt-36">
+
+    <!-- ============================== HERO SESSION (IMAGE 1 TARGET) ============================== -->
+    <section id="hero" class="relative overflow-hidden bg-slate-100 dark:bg-[#0B0F19] text-slate-800 dark:text-white py-6 sm:py-8 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+      <div class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 sm:px-6 lg:px-8">
+        
+        <!-- 3-Column Hero Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+          <!-- Col 1: Categories Sidebar (Desktop Left) -->
+          <aside class="hidden lg:block lg:col-span-3 xl:col-span-2 bg-white dark:bg-[#111827]/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl backdrop-blur-md transition-colors">
+            <div class="flex items-center gap-2 pb-3 mb-3 border-b border-slate-200 dark:border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              <i data-lucide="layers" class="h-4 w-4 text-amber-500 dark:text-amber-400"></i>
+              <span>Categories</span>
+            </div>
+            
+            <nav id="hero-categories-sidebar" class="flex flex-col space-y-1 text-xs font-medium text-slate-600 dark:text-slate-300" aria-label="Hero category navigation">
+              <!-- Dynamically populated or rendered with live item count badges -->
+              <button type="button" data-hero-cat="Computers" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Computers</span>
+                <span data-cat-count="Computers" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+              <button type="button" data-hero-cat="Beauty & Personal Care" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Beauty & Personal Care</span>
+                <span data-cat-count="Beauty & Personal Care" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+              <button type="button" data-hero-cat="Audio & Sound" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Audio & Sound</span>
+                <span data-cat-count="Audio & Sound" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">3</span>
+              </button>
+              <button type="button" data-hero-cat="Babies & Kids" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Babies & Kids</span>
+                <span data-cat-count="Babies & Kids" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Phones & Tablets" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Phones & Tablets</span>
+                <span data-cat-count="Phones & Tablets" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Office Supplies" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Office Supplies</span>
+                <span data-cat-count="Office Supplies" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Computer Accessories" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Computer Accessories</span>
+                <span data-cat-count="Computer Accessories" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Jewelry" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Jewelry</span>
+                <span data-cat-count="Jewelry" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+              <button type="button" data-hero-cat="Agriculture & Farming" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Agriculture & Farming</span>
+                <span data-cat-count="Agriculture & Farming" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Consumer Electronics" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Consumer Electronics</span>
+                <span data-cat-count="Consumer Electronics" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+            </nav>
+          </aside>
+
+          <!-- Col 2: Center Featured Product Showcase & Trending Strip -->
+          <div class="lg:col-span-6 xl:col-span-7 flex flex-col gap-4">
+            
+            <!-- Main Featured Showcase Card -->
+            <div id="hero-featured-card" class="relative overflow-hidden rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:via-[#131b2e] dark:to-slate-950 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm dark:shadow-2xl min-h-[380px] sm:min-h-[420px] flex flex-col justify-between transition-colors">
+              <!-- Ambient background glow -->
+              <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-amber-500/10 dark:bg-amber-500/15 blur-3xl"></div>
+              <div class="pointer-events-none absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-indigo-500/10 dark:bg-indigo-500/20 blur-3xl"></div>
+
+              <!-- Top Badges & Category -->
+              <div class="relative z-10 flex flex-wrap items-center gap-2.5">
+                <span class="rounded-full bg-amber-500/15 dark:bg-amber-500/20 border border-amber-500/30 dark:border-amber-500/40 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                  FEATURED
+                </span>
+                <span id="hero-featured-category" class="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-300">
+                  COMPUTERS
+                </span>
+                <span id="hero-featured-verified-badge" class="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                  <i data-lucide="shield-check" class="h-3 w-3"></i>
+                  <span>Verified Seller Upload</span>
+                </span>
+              </div>
+
+              <!-- Center Content Area (Grid with details on left, big image on right) -->
+              <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center my-4">
+                
+                <!-- Details -->
+                <div class="md:col-span-7 flex flex-col">
+                  <h1 id="hero-featured-title" class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                    Hp Laptop 15" · Apex Carbon Pro Studio 15
+                  </h1>
+
+                  <!-- Pricing row -->
+                  <div class="mt-3 sm:mt-4 flex flex-wrap items-baseline gap-3">
+                    <span id="hero-featured-price" class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+                      Ugx 2,000,000
+                    </span>
+                    <span id="hero-featured-oldprice" class="text-sm sm:text-base text-slate-400 dark:text-slate-500 line-through">
+                      Ugx 6,000,000
+                    </span>
+                    <span id="hero-featured-discount" class="rounded-full bg-emerald-500/15 dark:bg-emerald-500/20 border border-emerald-500/30 dark:border-emerald-500/40 px-2.5 py-0.5 text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                      Save 67%
+                    </span>
+                  </div>
+
+                  <p id="hero-featured-desc" class="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 max-w-md">
+                    Engineered for creators and power users. Featuring a 15.6" 3K OLED anti-glare display, aerospace-grade chassis, and full-day battery.
+                  </p>
+
+                  <!-- Action Buttons -->
+                  <div class="mt-6 flex flex-wrap items-center gap-3">
+                    <button type="button" id="hero-featured-view-btn"
+                      class="inline-flex items-center gap-2 rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3 text-xs sm:text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition active:scale-95">
+                      <i data-lucide="eye" class="h-4 w-4"></i>
+                      <span>View Product</span>
+                    </button>
+                    <button type="button" id="hero-featured-cart-btn"
+                      class="inline-flex items-center gap-2 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/90 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-6 py-3 text-xs sm:text-sm font-semibold text-slate-800 dark:text-white shadow-sm transition active:scale-95">
+                      <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                      <span>Add to Cart</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Big Product Photography -->
+                <div class="md:col-span-5 relative flex items-center justify-center">
+                  <div class="relative w-full max-w-[280px] sm:max-w-[320px] aspect-square rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 p-2 shadow-lg dark:shadow-2xl">
+                    <img id="hero-featured-img"
+                      src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&q=80"
+                      alt="Featured product"
+                      class="h-full w-full object-cover rounded-xl transition duration-500 hover:scale-105 cursor-pointer" />
+                    <span class="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-black/70 backdrop-blur-md px-2.5 py-1 text-[10px] font-semibold text-white border border-white/20">
+                      <i data-lucide="truck" class="h-3 w-3 text-emerald-400"></i> Free Express Delivery
+                    </span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- TRENDING NOW Strip (Directly docked beneath the featured card) -->
+            <div id="hero-trending-strip" class="bg-white dark:bg-[#111827]/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 sm:p-4 shadow-sm dark:shadow-xl transition-colors">
+              <!-- Header with left icon & right arrow buttons -->
+              <div class="flex items-center justify-between pb-3 mb-2 border-b border-slate-200 dark:border-slate-800">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-500 dark:text-amber-400 flex items-center gap-1.5">
+                  <i data-lucide="trending-up" class="h-4 w-4"></i>
+                  <span>TRENDING NOW</span>
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" id="trending-strip-prev" class="h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition active:scale-95" aria-label="Previous trending item">
+                    <i data-lucide="chevron-left" class="h-3.5 w-3.5"></i>
+                  </button>
+                  <button type="button" id="trending-strip-next" class="h-6 w-6 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition active:scale-95" aria-label="Next trending item">
+                    <i data-lucide="chevron-right" class="h-3.5 w-3.5"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4 Interactive Mini Cards -->
+              <div id="hero-trending-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <!-- Mini Card 1 -->
+                <div class="group relative flex flex-col overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/50 p-2.5 transition cursor-pointer" data-swap-hero="102">
+                  <div class="aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
+                    <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=400&q=80" alt="Artistic Paintings" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+                  </div>
+                  <h4 class="text-xs font-semibold text-slate-800 dark:text-white truncate group-hover:text-amber-500 dark:group-hover:text-amber-400 transition">Artistic Paintings</h4>
+                  <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Ugx 100,000</span>
+                </div>
+
+                <!-- Mini Card 2 -->
+                <div class="group relative flex flex-col overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/50 p-2.5 transition cursor-pointer" data-swap-hero="103">
+                  <div class="aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
+                    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80" alt="Itel Mobile Phone" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+                  </div>
+                  <h4 class="text-xs font-semibold text-slate-800 dark:text-white truncate group-hover:text-amber-500 dark:group-hover:text-amber-400 transition">Itel Mobile Phone</h4>
+                  <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Ugx 35,000</span>
+                </div>
+
+                <!-- Mini Card 3 -->
+                <div class="group relative flex flex-col overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/50 p-2.5 transition cursor-pointer" data-swap-hero="104">
+                  <div class="aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
+                    <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=400&q=80" alt="Necklace" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+                  </div>
+                  <h4 class="text-xs font-semibold text-slate-800 dark:text-white truncate group-hover:text-amber-500 dark:group-hover:text-amber-400 transition">Necklace</h4>
+                  <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Ugx 60,000</span>
+                </div>
+
+                <!-- Mini Card 4 -->
+                <div class="group relative flex flex-col overflow-hidden rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-amber-400/50 p-2.5 transition cursor-pointer" data-swap-hero="101">
+                  <div class="aspect-[4/3] rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
+                    <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=400&q=80" alt="Hp Laptop 15" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+                  </div>
+                  <h4 class="text-xs font-semibold text-slate-800 dark:text-white truncate group-hover:text-amber-500 dark:group-hover:text-amber-400 transition">Hp Laptop 15"</h4>
+                  <span class="text-[11px] font-bold text-amber-600 dark:text-amber-400 mt-0.5">Ugx 2,000,000</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Col 3: Right Deck (You May also Like + Seller Spotlight) -->
+          <div class="lg:col-span-3 xl:col-span-3 flex flex-col gap-4">
+
+            <!-- Card 1: "You May also Like" -->
+            <div class="bg-white dark:bg-[#111827]/90 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm dark:shadow-xl transition-colors">
+              <div class="flex items-center gap-2 pb-2.5 mb-2.5 border-b border-slate-200 dark:border-slate-800 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                <i data-lucide="sparkles" class="h-4 w-4 text-amber-500 dark:text-amber-400"></i>
+                <span>You May also Like</span>
+              </div>
+
+              <!-- 3 Compact Product Rows with 1-click cart -->
+              <div id="you-may-like-container" class="flex flex-col space-y-2.5">
+                <!-- Item 1: Wall Painting -->
+                <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition">
+                  <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=200&q=80" alt="Wall Painting" class="h-12 w-12 rounded-lg object-cover" />
+                  <div class="flex-1 min-w-0">
+                    <h5 class="text-xs font-semibold text-slate-800 dark:text-white truncate">Wall Painting</h5>
+                    <p class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Ugx 80,000</p>
+                  </div>
+                  <button type="button" data-add-to-cart="105" class="grid h-8 w-8 place-items-center rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 transition active:scale-95 shadow-sm" aria-label="Add Wall Painting to cart">
+                    <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                  </button>
+                </div>
+
+                <!-- Item 2: Ice Watch Patekphilippe -->
+                <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition">
+                  <img src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=200&q=80" alt="Ice Watch Patekphilippe" class="h-12 w-12 rounded-lg object-cover" />
+                  <div class="flex-1 min-w-0">
+                    <h5 class="text-xs font-semibold text-slate-800 dark:text-white truncate">Ice Watch Patekphilippe</h5>
+                    <p class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Ugx 80,000</p>
+                  </div>
+                  <button type="button" data-add-to-cart="106" class="grid h-8 w-8 place-items-center rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 transition active:scale-95 shadow-sm" aria-label="Add Ice Watch to cart">
+                    <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                  </button>
+                </div>
+
+                <!-- Item 3: Itel Mobile Phone -->
+                <div class="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 transition">
+                  <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=200&q=80" alt="Itel Mobile Phone" class="h-12 w-12 rounded-lg object-cover" />
+                  <div class="flex-1 min-w-0">
+                    <h5 class="text-xs font-semibold text-slate-800 dark:text-white truncate">Itel Mobile Phone</h5>
+                    <p class="text-[11px] font-bold text-amber-600 dark:text-amber-400">Ugx 35,000</p>
+                  </div>
+                  <button type="button" data-add-to-cart="103" class="grid h-8 w-8 place-items-center rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 transition active:scale-95 shadow-sm" aria-label="Add Itel Phone to cart">
+                    <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Seller Spotlight & Urban Scenery Brand Pitch -->
+            <div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-black border border-slate-200 dark:border-slate-800 p-4 shadow-sm dark:shadow-xl flex flex-col justify-between group transition-colors">
+              <!-- Official Brand Emblem Banner with Logo -->
+              <div class="relative aspect-[16/9] w-full rounded-xl overflow-hidden mb-3 bg-slate-50 dark:bg-white p-3 flex items-center justify-center border border-slate-200 dark:border-slate-700/60 shadow-inner">
+                <img src="/urban-scenery-logo.png" alt="Urban Scenery" class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                <div class="absolute bottom-2 left-2 flex items-center gap-1.5 bg-black/85 backdrop-blur px-2.5 py-1 rounded-full text-[10px] font-bold text-white border border-white/20">
+                  <span class="h-1.5 w-1.5 rounded-full bg-[#E6007E]"></span>
+                  <span class="text-[#E6007E]">URBAN</span> <span class="text-[#FFB800]">SCENERY</span>
+                </div>
+              </div>
+
+              <div>
+                <span class="inline-block text-[10px] font-black uppercase tracking-wider text-accent-500 dark:text-accent-400">Global Merchant Hub</span>
+                <h4 class="text-sm font-black text-slate-900 dark:text-white mt-0.5 leading-snug">
+                  <span class="text-[#E6007E]">Taking your business</span> to the world
+                </h4>
+                <p class="text-[11px] text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  Join hundreds of verified merchants. Sell electronics, fashion, and crafts with automated fulfillment & global shipping.
+                </p>
+              </div>
+
+              <!-- Action button -->
+              <div class="mt-4 flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800/80">
+                <div class="flex items-center gap-1">
+                  <span class="h-1.5 w-4 rounded-full bg-[#E6007E]"></span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-[#FFB800]"></span>
+                  <span class="h-1.5 w-1.5 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+                </div>
+                <a href="seller.html" class="inline-flex items-center gap-1.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white px-3.5 py-1.5 text-xs font-bold shadow-md shadow-brand-500/20 transition active:scale-95">
+                  <span>Open Store</span>
+                  <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================== SHOP BY CATEGORY PHOTO STRIP ============================== -->
+    <section id="shop-by-category-section" class="bg-slate-50 dark:bg-[#070A12] border-b border-slate-200/90 dark:border-slate-800/80 py-8 transition-colors">
+      <div class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Shop by category</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Explore popular categories</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="cat-strip-prev" class="h-8 w-8 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:text-brand-500 dark:hover:text-white flex items-center justify-center transition shadow-sm" aria-label="Previous categories">
+              <i data-lucide="chevron-left" class="h-4 w-4"></i>
+            </button>
+            <button type="button" id="cat-strip-next" class="h-8 w-8 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:text-brand-500 dark:hover:text-white flex items-center justify-center transition shadow-sm" aria-label="Next categories">
+              <i data-lucide="chevron-right" class="h-4 w-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Horizontal scroll strip with photo cards -->
+        <div id="shop-by-category-scroll" class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
+          
+          <!-- Card: Computers -->
+          <button type="button" data-select-cat="Computers" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=300&q=80" alt="Computers" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Computers</span>
+          </button>
+
+          <!-- Card: Beauty & Personal Care -->
+          <button type="button" data-select-cat="Beauty & Personal Care" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=300&q=80" alt="Beauty & Personal Care" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Beauty & Care</span>
+          </button>
+
+          <!-- Card: Audio & Sound -->
+          <button type="button" data-select-cat="Audio & Sound" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=300&q=80" alt="Audio & Sound" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Audio & Sound</span>
+          </button>
+
+          <!-- Card: Babies & Kids -->
+          <button type="button" data-select-cat="Babies & Kids" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=300&q=80" alt="Babies & Kids" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Babies & Kids</span>
+          </button>
+
+          <!-- Card: Phones & Tablets -->
+          <button type="button" data-select-cat="Phones & Tablets" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" alt="Phones & Tablets" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Phones & Tablets</span>
+          </button>
+
+          <!-- Card: Office Supplies -->
+          <button type="button" data-select-cat="Office Supplies" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?auto=format&fit=crop&w=300&q=80" alt="Office Supplies" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Office Supplies</span>
+          </button>
+
+          <!-- Card: Computer Accessories -->
+          <button type="button" data-select-cat="Computer Accessories" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=300&q=80" alt="Computer Accessories" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Accessories</span>
+          </button>
+
+          <!-- Card: Jewelry -->
+          <button type="button" data-select-cat="Jewelry" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=300&q=80" alt="Jewelry" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Jewelry</span>
+          </button>
+
+          <!-- Card: Consumer Electronics -->
+          <button type="button" data-select-cat="Consumer Electronics" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=300&q=80" alt="Consumer Electronics" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Electronics</span>
+          </button>
+
+          <!-- Card: Home & Living -->
+          <button type="button" data-select-cat="Home & Living" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=300&q=80" alt="Home & Living" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Home & Living</span>
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================== PRODUCTS CATALOG & FILTERS ============================== -->
+    <section id="products" class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 scroll-mt-24 px-4 py-8 sm:px-6 md:py-12 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left Filter Sidebar (Matching Image 1) -->
+        <aside class="hidden lg:block lg:col-span-3 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-5 shadow-sm sticky top-36 transition-colors">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 dark:border-slate-800">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+              <i data-lucide="filter" class="h-4 w-4 text-brand-500"></i>
+              <span>Filters</span>
+            </span>
+            <button type="button" id="sidebar-reset-filters" class="text-[11px] font-semibold text-brand-600 dark:text-brand-400 hover:underline">Reset</button>
+          </div>
+
+          <!-- Sort by -->
+          <div class="mb-5">
+            <label for="sidebar-sort-select" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Sort by</label>
+            <div class="relative">
+              <select id="sidebar-sort-select" class="w-full appearance-none rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-2.5 pl-3 pr-8 text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Top Rated</option>
+              </select>
+              <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+            </div>
+          </div>
+
+          <!-- Price Range Preset Pills -->
+          <div class="mb-5">
+            <span class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Price range</span>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <button type="button" data-price-range="under-50k" class="price-range-btn py-1.5 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-brand-500 dark:hover:border-accent-400 text-slate-700 dark:text-slate-300 text-center text-[11px] font-medium transition">
+                Under 50K
+              </button>
+              <button type="button" data-price-range="50k-200k" class="price-range-btn py-1.5 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-brand-500 dark:hover:border-accent-400 text-slate-700 dark:text-slate-300 text-center text-[11px] font-medium transition">
+                50K - 200K
+              </button>
+              <button type="button" data-price-range="200k-1m" class="price-range-btn py-1.5 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-brand-500 dark:hover:border-accent-400 text-slate-700 dark:text-slate-300 text-center text-[11px] font-medium transition">
+                200K - 1M
+              </button>
+              <button type="button" data-price-range="over-1m" class="price-range-btn py-1.5 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-brand-500 dark:hover:border-accent-400 text-slate-700 dark:text-slate-300 text-center text-[11px] font-medium transition">
+                Over 1M
+              </button>
+            </div>
+          </div>
+
+          <!-- Min / Max inputs -->
+          <div class="mb-5">
+            <div class="flex items-center gap-2 text-xs">
+              <input type="number" id="sidebar-price-min" placeholder="Min" class="w-1/2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-1.5 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500" />
+              <span class="text-slate-400">-</span>
+              <input type="number" id="sidebar-price-max" placeholder="Max" class="w-1/2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 py-1.5 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500" />
+            </div>
+            <button type="button" id="sidebar-apply-price" class="mt-2 w-full rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold py-2 shadow-sm shadow-brand-500/20 transition">
+              Apply Price
+            </button>
+          </div>
+
+          <!-- Verified Sellers Only Toggle -->
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-700 dark:text-slate-300 font-medium">Verified Sellers Only</span>
+            <input type="checkbox" id="sidebar-verified-only" class="rounded text-brand-500 focus:ring-brand-400 h-4 w-4 cursor-pointer accent-[#E6007E]" />
+          </div>
+        </aside>
+
+        <!-- Right Main Catalog Column -->
+        <div class="lg:col-span-9 flex flex-col">
+          
+          <!-- Catalog Header matching Image 1: "🔥 Trending on Urban Scenery" -->
+          <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="flame" class="h-6 w-6 text-brand-500"></i>
+                <span>Trending on Urban Scenery</span>
+              </h2>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Top products uploaded by admin and trusted sellers</p>
+              <p id="results-meta" class="mt-1 text-xs text-slate-400" aria-live="polite">Showing 12 products</p>
+            </div>
+
+            <!-- Mobile Grid View Toggle & Mobile Sort -->
+            <div class="flex items-center gap-2">
+              <button id="mobile-grid-toggle" type="button"
+                class="md:hidden inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm"
+                aria-label="Switch grid layout">
+                <i data-lucide="layout-grid" class="h-4 w-4"></i>
+                <span>2-Col</span>
+              </button>
+
+              <div class="lg:hidden relative">
+                <select id="sort-select" class="appearance-none rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 pl-3 pr-8 text-xs font-medium text-slate-700 dark:text-slate-200">
+                  <option value="featured">Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="rating">Top Rated</option>
+                </select>
+                <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Category Chips -->
+          <div class="mb-4">
+            <div id="category-chips" class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" aria-label="Filter by category"></div>
+          </div>
+
+          <!-- Active Shop Filter Indicator -->
+          <div id="active-shop-banner" class="mb-6 hidden"></div>
+
+          <!-- Product Grid -->
+          <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-5"></div>
+
+          <!-- Empty state -->
+          <div id="empty-state" class="hidden py-16 text-center">
+            <span class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500"><i data-lucide="search-x" class="h-8 w-8"></i></span>
+            <p id="empty-title" class="mt-4 text-lg font-semibold text-slate-800 dark:text-slate-100">No products found</p>
+            <p id="empty-text" class="text-sm text-slate-500 dark:text-slate-400">Try a different search term or price range.</p>
+            <button type="button" id="empty-reset-btn" class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-500 hover:bg-brand-600 px-5 py-2 text-xs font-bold text-white transition shadow-md shadow-brand-500/20">
+              Reset Filters
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ============================== CURATED BRAND SHOPS SECTION ============================== -->
+    <section id="shops-section" class="scroll-mt-24 border-t border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-[#0B0F19] py-12 sm:py-20 transition-colors">
+      <div class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+          <div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-400">
+              <i data-lucide="store" class="h-3.5 w-3.5"></i> Curated Creators & Labs
+            </span>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-4xl">Explore Curated Shops</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 sm:text-sm">Shop directly from independent acoustic labs, ergonomics studios, and artisanal craft workshops.</p>
+          </div>
+          <a href="#products" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 sm:text-sm">
+            View all goods <i data-lucide="arrow-right" class="h-4 w-4"></i>
+          </a>
+        </div>
+
+        <div id="curated-shops-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:gap-6"></div>
+      </div>
+    </section>
+
+    <!-- ============================== FLAGSHIP STORES & LOCAL PICKUP ============================== -->
+    <section id="retail-stores-section" class="scroll-mt-24 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#070A12] py-12 sm:py-20 transition-colors">
+      <div class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 sm:px-6 lg:px-8">
+        <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between md:mb-10">
+          <div>
+            <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+              <i data-lucide="map-pin" class="h-3.5 w-3.5"></i> Physical Flagships
+            </span>
+            <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-4xl">Visit Our Retail Shops</h2>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400 sm:text-sm">Touch, test, and experience Urban Scenery Ventures gear in person. Select your nearest store for same-day 2-hour pickup.</p>
+          </div>
+        </div>
+
+        <div id="retail-stores-grid" class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4"></div>
+      </div>
+    </section>
+
+    <!-- ============================== NEWSLETTER ============================== -->
+    <section class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 pb-16 sm:px-6 lg:px-8">
+      <div class="relative gap-8 overflow-hidden rounded-3xl bg-slate-900 dark:bg-[#0B0F19] border border-slate-800 px-6 py-12 text-center md:flex md:items-center md:justify-between md:px-12 md:py-14 md:text-left shadow-2xl">
+        <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-accent-500/20 blur-3xl"></div>
+        <div class="relative">
+          <h2 class="text-2xl font-bold text-white md:text-3xl">Get 10% off your first order</h2>
+          <p class="mt-2 text-slate-400">Join our newsletter for exclusive drops and early access.</p>
+        </div>
+        <form id="newsletter-form" class="relative mt-6 flex flex-col gap-3 sm:flex-row md:mt-0 md:min-w-[400px]">
+          <label for="newsletter-email" class="sr-only">Email address</label>
+          <input id="newsletter-email" type="email" required placeholder="you@example.com"
+            class="flex-1 rounded-full bg-white/10 px-5 py-3.5 text-sm text-white ring-1 ring-white/15 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500" />
+          <button id="newsletter-submit" type="submit" class="rounded-full bg-brand-500 hover:bg-brand-600 px-6 py-3.5 text-sm font-bold text-white transition-colors shadow-lg shadow-brand-500/25">Subscribe</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer id="footer" class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#070A12] text-slate-600 dark:text-slate-300 transition-colors">
+    <!-- Value & Trust Guarantees Bar -->
+    <div class="border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-[#0B0F19]/50 transition-colors">
+      <div class="mx-auto grid max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 grid-cols-1 divide-y divide-slate-200/60 dark:divide-slate-800 px-4 py-8 sm:grid-cols-2 sm:divide-y-0 sm:divide-x sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div class="flex items-center gap-4 py-3 sm:py-0 sm:px-6 lg:first:pl-0">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-brand-50 dark:bg-brand-500/15 text-brand-500 dark:text-brand-400 shadow-sm">
+            <i data-lucide="truck" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Fast Global Dispatch</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Free delivery on orders over $50</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 py-3 sm:py-0 sm:px-6">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent-50 dark:bg-accent-500/15 text-accent-500 dark:text-accent-400 shadow-sm">
+            <i data-lucide="rotate-ccw" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white">30-Day Easy Returns</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Hassle-free prepaid return shipping</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 py-3 sm:py-0 sm:px-6">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-50 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-sm">
+            <i data-lucide="shield-check" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white">2-Year Full Warranty</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Comprehensive hardware protection</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 py-3 sm:py-0 sm:px-6 lg:last:pr-0">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-violet-50 dark:bg-violet-500/15 text-violet-600 dark:text-violet-400 shadow-sm">
+            <i data-lucide="headset" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white">24/7 Dedicated Support</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Live chat concierge always ready</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Footer Content -->
+    <div class="mx-auto max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 px-4 py-14 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+
+        <!-- Column 1: Brand & Philosophy -->
+        <div class="sm:col-span-2 md:col-span-3 lg:col-span-2 pr-0 lg:pr-8">
+          <a href="#" class="inline-block transition-transform duration-300 hover:scale-[1.02]" aria-label="Urban Scenery Ventures home">
+            <img src="/urban-scenery-logo.png" alt="Urban Scenery · Taking your business to the world" class="h-11 sm:h-12 w-auto max-w-[220px] sm:max-w-[250px] object-contain drop-shadow-sm" />
+          </a>
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+            A next-generation AI-powered e-commerce marketplace connecting independent sellers and global buyers with seamless multi-currency fulfillment.
+          </p>
+
+          <!-- Badges -->
+          <div class="mt-5 flex flex-wrap items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
+              <i data-lucide="lock" class="h-3.5 w-3.5 text-slate-400"></i> SSL 256-Bit Encrypted
+            </span>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400">
+              <i data-lucide="check" class="h-3.5 w-3.5 text-emerald-500"></i> Certified Carbon Neutral
+            </span>
+          </div>
+
+          <!-- Social Media Icons -->
+          <div class="mt-6 flex items-center gap-3">
+            <a href="#" aria-label="Instagram" class="grid h-9 w-9 place-items-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 transition hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 hover:text-brand-600">
+              <svg class="h-4 w-4 fill-currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a href="#" aria-label="X (Twitter)" class="grid h-9 w-9 place-items-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 transition hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 hover:text-brand-600">
+              <svg class="h-4 w-4 fill-currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" aria-label="YouTube" class="grid h-9 w-9 place-items-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 transition hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 hover:text-brand-600">
+              <svg class="h-4 w-4 fill-currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="#" aria-label="GitHub" class="grid h-9 w-9 place-items-center rounded-full border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 transition hover:border-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 hover:text-brand-600">
+              <svg class="h-4 w-4 fill-currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Column 2: Shop Collections -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Shop Collections</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Audio & Sound</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Computers & Laptops</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Phones & Tablets</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Beauty & Personal Care</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Jewelry & Watches</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Office Supplies</a></li>
+            <li><a href="#products" class="inline-flex items-center gap-1.5 font-medium text-brand-600 dark:text-accent-400 transition hover:underline">
+              New Season Drops <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 px-1.5 py-0.5 text-[10px] font-bold">New</span>
+            </a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Customer Support -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Support & Care</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Track Your Order</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Shipping & Delivery</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Returns & Exchanges</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Warranty Registration</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Help Center & FAQ</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Product Care Guides</a></li>
+            <li><a href="#" class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 transition hover:underline">
+              <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Concierge Chat
+            </a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Company & Perks -->
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">About Urban Scenery</h3>
+          <ul class="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Our Story & Craft</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Urban Sustainability</a></li>
+            <li><a href="seller.html" class="inline-flex items-center gap-1.5 font-medium text-brand-600 dark:text-brand-400 transition hover:underline">
+              <i data-lucide="store" class="h-3.5 w-3.5"></i> Seller Central Hub
+            </a></li>
+            <li><a href="#" class="inline-flex items-center gap-1.5 transition hover:text-brand-500 dark:hover:text-accent-400">
+              Careers <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-700 dark:text-brand-300">Hiring</span>
+            </a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Press & Media Kit</a></li>
+            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Affiliate Community</a></li>
+            <li><a href="#retail-stores-section" class="transition hover:text-brand-500 dark:hover:text-accent-400">Store Locator</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Payment & Currency row in footer -->
+      <div class="mt-12 flex flex-col items-center justify-between gap-6 border-t border-slate-100 dark:border-slate-800/80 pt-8 md:flex-row">
+        <div class="w-full md:w-auto">
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Accepted Payment Methods</p>
+          <div class="mt-2.5 flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">VISA</span>
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">Mastercard</span>
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">Apple Pay</span>
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">Google Pay</span>
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">MTN MoMo</span>
+            <span class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-bold tracking-tight text-slate-700 dark:text-slate-200 shadow-sm">Airtel Money</span>
+          </div>
+        </div>
+
+        <!-- Currency / Region Selector -->
+        <div class="flex w-full items-center justify-start gap-3 md:w-auto md:justify-end">
+          <label for="currency-selector" class="sr-only">Select Region & Currency</label>
+          <div class="relative">
+            <select id="currency-selector" class="appearance-none rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-2 pl-3.5 pr-8 text-xs font-medium text-slate-700 dark:text-slate-200 transition hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <option value="UGX">🇺🇬 UGX (Ugx) · East Africa</option>
+              <option value="USD">🇺🇸 USD ($) · Global</option>
+              <option value="EUR">🇪🇺 EUR (€) · Europe</option>
+              <option value="GBP">🇬🇧 GBP (£) · UK</option>
+            </select>
+            <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright & Legal Links -->
+    <div class="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#0B0F19] transition-colors">
+      <div class="mx-auto flex max-w-7xl 2xl:max-w-[1720px] 2xl:px-10 flex-col items-center justify-between gap-4 px-4 py-6 text-xs text-slate-500 dark:text-slate-400 sm:px-6 md:flex-row lg:px-8">
+        <p>© <span data-year></span> Urban Scenery Ventures Inc. All rights reserved. Taking your business to the world.</p>
+        <nav class="flex flex-wrap justify-center gap-6" aria-label="Legal">
+          <a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Privacy Policy</a>
+          <a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Terms of Service</a>
+          <a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Cookie Preferences</a>
+          <a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Security</a>
+          <a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Accessibility</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================== MOBILE BOTTOM NAV (APP TAB BAR) ============================== -->
+  <nav id="mobile-bottom-nav" aria-label="Mobile navigation"
+    class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-[#0B0F19]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden shadow-[0_-4px_20px_rgba(0,0,0,0.06)] transition-colors">
+    <div class="grid h-16 grid-cols-5">
+      <!-- Tab 1: Home -->
+      <button id="mnav-home" data-nav="home" aria-current="true" class="flex flex-col items-center justify-center gap-1 text-brand-600 dark:text-accent-400 transition-colors active:scale-90" aria-label="Home">
+        <i data-lucide="house" class="h-5 w-5"></i>
+        <span class="text-[10px] font-semibold">Home</span>
+      </button>
+
+      <!-- Tab 2: Shops -->
+      <button id="mnav-shops" data-nav="shops" class="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500 transition-colors active:scale-90" aria-label="Curated Shops">
+        <i data-lucide="store" class="h-5 w-5"></i>
+        <span class="text-[10px] font-medium">Shops</span>
+      </button>
+
+      <!-- Tab 3: Search -->
+      <button id="mnav-search" data-nav="search" class="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500 transition-colors active:scale-90" aria-label="Search">
+        <i data-lucide="search" class="h-5 w-5"></i>
+        <span class="text-[10px] font-medium">Search</span>
+      </button>
+
+      <!-- Tab 4: Cart -->
+      <button id="mnav-cart" data-nav="cart" data-cart-label class="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500 transition-colors active:scale-90" aria-label="Open cart, 0 items">
+        <span class="relative">
+          <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+          <span data-cart-count class="count-badge -right-2.5 -top-1.5 bg-accent-500 text-slate-950 font-bold text-[10px]">0</span>
+        </span>
+        <span class="text-[10px] font-medium">Cart</span>
+      </button>
+
+      <!-- Tab 5: Profile -->
+      <button id="mnav-profile" data-nav="profile" class="flex flex-col items-center justify-center gap-1 text-slate-400 dark:text-slate-500 transition-colors active:scale-90" aria-label="Profile">
+        <i data-lucide="user" class="h-5 w-5"></i>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ============================== CART DRAWER ============================== -->
+  <div id="cart-overlay" class="pointer-events-none fixed inset-0 z-[70] bg-slate-900/60 opacity-0 backdrop-blur-sm transition-opacity duration-300"></div>
+
+  <aside id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true"
+    class="fixed inset-y-0 right-0 z-[80] flex w-full max-w-md translate-x-full flex-col bg-white dark:bg-[#0F172A] border-l dark:border-slate-800 shadow-2xl transition-transform duration-300 ease-out">
+    <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-5 py-4">
+      <h2 id="cart-title" class="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
+        <i data-lucide="shopping-bag" class="h-5 w-5 text-brand-500"></i>
+        <span>Your Cart</span> <span id="cart-drawer-count" class="font-normal text-slate-400 dark:text-slate-500">(0)</span>
+      </h2>
+      <button id="cart-close" class="grid h-10 w-10 place-items-center rounded-full text-slate-500 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white" aria-label="Close cart">
+        <i data-lucide="x" class="h-5 w-5"></i>
+      </button>
+    </header>
+
+    <!-- Free shipping progress -->
+    <div id="cart-shipping" class="hidden border-b border-slate-100 dark:border-slate-800 bg-brand-50/60 dark:bg-brand-500/10 px-5 py-3">
+      <p id="cart-shipping-text" class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300"></p>
+      <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+        <div id="cart-shipping-bar" class="h-full rounded-full bg-brand-500 transition-all duration-500" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <ul id="cart-items" class="flex-1 divide-slate-100 dark:divide-slate-800 overflow-y-auto px-5 py-5"></ul>
+
+    <footer id="cart-footer" class="hidden space-y-3 border-t border-slate-200 dark:border-slate-800 px-5 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+      <div class="flex justify-between text-sm text-slate-600 dark:text-slate-400"><span>Subtotal</span><span id="cart-subtotal" class="font-medium text-slate-900 dark:text-white">$0.00</span></div>
+      <div class="flex justify-between text-sm text-slate-600 dark:text-slate-400"><span>Shipping</span><span id="cart-shipping-cost" class="font-medium text-slate-900 dark:text-white">Free</span></div>
+      <div class="flex justify-between border-t border-dashed border-slate-200 dark:border-slate-700 pt-3 text-base font-bold text-slate-900 dark:text-white"><span>Total</span><span id="cart-total">$0.00</span></div>
+      <button id="cart-checkout" class="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-500 hover:bg-brand-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition active:scale-[0.98]">
+        <span>Proceed to Checkout</span> <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </button>
+      <div class="flex items-center justify-between text-sm">
+        <button id="cart-continue" class="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Continue shopping</button>
+        <button id="cart-clear" class="text-slate-400 dark:text-slate-500 transition hover:text-rose-500">Clear cart</button>
+      </div>
+    </footer>
+  </aside>
+
+  <!-- ============================== QUICK VIEW MODAL ============================== -->
+  <div id="quick-view" class="fixed inset-0 z-[90] hidden" role="dialog" aria-modal="true" aria-labelledby="qv-title" data-open="false">
+    <div data-qv-close class="qv-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 md:inset-0 md:grid md:place-items-center md:p-6">
+      <div class="qv-panel pointer-events-auto relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-white dark:bg-[#0F172A] border dark:border-slate-800 shadow-2xl md:max-w-4xl md:rounded-3xl">
+        <button id="qv-close" data-qv-close class="absolute right-4 top-4 z-10 grid h-10 w-10 place-items-center rounded-full bg-white/90 dark:bg-slate-800 text-slate-500 dark:text-slate-300 shadow-sm backdrop-blur transition hover:bg-white dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white" aria-label="Close quick view">
+          <i data-lucide="x" class="h-5 w-5"></i>
+        </button>
+        <div id="qv-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== VISUAL SEARCH MODAL ============================== -->
+  <div id="visual-search-modal" class="fixed inset-0 z-[95] hidden" role="dialog" aria-modal="true" aria-labelledby="vs-title" data-open="false">
+    <div data-vs-close class="vs-backdrop absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+      <div class="vs-panel pointer-events-auto relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white dark:bg-[#0F172A] border dark:border-slate-800 p-6 shadow-2xl sm:p-8">
+
+        <!-- Header -->
+        <div class="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-5">
+          <div class="flex items-center gap-3">
+            <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 dark:bg-brand-500/15 text-brand-500 shadow-sm">
+              <i data-lucide="camera" class="h-5 w-5"></i>
+            </span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="vs-title" class="text-lg font-bold text-slate-900 dark:text-white">Search with Image</h3>
+                <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 px-2 py-0.5 text-[10px] font-bold text-brand-700 dark:text-brand-300">Smart AI Match</span>
+              </div>
+              <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Drop a photo or select an item to match similar products in our store</p>
+            </div>
+          </div>
+          <button id="vs-close" data-vs-close class="grid h-9 w-9 place-items-center rounded-full text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200" aria-label="Close visual search">
+            <i data-lucide="x" class="h-5 w-5"></i>
+          </button>
+        </div>
+
+        <!-- 1. Upload Dropzone Stage -->
+        <div id="vs-dropzone" class="mt-6 flex flex-col items-center">
+          <label for="vs-file-input"
+            class="group flex w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-900/60 px-6 py-10 text-center transition hover:border-brand-500 hover:bg-brand-50/20 dark:hover:bg-slate-800/80">
+            <div class="grid h-16 w-16 place-items-center rounded-full bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 shadow-md transition group-hover:scale-110 group-hover:text-brand-500">
+              <i data-lucide="upload-cloud" class="h-8 w-8"></i>
+            </div>
+            <p class="mt-4 text-sm font-semibold text-slate-800 dark:text-slate-200">
+              <span class="text-brand-600 dark:text-brand-400 underline">Upload a file</span> or drag & drop here
+            </p>
+            <p class="mt-1 text-xs text-slate-400">Supports PNG, JPG, JPEG, WebP up to 10MB</p>
+            <span class="mt-4 inline-flex items-center gap-1.5 rounded-full bg-brand-500 hover:bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition">
+              <i data-lucide="image" class="h-3.5 w-3.5"></i> Select Image from Device
+            </span>
+            <input id="vs-file-input" type="file" accept="image/*" class="sr-only" />
+          </label>
+
+          <!-- Preset demo samples for 1-click test -->
+          <div class="mt-8 w-full border-t border-slate-100 dark:border-slate-800 pt-6">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Or try an instant visual match demo:</p>
+              <span class="text-[11px] font-semibold text-brand-600 dark:text-accent-400">Click any item</span>
+            </div>
+            <div id="vs-samples" class="mt-3 grid grid-cols-3 gap-2.5 sm:grid-cols-6"></div>
+          </div>
+        </div>
+
+        <!-- 2. Scanner Animation Stage -->
+        <div id="vs-scanner" class="mt-6 hidden flex-col items-center py-6 text-center">
+          <div class="relative h-60 w-60 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-900 shadow-xl">
+            <img id="vs-scan-preview" src="" alt="Scanning target" class="h-full w-full object-cover opacity-90" />
+            <!-- Laser scan bar -->
+            <div class="animate-scanline absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-brand-400 to-transparent shadow-[0_0_15px_3px_rgba(230,0,126,0.8)]"></div>
+            <!-- Grid overlay -->
+            <div class="pointer-events-none absolute inset-0 opacity-20 [background-image:linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+          </div>
+          <div id="vs-scan-status" class="mt-6 flex flex-col items-center gap-1"></div>
+        </div>
+
+        <!-- 3. Results Stage -->
+        <div id="vs-results" class="mt-6 hidden flex-col">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h4 class="text-sm font-bold text-slate-800 dark:text-white">Visual Similarity Results</h4>
+            <button id="vs-reset-btn" type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 transition hover:underline">
+              <i data-lucide="refresh-cw" class="h-3.5 w-3.5"></i> Try another image
+            </button>
+          </div>
+          <div id="vs-results-list" class="mt-4 max-h-[50vh] space-y-3 overflow-y-auto pr-1"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== WELCOME / AI PROMO MODAL ============================== -->
+  <div id="welcome-popup-modal" class="fixed inset-0 z-[105] hidden" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" data-open="false">
+    <div data-welcome-close class="welcome-backdrop absolute inset-0 bg-slate-950/75 backdrop-blur-md"></div>
+    <div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+      <div class="welcome-panel pointer-events-auto relative max-h-[92vh] w-full max-w-xl overflow-hidden rounded-3xl bg-white dark:bg-[#0F172A] border dark:border-slate-800 shadow-2xl ring-1 ring-slate-900/10">
+
+        <!-- Top visual banner with brand gradient & official logo lockup -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-[#800045] via-[#E6007E] to-[#FFB800] px-6 py-7 text-white sm:px-8">
+          <div class="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-yellow-400/30 blur-2xl"></div>
+          <div class="pointer-events-none absolute -bottom-16 -left-12 h-48 w-48 rounded-full bg-pink-400/30 blur-2xl"></div>
+          <div class="pointer-events-none absolute inset-0 opacity-10 [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+          <button id="welcome-modal-close" data-welcome-close class="absolute right-4 top-4 z-10 grid h-8 w-8 place-items-center rounded-full bg-black/20 text-white/90 backdrop-blur transition hover:bg-black/40 hover:text-white" aria-label="Close welcome banner">
+            <i data-lucide="x" class="h-4 w-4"></i>
+          </button>
+
+          <!-- Official Brand Lockup -->
+          <div class="mb-2.5">
+            <img src="/urban-scenery-logo.png" alt="Urban Scenery · Taking your business to the world" class="h-9 w-auto max-w-[190px] object-contain drop-shadow" />
+          </div>
+
+          <h2 id="welcome-modal-title" class="mt-2 text-2xl font-black tracking-tight sm:text-3xl leading-tight">
+            Elevate Your Shopping & Selling Journey.
+          </h2>
+          <p class="mt-1.5 text-xs sm:text-sm text-pink-50 leading-relaxed">
+            Welcome to Urban Scenery Ventures — next-gen e-commerce connecting buyers with verified independent merchants across East Africa and worldwide.
+          </p>
+        </div>
+
+        <!-- Body with 2 paths: Buyer Promo & Seller Portal -->
+        <div class="p-6 sm:p-8 space-y-4">
+          <!-- Option A: Shopper Promo Gift -->
+          <div class="rounded-2xl border border-brand-100 dark:border-slate-800 bg-brand-50/50 dark:bg-slate-900/60 p-4 transition hover:border-brand-300 dark:hover:border-brand-500/40">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-500 text-white shadow-md shadow-brand-500/20">
+                  <i data-lucide="sparkles" class="h-5 w-5"></i>
+                </span>
+                <div>
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">First-Time Shopper Special</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Take 15% off any item across all curated boutiques.</p>
+                </div>
+              </div>
+              <button type="button" id="welcome-copy-code-btn" class="shrink-0 inline-flex items-center gap-1 rounded-lg border border-brand-200 dark:border-brand-500/30 bg-white dark:bg-slate-800 px-2.5 py-1 text-xs font-mono font-bold text-brand-600 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-slate-700 transition" title="Click to copy code">
+                <span>URBAN15</span>
+                <i data-lucide="check" class="h-3 w-3 text-emerald-500"></i>
+              </button>
+            </div>
+            <div class="mt-3 flex items-center justify-end">
+              <button type="button" id="welcome-claim-btn" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 hover:bg-brand-600 px-5 py-2 text-xs font-bold text-white shadow-sm transition">
+                <span>Claim 15% & Start Shopping</span>
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Option B: Seller Invitation -->
+          <div class="rounded-2xl border border-accent-200/60 dark:border-slate-800 bg-gradient-to-r from-accent-50/60 to-amber-50/40 dark:from-slate-900/80 dark:to-slate-900/60 p-4 transition hover:border-accent-400">
+            <div class="flex items-start gap-3">
+              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-accent-500 text-slate-950 font-bold shadow-md shadow-accent-500/20">
+                <i data-lucide="store" class="h-5 w-5"></i>
+              </span>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-slate-900 dark:text-white">Are you a Merchant or Brand?</h3>
+                  <span class="rounded-full bg-accent-100 dark:bg-accent-500/20 px-2 py-0.5 text-[10px] font-bold text-accent-800 dark:text-accent-300">0% Fees</span>
+                </div>
+                <p class="mt-1 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Open your online store on Urban Scenery Ventures. Take your business to the world with automated fulfillment, multi-currency checkout, and 90 days zero fees.
+                </p>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                  <a href="seller.html" class="inline-flex items-center justify-center gap-1.5 rounded-full bg-slate-900 dark:bg-brand-500 hover:bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition">
+                    <i data-lucide="store" class="h-3.5 w-3.5"></i>
+                    <span>Open Merchant Store</span>
+                    <i data-lucide="arrow-right" class="h-3 w-3"></i>
+                  </a>
+                  <a href="seller.html#login" class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-accent-400 px-2 py-1">
+                    <span>Already a seller? Sign in</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer with 'Don't show again' and dismissal -->
+          <div class="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-3 text-xs text-slate-500 dark:text-slate-400">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="welcome-dont-show" class="h-3.5 w-3.5 rounded border-slate-300 dark:border-slate-700 text-brand-500 focus:ring-brand-500 accent-[#E6007E]" />
+              <span>Don't show this again</span>
+            </label>
+            <button type="button" data-welcome-close class="font-medium text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition">
+              Dismiss
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== TOAST ============================== -->
+  <div id="toast" role="status" aria-live="polite"
+    class="pointer-events-none fixed bottom-24 left-4 right-4 z-[100] translate-y-4 opacity-0 transition-all duration-300 md:bottom-6 md:left-auto md:right-6 md:w-[26rem]">
+    <div class="flex items-center gap-3 rounded-2xl bg-slate-900 px-4 py-3.5 text-white shadow-2xl">
+      <span id="toast-icon" class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald-500"></span>
+      <p id="toast-message" class="flex-1 text-sm font-medium">Added to cart</p>
+      <button id="toast-action" type="button" class="hidden shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"></button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
