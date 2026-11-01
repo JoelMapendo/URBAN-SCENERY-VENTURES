@@ -1,16 +1,17 @@
 import { icon } from '../icons.js';
-import { getCatalogProducts } from '../data/products.js';
+import { getCatalogProducts, mapBackendProduct } from '../data/products.js';
+import { aiApi } from '../services/api.js';
 import { formatPrice, lockScroll, unlockScroll } from '../utils.js';
 import { showToast } from './toast.js';
 
-// Predefined visual samples for instant 1-click testing
+// Predefined visual samples for instant 1-click testing (aligned with live backend & local catalogs)
 export const SAMPLES = [
-  { id: 1, label: 'Headphones', icon: 'headphones', bg: 'from-brand-100 to-brand-200', fg: 'text-brand-600' },
-  { id: 2, label: 'Smart Watch', icon: 'watch', bg: 'from-accent-50 to-accent-100', fg: 'text-accent-500' },
-  { id: 3, label: 'Sneakers', icon: 'footprints', bg: 'from-emerald-50 to-emerald-100', fg: 'text-emerald-600' },
-  { id: 4, label: 'Backpack', icon: 'backpack', bg: 'from-amber-50 to-amber-100', fg: 'text-amber-600' },
-  { id: 6, label: 'Ceramic Mug', icon: 'coffee', bg: 'from-rose-50 to-rose-100', fg: 'text-rose-500' },
-  { id: 7, label: 'Speaker', icon: 'speaker', bg: 'from-violet-50 to-violet-100', fg: 'text-violet-600' },
+  { id: 1, label: 'Laptop', query: 'laptop', icon: 'laptop', bg: 'from-slate-800 to-indigo-900', fg: 'text-indigo-300' },
+  { id: 2, label: 'Headphones', query: 'headphones', icon: 'headphones', bg: 'from-brand-100 to-brand-200', fg: 'text-brand-600' },
+  { id: 3, label: 'Smartphone', query: 'phone', icon: 'smartphone', bg: 'from-accent-50 to-accent-100', fg: 'text-accent-500' },
+  { id: 4, label: '4K Monitor', query: 'monitor', icon: 'cpu', bg: 'from-emerald-50 to-emerald-100', fg: 'text-emerald-600' },
+  { id: 5, label: 'Power Bank', query: 'power bank', icon: 'zap', bg: 'from-amber-50 to-amber-100', fg: 'text-amber-600' },
+  { id: 6, label: 'Gaming', query: 'gaming', icon: 'sparkles', bg: 'from-violet-50 to-violet-100', fg: 'text-violet-600' },
 ];
 
 let isOpen = false;
@@ -80,15 +81,46 @@ function resetToUploadState() {
 }
 
 /**
- * Intelligent image matching: matches by sample ID, or extracts image filename/color
- * keywords against product titles and categories.
+ * Intelligent image matching: queries FastAPI `/api/v1/ai/smart-search` when available,
+ * and falls back to local catalog matching by sample ID or filename keywords.
  */
-function findMatches(criteria) {
+async function findMatches(criteria) {
   const products = getCatalogProducts();
   let matched = [];
 
+  // Build search query from sample or filename
+  let queryTerm = '';
   if (typeof criteria === 'number') {
-    // Exact sample selected
+    const sample = SAMPLES.find((s) => s.id === criteria);
+    queryTerm = sample?.query || sample?.label || '';
+  } else {
+    const cleaned = String(criteria || '')
+      .replace(/\.[a-z0-9]+$/i, '')
+      .replace(/[-_]+/g, ' ')
+      .trim();
+    if (cleaned.length >= 2) queryTerm = cleaned;
+  }
+
+  if (queryTerm.length >= 2) {
+    try {
+      const res = await aiApi.smartSearch(queryTerm);
+      if (res && Array.isArray(res.matches) && res.matches.length > 0) {
+        const backendMapped = res.matches.map((item, idx) => mapBackendProduct(item, idx));
+        matched = backendMapped.map((p, i) => ({
+          product: p,
+          confidence: Math.max(80, 98 - i * 6),
+        }));
+        const matchedIds = new Set(backendMapped.map((p) => p.id));
+        const others = products.filter((p) => !matchedIds.has(p.id));
+        matched.push(...others.slice(0, 2).map((p, idx) => ({ product: p, confidence: 68 - idx * 8 })));
+        return matched;
+      }
+    } catch {
+      /* fall back to local catalog matching when backend is offline */
+    }
+  }
+
+  if (typeof criteria === 'number') {
     const primary = products.find((p) => p.id === criteria);
     if (primary) {
       const relatives = products.filter((p) => p.id !== criteria && p.category === primary.category);
@@ -98,29 +130,28 @@ function findMatches(criteria) {
         ...relatives.map((p, idx) => ({ product: p, confidence: 85 - idx * 6 })),
         ...others.slice(0, 2).map((p, idx) => ({ product: p, confidence: 64 - idx * 8 })),
       ];
+      return matched;
     }
-  } else {
-    // Filename / visual string criteria
-    const term = String(criteria).toLowerCase();
-    const exact = products.filter(
-      (p) =>
-        term.includes(p.category.toLowerCase()) ||
-        term.includes(p.icon.toLowerCase()) ||
-        p.title.toLowerCase().split(' ').some((w) => w.length > 3 && term.includes(w)),
-    );
+  }
 
-    if (exact.length > 0) {
-      matched = exact.map((p, i) => ({ product: p, confidence: Math.max(78, 96 - i * 7) }));
-      const remaining = products.filter((p) => !exact.some((e) => e.id === p.id));
-      matched.push(...remaining.slice(0, 2).map((p, i) => ({ product: p, confidence: 62 - i * 8 })));
-    } else {
-      // Fallback: smart variety ranked by rating
-      matched = products
-        .slice()
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 4)
-        .map((p, i) => ({ product: p, confidence: 92 - i * 11 }));
-    }
+  const term = String(queryTerm || criteria).toLowerCase();
+  const exact = products.filter(
+    (p) =>
+      term.includes(p.category.toLowerCase()) ||
+      term.includes((p.icon || '').toLowerCase()) ||
+      p.title.toLowerCase().split(' ').some((w) => w.length > 3 && term.includes(w)),
+  );
+
+  if (exact.length > 0) {
+    matched = exact.map((p, i) => ({ product: p, confidence: Math.max(78, 96 - i * 7) }));
+    const remaining = products.filter((p) => !exact.some((e) => e.id === p.id));
+    matched.push(...remaining.slice(0, 2).map((p, i) => ({ product: p, confidence: 62 - i * 8 })));
+  } else {
+    matched = products
+      .slice()
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 4)
+      .map((p, i) => ({ product: p, confidence: 92 - i * 11 }));
   }
 
   return matched;
@@ -133,16 +164,16 @@ function processImage(imageSrc, criteria, name = 'Selected Photo') {
 
   scanPreview.src = imageSrc;
   scanStatus.innerHTML = `
-    <span class="inline-flex items-center gap-2 text-sm font-semibold text-brand-600">
+    <span class="inline-flex items-center gap-2 text-sm font-semibold text-brand-600 dark:text-brand-400">
       <span class="h-2 w-2 rounded-full bg-brand-500 animate-ping"></span>
-      Analyzing visual features & silhouette…
+      Analyzing visual features & querying AI catalog…
     </span>`;
 
   clearTimeout(scanTimeout);
-  scanTimeout = setTimeout(() => {
-    currentMatches = findMatches(criteria);
+  scanTimeout = setTimeout(async () => {
+    currentMatches = await findMatches(criteria);
     displayResults(name);
-  }, 1100);
+  }, 650);
 }
 
 function displayResults(sourceName) {
@@ -155,9 +186,8 @@ function displayResults(sourceName) {
       <article class="flex flex-col sm:flex-row items-center gap-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 transition hover:border-brand-300 dark:hover:border-brand-500 hover:shadow-lg">
         <div class="relative grid h-24 w-24 shrink-0 place-items-center rounded-xl overflow-hidden bg-gradient-to-br ${p.bg}">
           ${p.image ? `<img src="${p.image}" alt="${p.title}" class="h-full w-full object-cover" />` : icon(p.icon, `h-12 w-12 ${p.fg}`, { 'stroke-width': '1.5' })}
-          <span class="absolute top-1.5 right-1.5 rounded-full ${
-            confidence >= 90 ? 'bg-emerald-500' : 'bg-brand-600'
-          } px-2 py-0.5 text-[10px] font-bold text-white shadow">
+          <span class="absolute top-1.5 right-1.5 rounded-full ${confidence >= 90 ? 'bg-emerald-500' : 'bg-brand-600'
+        } px-2 py-0.5 text-[10px] font-bold text-white shadow">
             ${confidence}% match
           </span>
         </div>

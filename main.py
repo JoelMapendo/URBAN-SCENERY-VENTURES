@@ -18,8 +18,12 @@ from routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Initialize database tables on application startup
+    # Initialize database tables and seed initial data on application startup
     init_db()
+    if settings.AUTO_SEED:
+        from seed_data import seed
+
+        seed()
     yield
 
 
@@ -39,6 +43,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

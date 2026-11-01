@@ -22,8 +22,23 @@ function stars(rating) {
   ).join('');
 }
 
+function getMaxStock(p) {
+  if (!p) return 99;
+  return p.fromBackend ? Math.max(0, Math.min(99, Number(p.stock ?? 0))) : 99;
+}
+
 function template(p) {
   const savings = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
+  const maxStock = getMaxStock(p);
+  const isOut = p.fromBackend && (maxStock <= 0 || p.status === 'EMPTY');
+  const stockLine = isOut
+    ? `<p class="mt-5 flex items-center gap-2 text-sm text-rose-600 dark:text-rose-400">
+         <span class="h-2 w-2 rounded-full bg-rose-500"></span> Currently out of stock
+       </p>`
+    : `<p class="mt-5 flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+         <span class="h-2 w-2 rounded-full bg-emerald-500"></span> In stock${p.fromBackend ? ` (${maxStock} available)` : ''} — ships in 1–2 business days
+       </p>`;
+
   return `
     <div class="grid md:grid-cols-2">
       <div class="relative grid aspect-[4/3] place-items-center overflow-hidden bg-slate-900/5 ${p.bg} md:aspect-auto md:min-h-[480px]">
@@ -64,19 +79,17 @@ function template(p) {
             .join('')}
         </ul>
 
-        <p class="mt-5 flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
-          <span class="h-2 w-2 rounded-full bg-emerald-500"></span> In stock — ships in 1–2 business days
-        </p>
+        ${stockLine}
 
         <div class="mt-auto flex items-center gap-3 pt-6">
           <div class="qty-stepper">
-            <button type="button" class="qty-btn h-11 w-11" id="qv-dec" aria-label="Decrease quantity" ${qty <= 1 ? 'disabled' : ''}>${icon('minus', 'h-4 w-4')}</button>
-            <span id="qv-qty" class="w-8 text-center font-semibold text-slate-900 dark:text-white" aria-live="polite">${qty}</span>
-            <button type="button" class="qty-btn h-11 w-11" id="qv-inc" aria-label="Increase quantity">${icon('plus', 'h-4 w-4')}</button>
+            <button type="button" class="qty-btn h-11 w-11" id="qv-dec" aria-label="Decrease quantity" ${qty <= 1 || isOut ? 'disabled' : ''}>${icon('minus', 'h-4 w-4')}</button>
+            <span id="qv-qty" class="w-8 text-center font-semibold text-slate-900 dark:text-white" aria-live="polite">${isOut ? 0 : qty}</span>
+            <button type="button" class="qty-btn h-11 w-11" id="qv-inc" aria-label="Increase quantity" ${isOut || qty >= maxStock ? 'disabled' : ''}>${icon('plus', 'h-4 w-4')}</button>
           </div>
-          <button type="button" id="qv-add"
-            class="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-500 hover:bg-brand-600 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/25 transition active:scale-[0.98]">
-            ${icon('shopping-cart', 'h-4 w-4')} <span id="qv-add-label">Add to Cart · ${formatPrice(toUGX(p.price) * qty)}</span>
+          <button type="button" id="qv-add" ${isOut ? 'disabled' : ''}
+            class="inline-flex flex-1 items-center justify-center gap-2 rounded-full ${isOut ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-brand-500 hover:bg-brand-600 text-white shadow-lg shadow-brand-500/25 active:scale-[0.98]'} py-3.5 text-sm font-semibold transition">
+            ${icon('shopping-cart', 'h-4 w-4')} <span id="qv-add-label">${isOut ? 'Out of Stock' : `Add to Cart · ${formatPrice(toUGX(p.price) * qty)}`}</span>
           </button>
           ${wishButton(p, 'h-12 w-12 border border-slate-200 dark:border-slate-700 shrink-0', 'h-5 w-5', 'qv-wishlist')}
         </div>
@@ -85,10 +98,11 @@ function template(p) {
 }
 
 function updateQty(next) {
-  qty = Math.max(1, Math.min(99, next));
+  const maxStock = Math.max(1, getMaxStock(current));
+  qty = Math.max(1, Math.min(maxStock, next));
   document.getElementById('qv-qty').textContent = qty;
   document.getElementById('qv-dec').disabled = qty <= 1;
-  document.getElementById('qv-inc').disabled = qty >= 99;
+  document.getElementById('qv-inc').disabled = qty >= maxStock;
   document.getElementById('qv-add-label').textContent = `Add to Cart · ${formatPrice(toUGX(current.price) * qty)}`;
 }
 
@@ -125,7 +139,11 @@ export function initQuickView({ onAdded } = {}) {
     if (e.target.closest('#qv-dec')) return updateQty(qty - 1);
     if (e.target.closest('#qv-inc')) return updateQty(qty + 1);
     if (e.target.closest('#qv-add')) {
-      addToCart(current.id, qty);
+      const ok = addToCart(current.id, qty);
+      if (!ok) {
+        showToast(`${current.title} is currently out of stock.`, { variant: 'error' });
+        return;
+      }
       const title = current.title;
       const added = qty;
       closeQuickView();

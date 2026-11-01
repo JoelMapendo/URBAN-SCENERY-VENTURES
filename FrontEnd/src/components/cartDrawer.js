@@ -53,6 +53,7 @@ export function closeCart() {
 }
 
 function cartItem({ product: p, qty }) {
+  const maxQty = p.fromBackend ? Math.max(1, Math.min(99, Number(p.stock ?? 99))) : 99;
   return `
     <li class="flex gap-4 py-4 first:pt-0 dark:border-slate-800" data-cart-item="${p.id}">
       <div class="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -79,7 +80,7 @@ function cartItem({ product: p, qty }) {
           <div class="qty-stepper">
             <button type="button" class="qty-btn" data-cart-dec="${p.id}" id="cart-dec-${p.id}" aria-label="Decrease quantity">${icon('minus', 'h-4 w-4')}</button>
             <span class="w-8 text-center text-sm font-semibold text-slate-900 dark:text-white" aria-live="polite">${qty}</span>
-            <button type="button" class="qty-btn" data-cart-inc="${p.id}" id="cart-inc-${p.id}" aria-label="Increase quantity" ${qty >= 99 ? 'disabled' : ''}>${icon('plus', 'h-4 w-4')}</button>
+            <button type="button" class="qty-btn" data-cart-inc="${p.id}" id="cart-inc-${p.id}" aria-label="Increase quantity" ${qty >= maxQty ? 'disabled' : ''}>${icon('plus', 'h-4 w-4')}</button>
           </div>
           <p class="text-sm font-bold text-slate-900 dark:text-white">${formatPrice(toUGX(p.price) * qty)}</p>
         </div>
@@ -128,7 +129,7 @@ function render() {
   totalEl.textContent = formatPrice(total);
 }
 
-export function initCartDrawer({ onShop } = {}) {
+export function initCartDrawer({ onShop, onCheckout } = {}) {
   drawer.inert = true;
 
   overlay.addEventListener('click', closeCart);
@@ -141,11 +142,15 @@ export function initCartDrawer({ onShop } = {}) {
   });
 
   document.getElementById('cart-checkout').addEventListener('click', () => {
-    const orderNum = `US-${Math.floor(100000 + Math.random() * 900000)}`;
-    const { total } = getCartTotals();
-    clearCart();
     closeCart();
-    showToast(`Order #${orderNum} confirmed (${formatPrice(total)})! Preparing dispatch.`, { variant: 'success' });
+    if (onCheckout) {
+      onCheckout();
+    } else {
+      const orderNum = `US-${Math.floor(100000 + Math.random() * 900000)}`;
+      const { total } = getCartTotals();
+      clearCart();
+      showToast(`Order #${orderNum} confirmed (${formatPrice(total)})! Preparing dispatch.`, { variant: 'success' });
+    }
   });
 
   list.addEventListener('click', (e) => {
@@ -168,5 +173,6 @@ export function initCartDrawer({ onShop } = {}) {
 
   subscribe((change) => change.type === 'cart' && render());
   window.addEventListener('lumen:currency_changed', render);
+  window.addEventListener('lumen:products_updated', render);
   render();
 }

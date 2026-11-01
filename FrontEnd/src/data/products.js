@@ -1,3 +1,5 @@
+import { productsApi } from '../services/api.js';
+
 export const defaultProducts = [
   {
     id: 101,
@@ -266,34 +268,228 @@ export const defaultProducts = [
 ];
 
 export const PRODUCTS_STORAGE_KEY = 'lumen:catalog_products_v2';
+export const PRODUCT_META_STORAGE_KEY = 'lumen:product_ui_meta_v1';
+
+let liveCatalogCache = null;
+
+function loadProductUiMetaMap() {
+  try {
+    const raw = localStorage.getItem(PRODUCT_META_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function saveProductUiMeta(productId, meta) {
+  try {
+    const map = loadProductUiMetaMap();
+    map[String(productId)] = { ...(map[String(productId)] || {}), ...meta };
+    localStorage.setItem(PRODUCT_META_STORAGE_KEY, JSON.stringify(map));
+  } catch {
+    /* ignore */
+  }
+}
+
+function inferProductPresentation(name = '', description = '') {
+  const text = `${name} ${description}`.toLowerCase();
+
+  if (/(macbook|laptop|notebook|thinkpad|ultrabook|pc|workstation|monitor|ultrasharp|display)/.test(text)) {
+    return {
+      category: 'Computers',
+      icon: 'laptop',
+      shopId: 'nordic-studio',
+      shopName: 'Nordic Light Studio',
+      bg: 'from-slate-900 to-indigo-950',
+      fg: 'text-indigo-400',
+      fallbackImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(headphone|wh-1000|earbud|earphone|speaker|audio|acoustic|sound|anc)/.test(text)) {
+    return {
+      category: 'Audio & Sound',
+      icon: 'headphones',
+      shopId: 'urban-acoustics',
+      shopName: 'Urban Scenery Acoustics',
+      bg: 'from-brand-100 to-brand-200',
+      fg: 'text-brand-600',
+      fallbackImage: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(galaxy|iphone|smartphone|phone|mobile|tablet|ipad|android|s24)/.test(text)) {
+    return {
+      category: 'Phones & Tablets',
+      icon: 'smartphone',
+      shopId: 'apex-tech',
+      shopName: 'Apex Electronics',
+      bg: 'from-slate-100 to-slate-200',
+      fg: 'text-slate-800',
+      fallbackImage: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(watch|smartwatch|wearable|tracker|ring|biometric)/.test(text)) {
+    return {
+      category: 'Wearables',
+      icon: 'watch',
+      shopId: 'apex-tech',
+      shopName: 'Apex Wearables',
+      bg: 'from-accent-50 to-accent-100',
+      fg: 'text-accent-500',
+      fallbackImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(power bank|powercore|anker|charger|cable|adapter|hub|usb-c|backpack|bag|sleeve|accessory)/.test(text)) {
+    return {
+      category: 'Computer Accessories',
+      icon: 'zap',
+      shopId: 'urban-carry',
+      shopName: 'Urban Carry Co.',
+      bg: 'from-amber-50 to-amber-100',
+      fg: 'text-amber-600',
+      fallbackImage: 'https://images.unsplash.com/photo-1609592424364-c78d53b27670?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(shoe|sneaker|runner|footwear|trainer)/.test(text)) {
+    return {
+      category: 'Footwear',
+      icon: 'footprints',
+      shopId: 'acro-kinetic',
+      shopName: 'Acro Kinetic Lab',
+      bg: 'from-emerald-50 to-emerald-100',
+      fg: 'text-emerald-600',
+      fallbackImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+  if (/(lamp|desk|office)/.test(text)) {
+    return {
+      category: 'Office Supplies',
+      icon: 'lamp-desk',
+      shopId: 'nordic-studio',
+      shopName: 'Nordic Light Studio',
+      bg: 'from-sky-50 to-sky-100',
+      fg: 'text-sky-600',
+      fallbackImage: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1000&q=80',
+    };
+  }
+
+  return {
+    category: 'Consumer Electronics',
+    icon: 'cpu',
+    shopId: 'solaris-optics',
+    shopName: 'Urban Scenery Flagship',
+    bg: 'from-violet-50 to-violet-100',
+    fg: 'text-violet-600',
+    fallbackImage: 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=1000&q=80',
+  };
+}
+
+function extractFeatures(description = '', fallbackFeatures) {
+  if (Array.isArray(fallbackFeatures) && fallbackFeatures.length > 0) {
+    return fallbackFeatures;
+  }
+  const parts = String(description || '')
+    .split(/[,.·;]/)
+    .map((s) => s.trim())
+    .filter((s) => s.length >= 6 && s.length <= 65);
+  if (parts.length >= 2) {
+    return parts.slice(0, 4);
+  }
+  return ['Verified Authentic Hardware', 'Express Dispatch & Pickup', '1-Year Full Warranty'];
+}
 
 /**
- * Loads catalog products dynamically:
- * Prioritizes products uploaded by admin and sellers in localStorage.
- * Automatically falls back to default initial products.
+ * Maps a FastAPI `ProductOut` record into the rich frontend product format.
+ */
+export function mapBackendProduct(apiProd, index = 0) {
+  const metaMap = loadProductUiMetaMap();
+  const meta = metaMap[String(apiProd.id)] || {};
+  const inferred = inferProductPresentation(apiProd.name, apiProd.description);
+  const price = Number(apiProd.price);
+  const quantity = Number(apiProd.quantity ?? 0);
+  const isOut = quantity <= 0 || apiProd.status === 'EMPTY';
+
+  let image = apiProd.banner_image || meta.image || inferred.fallbackImage;
+  if (image && image.includes('images.unsplash.com/') && !image.includes('?')) {
+    image = `${image}?auto=format&fit=crop&w=1000&q=80`;
+  }
+
+  const defaultBadge = isOut
+    ? 'Out of Stock'
+    : index === 0
+    ? 'Featured'
+    : quantity <= 10
+    ? 'Limited Stock'
+    : null;
+
+  return {
+    id: Number(apiProd.id),
+    title: apiProd.name,
+    name: apiProd.name,
+    category: meta.category || inferred.category,
+    shopId: meta.shopId || inferred.shopId,
+    shopName: meta.shopName || inferred.shopName,
+    price,
+    oldPrice: meta.oldPrice && Number(meta.oldPrice) > price ? Number(meta.oldPrice) : null,
+    stock: quantity,
+    quantity,
+    status: apiProd.status || (quantity > 0 ? 'AVAILABLE' : 'EMPTY'),
+    rating: meta.rating || Number((4.7 + ((Number(apiProd.id) * 3) % 3) * 0.1).toFixed(1)),
+    reviews: meta.reviews || 48 + ((Number(apiProd.id) * 37) % 240),
+    icon: meta.icon || inferred.icon,
+    badge: isOut ? 'Out of Stock' : meta.badge ?? defaultBadge,
+    bg: meta.bg || inferred.bg,
+    fg: meta.fg || inferred.fg,
+    image,
+    description: apiProd.description || 'Verified electronics product available on Urban Scenery Ventures.',
+    features: extractFeatures(apiProd.description, meta.features),
+    fromBackend: true,
+    created_at: apiProd.created_at,
+    updated_at: apiProd.updated_at,
+  };
+}
+
+/**
+ * Fetches the authoritative product catalog from the FastAPI backend (`GET /api/v1/products`),
+ * updates local cache, and notifies all active UI components.
+ */
+export async function syncCatalogFromBackend(filters = {}) {
+  const apiProducts = await productsApi.list(filters);
+  const mapped = (apiProducts || []).map((item, idx) => mapBackendProduct(item, idx));
+  liveCatalogCache = mapped;
+  saveCatalogProducts(mapped);
+  return mapped;
+}
+
+/**
+ * Loads catalog products synchronously (returns latest backend-synced cache, or default fallback prior to first sync).
  */
 export function getCatalogProducts() {
+  if (Array.isArray(liveCatalogCache) && liveCatalogCache.length > 0) {
+    return liveCatalogCache;
+  }
   try {
     const raw = localStorage.getItem(PRODUCTS_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
+        liveCatalogCache = parsed;
         return parsed;
       }
     }
-  } catch (e) {
+  } catch {
     // ignore
   }
   return [...defaultProducts];
 }
 
 export function saveCatalogProducts(prods) {
+  liveCatalogCache = prods;
   try {
     localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(prods));
-    window.dispatchEvent(new CustomEvent('lumen:products_updated', { detail: prods }));
-  } catch (e) {
+  } catch {
     // ignore
   }
+  window.dispatchEvent(new CustomEvent('lumen:products_updated', { detail: prods }));
 }
 
 export const products = getCatalogProducts();
