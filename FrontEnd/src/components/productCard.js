@@ -3,6 +3,8 @@ import { isWished } from '../store.js';
 import { formatPrice } from '../utils.js';
 
 export function badgeClass(badge) {
+  if (badge === 'Out of Stock') return 'bg-rose-600 text-white font-bold';
+  if (badge === 'Limited Stock') return 'bg-amber-500 text-slate-950 font-bold';
   if (badge === 'Featured') return 'bg-accent-500 text-slate-950 font-bold';
   if (badge === 'Sale') return 'bg-brand-500 text-white font-bold';
   return 'bg-brand-600 text-white font-semibold';
@@ -60,10 +62,21 @@ export function productCard(p) {
           <button type="button" data-quick-view="${p.id}" class="text-left hover:text-brand-500 dark:hover:text-brand-400 transition-colors line-clamp-2">${p.title}</button>
         </h3>
 
-        <div class="mt-1.5 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-          ${icon('star', 'h-3 w-3 sm:h-3.5 sm:w-3.5 fill-accent-400 text-accent-400')}
-          <span class="font-medium text-slate-700 dark:text-slate-300">${p.rating}</span>
-          <span class="text-[11px]">(${p.reviews})</span>
+        <div class="mt-1.5 flex items-center justify-between gap-1 text-xs text-slate-500 dark:text-slate-400">
+          <div class="flex items-center gap-1">
+            ${icon('star', 'h-3 w-3 sm:h-3.5 sm:w-3.5 fill-accent-400 text-accent-400')}
+            <span class="font-medium text-slate-700 dark:text-slate-300">${p.rating}</span>
+            <span class="text-[11px]">(${p.reviews})</span>
+          </div>
+          ${
+            p.fromBackend
+              ? p.stock <= 0 || p.status === 'EMPTY'
+                ? `<span class="text-[11px] font-semibold text-rose-500">Out of stock</span>`
+                : p.stock <= 10
+                ? `<span class="text-[11px] font-semibold text-amber-600 dark:text-amber-400">Only ${p.stock} left</span>`
+                : `<span class="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">${p.stock} in stock</span>`
+              : ''
+          }
         </div>
 
         <div class="mt-auto flex items-baseline gap-2 pt-3 sm:pt-4">
@@ -71,11 +84,19 @@ export function productCard(p) {
           ${p.oldPrice ? `<span class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 line-through">${formatPrice(p.oldPrice)}</span>` : ''}
         </div>
 
-        <button type="button" id="add-to-cart-${p.id}" data-add-to-cart="${p.id}"
-          class="mt-3 sm:mt-4 inline-flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-brand-500/20 transition-all duration-200 hover:shadow-brand-500/30 active:scale-[0.96] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200">
-          ${icon('shopping-cart', 'h-3.5 w-3.5 sm:h-4 sm:w-4')}
-          <span>Add to Cart</span>
-        </button>
+        ${
+          p.fromBackend && (p.stock <= 0 || p.status === 'EMPTY')
+            ? `<button type="button" id="add-to-cart-${p.id}" disabled
+                 class="mt-3 sm:mt-4 inline-flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-slate-200 dark:bg-slate-800 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                 ${icon('alert-circle', 'h-3.5 w-3.5 sm:h-4 sm:w-4')}
+                 <span>Out of Stock</span>
+               </button>`
+            : `<button type="button" id="add-to-cart-${p.id}" data-add-to-cart="${p.id}"
+                 class="mt-3 sm:mt-4 inline-flex w-full items-center justify-center gap-1.5 sm:gap-2 rounded-xl bg-brand-500 hover:bg-brand-600 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-md shadow-brand-500/20 transition-all duration-200 hover:shadow-brand-500/30 active:scale-[0.96] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200">
+                 ${icon('shopping-cart', 'h-3.5 w-3.5 sm:h-4 sm:w-4')}
+                 <span>Add to Cart</span>
+               </button>`
+        }
       </div>
     </article>`;
 }

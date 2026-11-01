@@ -7,7 +7,7 @@ import '@fontsource/poppins/700.css';
 import '@fontsource/poppins/800.css';
 import './style.css';
 
-import { getCatalogProducts, getProduct } from './data/products.js';
+import { getCatalogProducts, getProduct, syncCatalogFromBackend } from './data/products.js';
 import { renderStaticIcons, icon } from './icons.js';
 import * as store from './store.js';
 import { productCard } from './components/productCard.js';
@@ -16,6 +16,16 @@ import { initQuickView, openQuickView, closeQuickView, isQuickViewOpen } from '.
 import { initVisualSearch, closeVisualSearch, isVisualSearchOpen } from './components/visualSearch.js';
 import { initShopsSection } from './components/shopsSection.js';
 import { initWelcomeModal } from './components/welcomeModal.js';
+import { initCheckoutModal, openCheckoutModal, closeCheckoutModal, isCheckoutOpen } from './components/checkoutModal.js';
+import { initAccountModal, openAccountModal, closeAccountModal, isAccountModalOpen } from './components/accountModal.js';
+import {
+  authApi,
+  aiApi,
+  checkBackendHealth,
+  getCurrentUser,
+  subscribeAuth,
+  subscribeBackendStatus,
+} from './services/api.js';
 import { showToast } from './components/toast.js';
 import { plural, replayAnimation, formatPrice, toUGX, getSelectedCurrency, setSelectedCurrency } from './utils.js';
 import { initTheme } from './theme.js';
@@ -52,6 +62,8 @@ const filters = {
   minPrice: null,
   maxPrice: null,
   verifiedOnly: false,
+  smartSearchIds: null,
+  aiRecommendationIds: null,
 };
 
 const SORTERS = {
@@ -230,10 +242,13 @@ function getVisibleProducts() {
   const q = filters.query.trim().toLowerCase();
   return catalog
     .filter((p) => {
+      if (filters.aiRecommendationIds instanceof Set && !filters.aiRecommendationIds.has(p.id)) {
+        return false;
+      }
       if (filters.shop && p.shopId !== filters.shop) return false;
       if (filters.category === 'saved') return store.isWished(p.id);
       if (filters.category !== 'all' && p.category !== filters.category) return false;
-      if (filters.verifiedOnly && !(p.shopName || p.id > 100)) return false;
+      if (filters.verifiedOnly && !(p.shopName || p.id > 100 || p.fromBackend)) return false;
 
       const priceUgx = toUGX(p.price);
 
@@ -249,7 +264,14 @@ function getVisibleProducts() {
 
       return true;
     })
-    .filter((p) => !q || p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.description && p.description.toLowerCase().includes(q)))
+    .filter(
+      (p) =>
+        !q ||
+        p.title.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (filters.smartSearchIds instanceof Set && filters.smartSearchIds.has(p.id)),
+    )
     .sort(SORTERS[filters.sort]);
 }
 
@@ -331,6 +353,7 @@ function renderChips() {
 
 function setCategory(category) {
   filters.category = category;
+  filters.aiRecommendationIds = null;
   renderChips();
   renderCategorySidebar();
   renderGrid();
@@ -345,6 +368,11 @@ function resetFilters() {
   filters.minPrice = null;
   filters.maxPrice = null;
   filters.verifiedOnly = false;
+  filters.smartSearchIds = null;
+  filters.aiRecommendationIds = null;
+
+  const aiResp = document.getElementById('ai-concierge-response');
+  if (aiResp) aiResp.classList.add('hidden');
 
   if (sortSelect) sortSelect.value = 'featured';
   if (sidebarSortSelect) sidebarSortSelect.value = 'featured';
@@ -370,10 +398,11 @@ function resetFilters() {
 }
 
 /* ============================================================
-   Search (inputs sync)
+   Search (inputs sync & Backend Smart Search)
    ============================================================ */
 function setSearch(value) {
   filters.query = value;
+  filters.smartSearchIds = null;
   searchInputs.forEach((input) => {
     if (input.value !== value) input.value = value;
   });
@@ -388,16 +417,87 @@ searchInputs.forEach((input) =>
 
 ['desktop-search-form', 'mobile-search-form'].forEach((id) => {
   const f = document.getElementById(id);
-  f?.addEventListener('submit', (e) => {
+  f?.addEventListener('submit', async (e) => {
     e.preventDefault();
     document.activeElement?.blur();
     if (searchCategorySelect && searchCategorySelect.value !== 'all') {
       filters.category = searchCategorySelect.value;
       renderChips();
     }
+    const q = filters.query.trim();
+    if (q.length >= 2) {
+      try {
+        const res = await aiApi.smartSearch(q);
+        if (res && Array.isArray(res.matches)) {
+          filters.smartSearchIds = new Set(res.matches.map((m) => Number(m.id)));
+        }
+      } catch {
+        /* fallback to local substring search when offline */
+      }
+    }
     renderGrid();
     scrollToProducts();
   });
+});
+
+// AI Electronics Shopping Concierge (POST /api/v1/ai/recommend)
+document.getElementById('ai-concierge-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const qInput = document.getElementById('ai-concierge-query');
+  const budgetInput = document.getElementById('ai-concierge-budget');
+  const submitBtn = document.getElementById('ai-concierge-submit');
+  const respBox = document.getElementById('ai-concierge-response');
+
+  const query = qInput?.value.trim() || '';
+  if (query.length < 2) return;
+  const maxBudget = budgetInput?.value ? Number(budgetInput.value) : undefined;
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `${icon('refresh-cw', 'h-3.5 w-3.5 animate-spin')} <span>Thinking…</span>`;
+  }
+
+  try {
+    const res = await aiApi.recommend({
+      query,
+      max_budget: maxBudget,
+      preferred_category: filters.category !== 'all' && filters.category !== 'saved' ? filters.category : undefined,
+    });
+
+    const recIds = new Set((res.recommendations || []).map((p) => Number(p.id)));
+    filters.aiRecommendationIds = recIds.size > 0 ? recIds : null;
+    filters.category = 'all';
+    renderChips();
+    renderCategorySidebar();
+    renderGrid();
+
+    if (respBox) {
+      respBox.classList.remove('hidden');
+      respBox.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-start gap-2">
+            <span class="mt-0.5 text-brand-500 shrink-0">${icon('sparkles', 'h-4 w-4')}</span>
+            <p class="leading-relaxed">${res.ai_advice || 'Here are the top matching electronics in stock.'}</p>
+          </div>
+          <button type="button" id="ai-concierge-clear" class="shrink-0 inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-1 text-[11px] font-bold text-slate-700 dark:text-slate-200 transition">
+            ${icon('x', 'h-3 w-3')} Show All
+          </button>
+        </div>
+      `;
+      document.getElementById('ai-concierge-clear')?.addEventListener('click', () => {
+        filters.aiRecommendationIds = null;
+        respBox.classList.add('hidden');
+        renderGrid();
+      });
+    }
+  } catch (err) {
+    showToast(err.message || 'AI Advisor unavailable while backend is offline.', { variant: 'error' });
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `${icon('sparkles', 'h-3.5 w-3.5')} <span>Recommend</span>`;
+    }
+  }
 });
 
 if (searchCategorySelect) {
@@ -441,7 +541,11 @@ function handleAddToCart(button) {
   const product = getProduct(button.dataset.addToCart);
   if (!product) return;
 
-  store.addToCart(product.id);
+  const added = store.addToCart(product.id);
+  if (!added) {
+    showToast(`${product.title} is currently out of stock.`, { variant: 'error' });
+    return;
+  }
   showToast(`${product.title} added to cart`, { action: { label: 'View cart', onClick: openCart } });
 
   if (!button.dataset.original) button.dataset.original = button.innerHTML;
@@ -534,6 +638,14 @@ document.addEventListener('click', (e) => {
     return;
   }
 
+  if (e.target.closest('[data-open-account]')) {
+    e.preventDefault();
+    return openAccountModal('auth');
+  }
+  if (e.target.closest('[data-open-orders]')) {
+    e.preventDefault();
+    return openAccountModal('orders');
+  }
   if (e.target.closest('[data-open-cart]')) return openCart();
   if (e.target.closest('[data-open-wishlist]')) return showSaved();
   if (e.target.closest('#sidebar-reset-filters') || e.target.closest('#empty-reset-btn')) return resetFilters();
@@ -655,7 +767,8 @@ navButtons.forEach((btn) =>
         openCart();
         break;
       case 'profile':
-        window.location.href = 'seller.html';
+        toggleMobileSearch(false);
+        openAccountModal('auth');
         break;
     }
   }),
@@ -673,7 +786,9 @@ document.getElementById('mobile-grid-toggle')?.addEventListener('click', () => {
    ============================================================ */
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (isVisualSearchOpen()) closeVisualSearch();
+  if (isCheckoutOpen()) closeCheckoutModal();
+  else if (isAccountModalOpen()) closeAccountModal();
+  else if (isVisualSearchOpen()) closeVisualSearch();
   else if (isQuickViewOpen()) closeQuickView();
   else if (isCartOpen()) closeCart();
   else if (!mobileSearchPanel?.classList.contains('hidden')) toggleMobileSearch(false);
@@ -714,9 +829,12 @@ store.subscribe((change) => {
   }
 });
 
-// Dynamic seller/admin product sync
+// Dynamic seller/admin & FastAPI backend product sync
+let initialBackendSync = true;
+
 function reloadCatalogFromStorage(eventDetail) {
   catalog = eventDetail || getCatalogProducts();
+  trendingIndex = catalog.length ? trendingIndex % catalog.length : 0;
   renderHeroFeatured();
   renderTrendingStrip();
   renderCategorySidebar();
@@ -727,7 +845,9 @@ function reloadCatalogFromStorage(eventDetail) {
 
 window.addEventListener('lumen:products_updated', (e) => {
   reloadCatalogFromStorage(e.detail);
-  showToast('Storefront updated with latest merchant products!', { variant: 'info' });
+  if (!initialBackendSync) {
+    showToast('Storefront synced with latest live inventory!', { variant: 'info' });
+  }
 });
 
 window.addEventListener('storage', (e) => {
@@ -735,6 +855,53 @@ window.addEventListener('storage', (e) => {
     reloadCatalogFromStorage();
   }
 });
+
+/* ============================================================
+   Auth & Backend Health Status Indicators
+   ============================================================ */
+function updateAccountButtons() {
+  const user = getCurrentUser();
+  const shortName = user?.name ? user.name.trim().split(/\s+/)[0] : null;
+  const desktopLabel = document.getElementById('desktop-account-label');
+  if (desktopLabel) {
+    desktopLabel.textContent = shortName || 'Sign in';
+  }
+  const mobileLabel = document.querySelector('#mnav-profile span');
+  if (mobileLabel) {
+    mobileLabel.textContent = shortName || 'Profile';
+  }
+}
+
+function updateBackendStatusPill(online) {
+  const pill = document.getElementById('backend-status-pill');
+  if (!pill) return;
+  if (online) {
+    pill.className =
+      'hidden lg:inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400';
+    pill.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>API Live</span>`;
+  } else {
+    pill.className =
+      'hidden lg:inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 px-2.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400';
+    pill.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span><span>Offline Cache</span>`;
+  }
+}
+
+subscribeAuth(updateAccountButtons);
+subscribeBackendStatus(updateBackendStatusPill);
+
+async function bootstrapBackendIntegration() {
+  updateAccountButtons();
+  try {
+    const [healthy] = await Promise.all([
+      checkBackendHealth(),
+      syncCatalogFromBackend().catch(() => null),
+      authApi.me().catch(() => null),
+    ]);
+    updateBackendStatusPill(Boolean(healthy));
+  } finally {
+    initialBackendSync = false;
+  }
+}
 
 /* ============================================================
    Initialization
@@ -751,7 +918,12 @@ renderGrid();
 updateCartBadges(false);
 updateWishBadges(false);
 
-initCartDrawer({ onShop: scrollToProducts });
+initCartDrawer({ onShop: scrollToProducts, onCheckout: openCheckoutModal });
+initCheckoutModal({
+  onViewOrders: () => openAccountModal('orders'),
+  onOpenSignIn: () => openAccountModal('auth'),
+});
+initAccountModal();
 initQuickView({ onAdded: openCart });
 initVisualSearch({
   onSelectMatch: (product) => {
@@ -777,3 +949,4 @@ initShopsSection({
   },
 });
 initWelcomeModal({ onExploreDeals: scrollToProducts });
+bootstrapBackendIntegration();

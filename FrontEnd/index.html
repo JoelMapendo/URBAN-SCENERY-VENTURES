@@ -35,19 +35,19 @@
             <span>Sell on Urban Scenery</span>
           </a>
           <span class="text-slate-300 dark:text-slate-700 hidden sm:inline">|</span>
-          <a href="#retail-stores-section" class="hidden sm:flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-white transition">
+          <button type="button" data-open-orders class="hidden sm:flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-white transition">
             <i data-lucide="truck" class="h-3 w-3"></i>
             <span>Track order</span>
-          </a>
+          </button>
           <span class="text-slate-300 dark:text-slate-700 hidden md:inline">|</span>
           <a href="#footer" class="hidden md:flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-white transition">
             <i data-lucide="help-circle" class="h-3 w-3"></i>
             <span>Help & Support</span>
           </a>
           <span class="text-slate-300 dark:text-slate-700 hidden lg:inline">|</span>
-          <span class="hidden lg:flex items-center gap-1 text-slate-600 dark:text-slate-400">
-            <i data-lucide="smartphone" class="h-3 w-3 text-emerald-500"></i>
-            <span>Mobile app</span>
+          <span id="backend-status-pill" class="hidden lg:inline-flex items-center gap-1.5 rounded-full bg-slate-200/70 dark:bg-slate-800/80 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600 dark:text-slate-300" title="FastAPI Backend Connection">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Connecting API…</span>
           </span>
         </div>
 
@@ -156,11 +156,11 @@
           <!-- Icon injected by theme.js -->
         </button>
 
-        <!-- Seller / Sign In -->
-        <a href="seller.html" id="desktop-account-btn" class="flex items-center gap-1.5 rounded-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition" aria-label="Sign in / Seller Portal">
+        <!-- Account / Sign In -->
+        <button type="button" id="desktop-account-btn" data-open-account class="flex items-center gap-1.5 rounded-full px-3 py-2 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition" aria-label="Customer Account & Orders">
           <i data-lucide="user" class="h-5 w-5"></i>
-          <span class="text-xs font-semibold">Sign in</span>
-        </a>
+          <span id="desktop-account-label" class="text-xs font-semibold">Sign in</span>
+        </button>
       </div>
 
       <!-- Mobile Top Actions -->
@@ -202,7 +202,7 @@
           <button type="button" data-cat-link="Computers" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computers</button>
           <button type="button" data-cat-link="Beauty & Personal Care" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Beauty & Personal Care</button>
           <button type="button" data-cat-link="Audio & Sound" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Audio & Sound</button>
-          <button type="button" data-cat-link="Babies & Kids" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Babies & Kids</button>
+          <button type="button" data-cat-link="Wearables" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Wearables</button>
           <button type="button" data-cat-link="Phones & Tablets" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Phones & Tablets</button>
           <button type="button" data-cat-link="Office Supplies" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Office Supplies</button>
           <button type="button" data-cat-link="Computer Accessories" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computer Accessories</button>
@@ -267,9 +267,9 @@
                 <span>Audio & Sound</span>
                 <span data-cat-count="Audio & Sound" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">3</span>
               </button>
-              <button type="button" data-hero-cat="Babies & Kids" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Babies & Kids</span>
-                <span data-cat-count="Babies & Kids" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              <button type="button" data-hero-cat="Wearables" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Wearables</span>
+                <span data-cat-count="Wearables" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
               </button>
               <button type="button" data-hero-cat="Phones & Tablets" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
                 <span>Phones & Tablets</span>
@@ -577,12 +577,12 @@
             <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Audio & Sound</span>
           </button>
 
-          <!-- Card: Babies & Kids -->
-          <button type="button" data-select-cat="Babies & Kids" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+          <!-- Card: Wearables -->
+          <button type="button" data-select-cat="Wearables" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=300&q=80" alt="Babies & Kids" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80" alt="Wearables" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Babies & Kids</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Wearables</span>
           </button>
 
           <!-- Card: Phones & Tablets -->
@@ -738,6 +738,29 @@
                 <i data-lucide="chevron-down" class="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400"></i>
               </div>
             </div>
+          </div>
+
+          <!-- AI Electronics Shopping Concierge (Connected to POST /api/v1/ai/recommend) -->
+          <div id="ai-concierge-widget" class="mb-5 rounded-2xl border border-brand-200/80 dark:border-slate-800 bg-gradient-to-r from-brand-50/70 via-white to-amber-50/50 dark:from-slate-900 dark:via-[#111827] dark:to-slate-900 p-4 shadow-sm">
+            <form id="ai-concierge-form" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <div class="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-accent-400 shrink-0">
+                <span class="grid h-8 w-8 place-items-center rounded-xl bg-brand-500 text-white shadow-sm shadow-brand-500/20">
+                  <i data-lucide="bot" class="h-4 w-4"></i>
+                </span>
+                <span>AI Tech Advisor</span>
+              </div>
+              <input id="ai-concierge-query" type="text" minlength="2" required
+                placeholder="Ask AI: e.g. 'laptop for video editing', 'noise cancelling audio', 'gaming'..."
+                class="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:outline-none" />
+              <input id="ai-concierge-budget" type="number" min="1" step="1"
+                placeholder="Max USD ($)"
+                class="w-full sm:w-28 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 px-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:outline-none" />
+              <button type="submit" id="ai-concierge-submit" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand-500 hover:bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow-sm shadow-brand-500/20 transition shrink-0">
+                <i data-lucide="sparkles" class="h-3.5 w-3.5"></i>
+                <span>Recommend</span>
+              </button>
+            </form>
+            <div id="ai-concierge-response" class="hidden mt-3 rounded-xl border border-brand-200/70 dark:border-slate-700 bg-white/90 dark:bg-slate-900/90 px-3.5 py-2.5 text-xs text-slate-700 dark:text-slate-200"></div>
           </div>
 
           <!-- Active Category Chips -->
@@ -927,7 +950,7 @@
         <div>
           <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Support & Care</h3>
           <ul class="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-            <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Track Your Order</a></li>
+            <li><a href="#" data-open-orders class="transition hover:text-brand-500 dark:hover:text-accent-400">Track Your Order</a></li>
             <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Shipping & Delivery</a></li>
             <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Returns & Exchanges</a></li>
             <li><a href="#" class="transition hover:text-brand-500 dark:hover:text-accent-400">Warranty Registration</a></li>

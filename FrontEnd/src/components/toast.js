@@ -4,6 +4,7 @@ const VARIANTS = {
   success: { bg: 'bg-emerald-500', icon: 'check' },
   wish: { bg: 'bg-accent-500', icon: 'heart' },
   info: { bg: 'bg-brand-500', icon: 'info' },
+  error: { bg: 'bg-rose-500', icon: 'alert-circle' },
 };
 
 const toast = document.getElementById('toast');

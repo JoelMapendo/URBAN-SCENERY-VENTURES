@@ -8,15 +8,26 @@ import '@fontsource/poppins/800.css';
 import './style.css';
 
 import {
-  defaultProducts,
   getCatalogProducts,
   saveCatalogProducts,
-  PRODUCTS_STORAGE_KEY,
+  syncCatalogFromBackend,
+  saveProductUiMeta,
 } from './data/products.js';
 import { renderStaticIcons, icon } from './icons.js';
 import { showToast } from './components/toast.js';
 import { initTheme } from './theme.js';
 import { formatPrice, toUSD } from './utils.js';
+import {
+  authApi,
+  productsApi,
+  ordersApi,
+  paymentsApi,
+  aiApi,
+  getCurrentUser,
+  isAuthenticated,
+  isAdmin,
+  isBackendOnline,
+} from './services/api.js';
 import {
   tiktokApi,
   getTikTokConfig,
@@ -29,85 +40,148 @@ import {
    State & Local Storage
    ============================================================ */
 const SELLER_STORAGE_KEY = 'lumen:seller_session';
-const AGENTS_STORAGE_KEY = 'lumen:ai_agents_state';
 
-// Load stored seller session or default
 function getStoredSeller() {
   try {
     const raw = localStorage.getItem(SELLER_STORAGE_KEY);
     return raw ? JSON.parse(raw) : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }
 
 let currentSeller = getStoredSeller();
 let catalog = getCatalogProducts();
+let ordersFromBackend = false;
 
-// Pre-configured demo stores for 1-click test
+// Pre-configured demo stores for 1-click test (authenticate with seeded FastAPI Admin)
 const DEMO_STORES = {
   acoustics: {
     storeName: 'Urban Scenery Acoustics',
     handle: '@urban-acoustics',
-    email: 'founders@urbanscenery.io',
+    email: 'admin@urbanventures.com',
     category: 'Audio',
     plan: 'Verified Merchant · All Tools Included',
     rating: 4.9,
-    ordersCount: 142,
-    revenue: 48290,
+    ordersCount: 0,
+    revenue: 0,
     activeAgents: 4,
   },
   wearables: {
     storeName: 'Apex Wearables',
     handle: '@apex-wearables',
-    email: 'partners@apexwear.io',
+    email: 'admin@urbanventures.com',
     category: 'Wearables',
     plan: 'Verified Merchant · All Tools Included',
     rating: 4.8,
-    ordersCount: 98,
-    revenue: 34120,
+    ordersCount: 0,
+    revenue: 0,
     activeAgents: 4,
   },
   kinetic: {
     storeName: 'Acro Kinetic Lab',
     handle: '@acro-kinetic',
-    email: 'sales@acrokinetic.com',
+    email: 'admin@urbanventures.com',
     category: 'Footwear',
     plan: 'Verified Merchant · All Tools Included',
     rating: 4.7,
-    ordersCount: 115,
-    revenue: 29840,
+    ordersCount: 0,
+    revenue: 0,
     activeAgents: 3,
   },
 };
 
 // AI Agent Configurations
 let aiAgents = {
-  repricer: { enabled: true, name: 'Dynamic Repricing Agent', status: 'Active · Monitoring 8 SKUs', actions: 140 },
+  repricer: { enabled: true, name: 'Dynamic Repricing Agent', status: 'Active · Monitoring SKUs', actions: 140 },
   copywriter: { enabled: true, name: 'Autonomous SEO & Copywriter', status: 'Active · 100% Listings Optimized', actions: 28 },
   forecaster: { enabled: true, name: 'Predictive Restock Forecaster', status: 'Active · Next reorder in 14 days', actions: 12 },
-  supportBot: { enabled: true, name: '24/7 AI Customer Concierge', status: 'Active · 89 queries resolved today', actions: 89 },
+  supportBot: { enabled: true, name: '24/7 AI Customer Concierge', status: 'Active · Resolving buyer queries', actions: 89 },
 };
 
-// AI Agent live logs
-const aiLogs = [
-  { time: '2 mins ago', agent: 'Dynamic Repricing Agent', text: 'Adjusted Studio Pro Wireless price from $199.00 to $189.00 to win Buy Box against competitor.', badge: 'Reprice', color: 'emerald' },
-  { time: '14 mins ago', agent: 'AI Customer Concierge', text: 'Answered inquiry for Order #LM-8491 regarding overnight carrier tracking.', badge: 'Support', color: 'brand' },
-  { time: '48 mins ago', agent: 'Predictive Forecaster', text: 'Generated inventory replenishment recommendation: Restock 30 units of Nimbus Smart Watch within 6 days.', badge: 'Stock', color: 'amber' },
-  { time: '2 hours ago', agent: 'SEO & Copywriter Agent', text: 'Enhanced search meta keywords for Drift Running Sneakers, boosting expected search volume by +14%.', badge: 'SEO', color: 'accent' },
-  { time: '4 hours ago', agent: 'Dynamic Repricing Agent', text: 'Verified minimum profit margin floor (30%) on 12 variant combinations.', badge: 'Safety', color: 'slate' },
+// Default fallback AI Agent logs (augmented by live `/api/v1/ai/interactions` records)
+const defaultAiLogs = [
+  { time: 'Live Engine', agent: 'Dynamic Repricing Agent', text: 'Monitoring active electronics SKUs against marketplace Buy Box margin floors.', badge: 'Reprice', color: 'emerald' },
+  { time: 'Live Engine', agent: 'AI Customer Concierge', text: 'Connected to /api/v1/ai/recommend & /api/v1/ai/smart-search for real-time buyer assistance.', badge: 'Support', color: 'brand' },
+  { time: 'Live Engine', agent: 'Predictive Forecaster', text: 'Tracking live stock levels across SQLite inventory after every order.', badge: 'Stock', color: 'amber' },
 ];
 
-// Sample Orders
-const initialOrders = [
-  { id: 'LM-8491', customer: 'Sophia Chen', item: 'Aurora Wireless Headphones', amount: 129.00, date: 'Today, 2:40 PM', status: 'Processing', badge: 'bg-amber-100 text-amber-700' },
-  { id: 'LM-8490', customer: 'Marcus Miller', item: 'Nimbus Smart Watch', amount: 199.00, date: 'Today, 1:15 PM', status: 'Shipped', badge: 'bg-blue-100 text-blue-700' },
-  { id: 'LM-8489', customer: 'Elena Rostova', item: 'Haven Canvas Backpack', amount: 79.50, date: 'Today, 11:22 AM', status: 'Delivered', badge: 'bg-emerald-100 text-emerald-700' },
-  { id: 'LM-8488', customer: 'Liam O’Connor', item: 'Drift Running Sneakers', amount: 89.99, date: 'Yesterday', status: 'Delivered', badge: 'bg-emerald-100 text-emerald-700' },
-  { id: 'LM-8487', customer: 'Ava Patel', item: 'Beacon Ambient Desk Lamp', amount: 64.00, date: 'Yesterday', status: 'Delivered', badge: 'bg-emerald-100 text-emerald-700' },
-];
+let aiLogs = [...defaultAiLogs];
+let orders = [];
 
-let orders = [...initialOrders];
+function mapBackendOrder(o) {
+  return {
+    rawId: o.id,
+    id: `#${o.id}`,
+    customer: o.contacs || (o.user_id ? `User #${o.user_id}` : 'Guest Shopper'),
+    address: o.address || '',
+    item: `${o.quantity} × ${o.product?.name || `Product #${o.product_id}`}`,
+    amount: Number(o.total_price),
+    date: o.ordered_at ? new Date(o.ordered_at).toLocaleString() : 'Just now',
+    orderStatus: o.order_status || 'PENDING',
+    paymentStatus: o.payment_status || 'NOT YET PAID',
+    paymentMethod: o.payment_method || 'BANK',
+    fromBackend: true,
+  };
+}
+
+function mapSellerProfileFromUser(user, overrides = {}) {
+  const email = user?.email || overrides.email || 'admin@urbanventures.com';
+  const baseHandle = overrides.handle || `@${email.split('@')[0].replace(/[^a-z0-9_-]/gi, '')}`;
+  return {
+    storeName:
+      overrides.storeName ||
+      (user?.role === 'ADMIN' ? 'Urban Scenery Flagship' : `${user?.name || 'Merchant'} Store`),
+    handle: baseHandle.startsWith('@') ? baseHandle : `@${baseHandle}`,
+    email,
+    role: user?.role || 'CUSTOMER',
+    userId: user?.public_id || null,
+    category: overrides.category || 'Computers',
+    plan: user?.role === 'ADMIN' ? 'Admin · Full Catalog & Order Control' : 'Customer Account · View Only',
+    rating: overrides.rating || 4.9,
+    activeAgents: overrides.activeAgents || 4,
+  };
+}
+
+async function refreshBackendDashboardData() {
+  try {
+    const syncedProducts = await syncCatalogFromBackend();
+    catalog = syncedProducts;
+  } catch {
+    catalog = getCatalogProducts();
+  }
+
+  if (isAuthenticated()) {
+    try {
+      const apiOrders = await ordersApi.list({ offset: 0, limit: 100 });
+      orders = (apiOrders || []).map(mapBackendOrder);
+      ordersFromBackend = true;
+    } catch {
+      ordersFromBackend = false;
+    }
+
+    if (isAdmin()) {
+      try {
+        const interactions = await aiApi.listInteractions({ offset: 0, limit: 15 });
+        const mappedLogs = (interactions || []).map((entry) => ({
+          id: entry.id,
+          time: entry.created_at ? new Date(entry.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Logged',
+          agent: entry.prompt,
+          text: entry.response,
+          badge: 'DB Log',
+          color: 'brand',
+        }));
+        aiLogs = [...mappedLogs, ...defaultAiLogs];
+      } catch {
+        /* keep current logs */
+      }
+    }
+  }
+
+  if (currentSeller) {
+    renderDashboardData();
+  }
+}
 
 /* ============================================================
    UI Switching: Auth View vs Dashboard View
@@ -137,27 +211,60 @@ function showDashboardView(sellerData) {
    ============================================================ */
 function renderDashboardData() {
   if (!currentSeller) return;
+  const user = getCurrentUser();
+  const adminActive = isAdmin();
 
   // Header & Identity
   document.querySelectorAll('[data-seller-name]').forEach((el) => {
-    el.textContent = currentSeller.storeName || 'Urban Scenery Acoustics';
+    el.textContent = currentSeller.storeName || 'Urban Scenery Flagship';
   });
   document.querySelectorAll('[data-seller-handle]').forEach((el) => {
-    el.textContent = currentSeller.handle || '@urban-acoustics';
+    el.textContent = currentSeller.handle || '@urban-scenery';
   });
   document.querySelectorAll('[data-seller-plan]').forEach((el) => {
-    el.textContent = currentSeller.plan || 'Pro Merchant AI';
+    el.textContent = currentSeller.plan || 'Verified Merchant';
   });
   document.querySelectorAll('[data-tt-account-handle]').forEach((el) => {
     el.textContent = `@${(currentSeller.handle || 'urban_scenery').replace('@', '')}_tiktok`;
   });
 
-  // KPI HUD
+  const roleBadge = document.getElementById('seller-role-badge');
+  if (roleBadge) {
+    if (adminActive) {
+      roleBadge.className =
+        'inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-700/60';
+      roleBadge.innerHTML = `${icon('shield-check', 'h-3 w-3')} <span>ADMIN · Live DB Access</span>`;
+    } else if (user) {
+      roleBadge.className =
+        'inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-900/30 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700/60';
+      roleBadge.innerHTML = `${icon('info', 'h-3 w-3')} <span>${user.role} · Sign in as Admin to edit catalog</span>`;
+    }
+  }
+
+  // Live KPI HUD computed from FastAPI orders & products
+  const validOrders = orders.filter((o) => o.orderStatus !== 'CANCELLED');
+  const liveRevenue = validOrders.reduce((sum, o) => sum + Number(o.amount || 0), 0);
+  const pendingCount = orders.filter((o) => o.orderStatus === 'PENDING' || o.orderStatus === 'APPROVED').length;
+
   const revenueEl = document.getElementById('kpi-revenue');
-  if (revenueEl) revenueEl.textContent = `$${(currentSeller.revenue || 48290).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  if (revenueEl) {
+    revenueEl.textContent = `$${liveRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
 
   const ordersEl = document.getElementById('kpi-orders');
-  if (ordersEl) ordersEl.textContent = `${currentSeller.ordersCount || 142}`;
+  if (ordersEl) ordersEl.textContent = `${orders.length}`;
+
+  const ordersSubEl = document.getElementById('kpi-orders-sub');
+  if (ordersSubEl) {
+    ordersSubEl.textContent = ordersFromBackend
+      ? `${pendingCount} pending dispatch`
+      : 'Connect backend to load orders';
+  }
+
+  const pendingBadgeEl = document.getElementById('orders-pending-badge');
+  if (pendingBadgeEl) {
+    pendingBadgeEl.textContent = `${pendingCount} Orders Pending Dispatch`;
+  }
 
   const ratingEl = document.getElementById('kpi-rating');
   if (ratingEl) ratingEl.textContent = `${currentSeller.rating || 4.9} ★`;
@@ -173,7 +280,7 @@ function renderDashboardData() {
 }
 
 /* ============================================================
-   Inventory & Catalog Table
+   Inventory & Catalog Table (Connected to /api/v1/products)
    ============================================================ */
 function renderInventoryTable(filterTerm = '') {
   const tbody = document.getElementById('inventory-table-body');
@@ -189,18 +296,20 @@ function renderInventoryTable(filterTerm = '') {
     tbody.innerHTML = `
       <tr>
         <td colspan="6" class="py-12 text-center text-sm text-slate-400">
-          No products matching "${filterTerm}". Upload a new item using the AI Uploader above.
+          No products matching "${filterTerm}". Upload a new item using the AI Product Uploader.
         </td>
       </tr>
     `;
     return;
   }
 
-  tbody.innerHTML = filtered.map((item) => {
-    const stock = item.stock || 24 + ((item.id * 7) % 65);
-    const isLow = stock < 20;
+  tbody.innerHTML = filtered
+    .map((item) => {
+      const stock = item.fromBackend ? Number(item.stock ?? 0) : Number(item.stock ?? 24);
+      const isOut = stock <= 0 || item.status === 'EMPTY';
+      const isLow = !isOut && stock < 15;
 
-    return `
+      return `
       <tr class="border-b border-slate-100 dark:border-slate-800 transition hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
         <td class="py-4 pl-6 pr-4">
           <div class="flex items-center gap-3">
@@ -213,7 +322,7 @@ function renderInventoryTable(filterTerm = '') {
             }
             <div>
               <p class="font-semibold text-slate-900 dark:text-white text-sm">${item.title}</p>
-              <p class="text-xs text-slate-400 font-mono">SKU: LM-${String(item.id).slice(-4).padStart(4, '0')} · ${item.category}</p>
+              <p class="text-xs text-slate-400 font-mono">ID #${item.id} · ${item.category}</p>
             </div>
           </div>
         </td>
@@ -223,15 +332,21 @@ function renderInventoryTable(filterTerm = '') {
         </td>
         <td class="px-4 py-4 text-xs">
           <div class="flex items-center gap-2">
-            <span class="inline-flex h-2 w-2 rounded-full ${isLow ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
+            <span class="inline-flex h-2 w-2 rounded-full ${isOut ? 'bg-rose-500' : isLow ? 'bg-amber-500' : 'bg-emerald-500'}"></span>
             <span class="font-medium text-slate-700 dark:text-slate-300">${stock} units</span>
-            ${isLow ? '<span class="rounded bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400">Low Stock</span>' : ''}
+            ${
+              isOut
+                ? '<span class="rounded bg-rose-100 dark:bg-rose-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 dark:text-rose-400">EMPTY</span>'
+                : isLow
+                ? '<span class="rounded bg-amber-100 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400">Low Stock</span>'
+                : ''
+            }
           </div>
         </td>
         <td class="px-4 py-4">
           <span class="inline-flex items-center gap-1.5 rounded-full bg-brand-50 dark:bg-brand-950/60 border border-brand-200/80 dark:border-brand-800 px-2.5 py-1 text-[11px] font-semibold text-brand-700 dark:text-brand-300">
             <span class="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse"></span>
-            AI Monitored
+            ${item.fromBackend ? 'FastAPI Synced' : 'Local Cache'}
           </span>
         </td>
         <td class="px-4 py-4 text-xs text-slate-500 dark:text-slate-400">
@@ -239,108 +354,198 @@ function renderInventoryTable(filterTerm = '') {
         </td>
         <td class="py-4 pl-4 pr-6 text-right">
           <div class="flex items-center justify-end gap-1.5">
-            <button type="button" data-reprice-id="${item.id}" class="grid h-8 w-8 place-items-center rounded-lg text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 transition" title="Run AI Dynamic Reprice">
+            <button type="button" data-reprice-id="${item.id}" class="grid h-8 w-8 place-items-center rounded-lg text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-800 transition" title="Run AI Dynamic Reprice (PUT /api/v1/products/${item.id})">
               ${icon('zap', 'h-4 w-4 text-accent-500')}
             </button>
-            <button type="button" data-delete-id="${item.id}" class="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 transition" title="Delete Product">
+            <button type="button" data-delete-id="${item.id}" class="grid h-8 w-8 place-items-center rounded-lg text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400 transition" title="Delete Product (DELETE /api/v1/products/${item.id})">
               ${icon('trash-2', 'h-4 w-4')}
             </button>
           </div>
         </td>
       </tr>
     `;
-  }).join('');
+    })
+    .join('');
 
-  // Attach Reprice buttons
+  // Attach Reprice buttons -> PUT /api/v1/products/{id}
   tbody.querySelectorAll('[data-reprice-id]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const id = Number(btn.dataset.repriceId);
       const prod = catalog.find((p) => p.id === id);
       if (!prod) return;
 
-      const isUgx = prod.price >= 10000;
-      const newPrice = isUgx
-        ? Math.max(15000, Math.round((prod.price * 0.95) / 500) * 500)
-        : Math.max(10, Math.round(prod.price * 0.95 * 100) / 100);
-      prod.oldPrice = prod.price;
-      prod.price = newPrice;
-      saveCatalogProducts(catalog);
-      renderInventoryTable(filterTerm);
-      window.dispatchEvent(new CustomEvent('urban:seller_catalog_changed'));
+      const currentUsd = toUSD(prod.price);
+      const newUsd = Math.max(5, Number((currentUsd * 0.95).toFixed(2)));
+      btn.disabled = true;
 
-      const formattedNew = formatPrice(newPrice, 'USD');
-      // Add to AI log
-      aiLogs.unshift({
-        time: 'Just now',
-        agent: 'Dynamic Repricing Agent',
-        text: `Algorithm adjusted "${prod.title}" to ${formattedNew} to win market Buy Box.`,
-        badge: 'Reprice',
-        color: 'emerald',
-      });
-      renderAgentLogs();
-
-      showToast(`AI Repricer adjusted "${prod.title}" to ${formattedNew} to capture Buy Box!`, { variant: 'success' });
+      try {
+        if (prod.fromBackend) {
+          await productsApi.update(id, { price: newUsd });
+          saveProductUiMeta(id, { oldPrice: currentUsd });
+          if (isAdmin()) {
+            aiApi
+              .logInteraction({
+                prompt: 'Dynamic Repricing Agent',
+                response: `Adjusted "${prod.title}" (ID #${id}) from $${currentUsd.toFixed(2)} to $${newUsd.toFixed(2)} to capture Buy Box.`,
+                user_id: getCurrentUser()?.public_id || null,
+              })
+              .catch(() => null);
+          }
+          await refreshBackendDashboardData();
+        } else {
+          prod.oldPrice = currentUsd;
+          prod.price = newUsd;
+          saveCatalogProducts(catalog);
+          renderDashboardData();
+        }
+        showToast(`AI Repricer updated "${prod.title}" to ${formatPrice(newUsd, 'USD')}!`, { variant: 'success' });
+      } catch (err) {
+        showToast(err.message || 'Reprice failed (Admin role required).', { variant: 'error' });
+      } finally {
+        btn.disabled = false;
+      }
     });
   });
 
-  // Attach Delete buttons
+  // Attach Delete buttons -> DELETE /api/v1/products/{id}
   tbody.querySelectorAll('[data-delete-id]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const id = Number(btn.dataset.deleteId);
       const prod = catalog.find((p) => p.id === id);
-      if (!confirm(`Are you sure you want to remove "${prod?.title || 'this product'}" from your catalog?`)) return;
+      if (!confirm(`Are you sure you want to delete "${prod?.title || 'this product'}" from the database?`)) return;
 
-      catalog = catalog.filter((p) => p.id !== id);
-      saveCatalogProducts(catalog);
-      renderInventoryTable(filterTerm);
-      renderDashboardData();
-      showToast('Product removed from catalog', { variant: 'info' });
+      btn.disabled = true;
+      try {
+        if (prod?.fromBackend || isBackendOnline()) {
+          await productsApi.remove(id);
+          await refreshBackendDashboardData();
+        } else {
+          catalog = catalog.filter((p) => p.id !== id);
+          saveCatalogProducts(catalog);
+          renderDashboardData();
+        }
+        showToast(`"${prod?.title || 'Product'}" deleted from catalog.`, { variant: 'info' });
+      } catch (err) {
+        showToast(err.message || 'Could not delete product.', { variant: 'error' });
+        btn.disabled = false;
+      }
     });
   });
 }
 
 /* ============================================================
-   Orders Table
+   Orders Table (Connected to /api/v1/orders & /api/v1/payments)
    ============================================================ */
+function getOrderBadgeCls(status) {
+  const map = {
+    PENDING: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+    APPROVED: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+    SHIPPED: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300',
+    DELIVERED: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+    CANCELLED: 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300',
+  };
+  return map[status] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+}
+
 function renderOrdersTable() {
   const tbody = document.getElementById('orders-table-body');
   if (!tbody) return;
 
-  tbody.innerHTML = orders.map((o) => {
-    const actionLabel = o.status === 'Processing' ? 'Dispatch Order' : o.status === 'Shipped' ? 'Mark Delivered' : 'View Receipt';
-    return `
+  if (!orders.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="py-12 text-center text-xs sm:text-sm text-slate-400">
+          No customer orders in the database yet. Place an order on the <a href="index.html" class="font-bold text-brand-600 dark:text-brand-400 hover:underline">Customer Storefront</a> to manage fulfillment live here!
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = orders
+    .map((o) => {
+      const nextStatusMap = {
+        PENDING: { next: 'APPROVED', label: 'Approve Order' },
+        APPROVED: { next: 'SHIPPED', label: 'Dispatch Order' },
+        SHIPPED: { next: 'DELIVERED', label: 'Mark Delivered' },
+      };
+      const step = nextStatusMap[o.orderStatus];
+      const unpaid = o.paymentStatus !== 'PAID' && o.orderStatus !== 'CANCELLED';
+
+      return `
       <tr class="border-b border-slate-100 dark:border-slate-800 transition hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
         <td class="py-3.5 pl-6 pr-4 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">${o.id}</td>
-        <td class="px-4 py-3.5 text-sm font-medium text-slate-900 dark:text-white">${o.customer}</td>
+        <td class="px-4 py-3.5">
+          <p class="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">${o.customer}</p>
+          ${o.address ? `<p class="text-[11px] text-slate-400 truncate max-w-[180px]" title="${o.address}">${o.address}</p>` : ''}
+        </td>
         <td class="px-4 py-3.5 text-xs text-slate-600 dark:text-slate-300">${o.item}</td>
         <td class="px-4 py-3.5 text-xs text-slate-400">${o.date}</td>
         <td class="px-4 py-3.5 text-sm font-bold text-slate-900 dark:text-white">$${Number(o.amount).toFixed(2)}</td>
         <td class="px-4 py-3.5">
-          <span class="inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${o.badge}">${o.status}</span>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold ${getOrderBadgeCls(o.orderStatus)}">${o.orderStatus}</span>
+            <span class="inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${
+              o.paymentStatus === 'PAID'
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
+                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+            }">${o.paymentStatus}</span>
+          </div>
         </td>
         <td class="py-3.5 pl-4 pr-6 text-right">
-          <button type="button" data-order-action="${o.id}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 transition">${actionLabel}</button>
+          <div class="inline-flex items-center justify-end gap-2">
+            ${
+              unpaid
+                ? `<button type="button" data-settle-order="${o.rawId}" class="rounded-full bg-emerald-600 hover:bg-emerald-700 px-2.5 py-1 text-[11px] font-bold text-white transition">Settle Pay</button>`
+                : ''
+            }
+            ${
+              step && isAdmin()
+                ? `<button type="button" data-advance-order="${o.rawId}" data-next-status="${step.next}" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-800 dark:hover:text-brand-300 transition">${step.label}</button>`
+                : `<span class="text-xs text-slate-400 font-medium">${o.orderStatus === 'DELIVERED' ? 'Completed ✓' : o.orderStatus}</span>`
+            }
+          </div>
         </td>
       </tr>
     `;
-  }).join('');
+    })
+    .join('');
 
-  tbody.querySelectorAll('[data-order-action]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const ord = orders.find((o) => o.id === btn.dataset.orderAction);
+  // Settle unpaid order -> POST /api/v1/payments/pay
+  tbody.querySelectorAll('[data-settle-order]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const rawId = Number(btn.dataset.settleOrder);
+      const ord = orders.find((o) => o.rawId === rawId);
       if (!ord) return;
-      if (ord.status === 'Processing') {
-        ord.status = 'Shipped';
-        ord.badge = 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300';
-        renderOrdersTable();
-        showToast(`Order #${ord.id} dispatched with Express Logistics tracking!`, { variant: 'success' });
-      } else if (ord.status === 'Shipped') {
-        ord.status = 'Delivered';
-        ord.badge = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300';
-        renderOrdersTable();
-        showToast(`Order #${ord.id} marked as Delivered to ${ord.customer}.`, { variant: 'success' });
-      } else {
-        showToast(`Order #${ord.id}: ${ord.item} ($${ord.amount.toFixed(2)}) — Delivered to ${ord.customer}.`, { variant: 'info' });
+      btn.disabled = true;
+      try {
+        await paymentsApi.pay({
+          order_id: ord.rawId,
+          payment_method: ord.paymentMethod || 'BANK',
+          amount: ord.amount,
+        });
+        showToast(`Payment settled for Order #${ord.rawId}! Status updated to APPROVED.`, { variant: 'success' });
+        await refreshBackendDashboardData();
+      } catch (err) {
+        showToast(err.message || 'Payment settlement failed.', { variant: 'error' });
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // Advance fulfillment status -> PATCH /api/v1/orders/{id}/status
+  tbody.querySelectorAll('[data-advance-order]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const rawId = Number(btn.dataset.advanceOrder);
+      const nextStatus = btn.dataset.nextStatus;
+      btn.disabled = true;
+      try {
+        await ordersApi.updateStatus(rawId, { order_status: nextStatus });
+        showToast(`Order #${rawId} updated to ${nextStatus}!`, { variant: 'success' });
+        await refreshBackendDashboardData();
+      } catch (err) {
+        showToast(err.message || 'Failed to update order status.', { variant: 'error' });
+        btn.disabled = false;
       }
     });
   });
@@ -353,7 +558,10 @@ function renderAgentLogs() {
   const container = document.getElementById('ai-activity-feed');
   if (!container) return;
 
-  container.innerHTML = aiLogs.slice(0, 6).map((log) => `
+  container.innerHTML = aiLogs
+    .slice(0, 8)
+    .map(
+      (log) => `
     <li class="flex items-start gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 p-3.5 shadow-sm transition hover:shadow">
       <span class="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400">
         ${icon('cpu', 'h-4 w-4')}
@@ -366,7 +574,9 @@ function renderAgentLogs() {
         <p class="mt-1 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${log.text}</p>
       </div>
     </li>
-  `).join('');
+  `,
+    )
+    .join('');
 }
 
 /* ============================================================
@@ -526,10 +736,17 @@ function initProductUploader() {
     });
   }
 
-  // 3. Form Submit -> Upload Product
+  // 3. Form Submit -> Upload Product to FastAPI POST /api/v1/products
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn?.innerHTML || '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `${icon('refresh-cw', 'h-4 w-4 animate-spin')} <span>Publishing to Database...</span>`;
+      }
 
       const title = titleInput.value.trim();
       const cat = categorySelect.value || 'Audio';
@@ -537,52 +754,108 @@ function initProductUploader() {
       const oldPrice = oldPriceInput.value ? parseFloat(oldPriceInput.value) : null;
       const desc = descTextarea.value.trim() || 'Premium quality crafted product.';
       const featuresRaw = featuresInput.value.trim();
-      const features = featuresRaw ? featuresRaw.split(',').map((f) => f.trim()).filter(Boolean) : ['Fast shipping', '30-day returns', '1-year warranty'];
+      const features = featuresRaw
+        ? featuresRaw.split(',').map((f) => f.trim()).filter(Boolean)
+        : ['Fast shipping', '30-day returns', '1-year warranty'];
 
       const template = AI_PRESET_TEMPLATES[cat] || AI_PRESET_TEMPLATES.Audio;
-
+      const customImage = document.getElementById('upload-image')?.value.trim() || '';
       const stockInput = document.getElementById('upload-stock');
-      const stock = parseInt(stockInput?.value, 10) || 50;
-      const newProduct = {
-        id: Date.now(),
-        title,
-        category: cat,
-        shopId: currentSeller?.handle ? currentSeller.handle.replace('@', '') : 'urban-acoustics',
-        shopName: currentSeller?.storeName || 'Urban Scenery Acoustics',
-        price,
-        oldPrice,
-        stock,
-        rating: 5.0,
-        reviews: 1,
-        icon: template.icon,
-        badge: 'New Arrival',
-        bg: template.bg,
-        fg: template.fg,
-        image: template.image || 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&q=80',
-        description: desc,
-        features,
+      const stock = Math.max(0, parseInt(stockInput?.value, 10) || 50);
+
+      const categoryMap = {
+        Audio: 'Audio & Sound',
+        Bags: 'Computer Accessories',
+        Home: 'Home & Living',
       };
+      const mappedCategory = categoryMap[cat] || cat;
+      const usdPrice = Number(toUSD(price).toFixed(2));
+      const usdOldPrice = oldPrice ? Number(toUSD(oldPrice).toFixed(2)) : null;
+      const imageUrl =
+        customImage ||
+        template.image ||
+        'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&q=80';
 
-      catalog.unshift(newProduct);
-      saveCatalogProducts(catalog);
+      try {
+        const created = await productsApi.create({
+          name: title.slice(0, 128),
+          price: usdPrice,
+          description: desc,
+          banner_image: imageUrl,
+          quantity: stock,
+          status: stock > 0 ? 'AVAILABLE' : 'EMPTY',
+        });
 
-      // Add to AI logs
-      aiLogs.unshift({
-        time: 'Just now',
-        agent: 'Listing Optimizer Agent',
-        text: `New listing "${title}" indexed with 100% SEO quality score. Automated pricing active.`,
-        badge: 'Listed',
-        color: 'brand',
-      });
+        saveProductUiMeta(created.id, {
+          category: mappedCategory,
+          oldPrice: usdOldPrice,
+          features,
+          shopId: currentSeller?.handle ? currentSeller.handle.replace('@', '') : 'urban-acoustics',
+          shopName: currentSeller?.storeName || 'Urban Scenery Flagship',
+          icon: template.icon,
+          badge: 'New Arrival',
+          bg: template.bg,
+          fg: template.fg,
+        });
 
-      renderDashboardData();
-      form.reset();
-      if (aiStatusBadge) aiStatusBadge.classList.add('hidden');
+        if (isAdmin()) {
+          aiApi
+            .logInteraction({
+              prompt: 'Listing Optimizer Agent',
+              response: `Published "${created.name}" (ID #${created.id}) at $${usdPrice.toFixed(2)} (${stock} units).`,
+              user_id: getCurrentUser()?.public_id || null,
+            })
+            .catch(() => null);
+        }
 
-      showToast(`Product "${title}" successfully published to Urban Scenery Storefront!`, { variant: 'success' });
+        await refreshBackendDashboardData();
+        form.reset();
+        if (aiStatusBadge) aiStatusBadge.classList.add('hidden');
 
-      // Switch to Inventory tab to see it
-      switchDashboardTab('inventory');
+        showToast(`Product "${created.name}" (ID #${created.id}) saved to Urban Scenery database!`, {
+          variant: 'success',
+        });
+        switchDashboardTab('inventory');
+      } catch (err) {
+        if (err.isNetworkError) {
+          // Offline local fallback when FastAPI is unreachable
+          const fallbackProduct = {
+            id: Date.now(),
+            title,
+            category: mappedCategory,
+            shopId: currentSeller?.handle ? currentSeller.handle.replace('@', '') : 'urban-acoustics',
+            shopName: currentSeller?.storeName || 'Urban Scenery Flagship',
+            price: usdPrice,
+            oldPrice: usdOldPrice,
+            stock,
+            status: stock > 0 ? 'AVAILABLE' : 'EMPTY',
+            rating: 5.0,
+            reviews: 1,
+            icon: template.icon,
+            badge: 'New Arrival',
+            bg: template.bg,
+            fg: template.fg,
+            image: imageUrl,
+            description: desc,
+            features,
+            fromBackend: false,
+          };
+          catalog.unshift(fallbackProduct);
+          saveCatalogProducts(catalog);
+          renderDashboardData();
+          form.reset();
+          if (aiStatusBadge) aiStatusBadge.classList.add('hidden');
+          showToast(`Backend offline: "${title}" cached locally.`, { variant: 'info' });
+          switchDashboardTab('inventory');
+        } else {
+          showToast(err.message || 'Product creation requires an Admin account.', { variant: 'error' });
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+      }
     });
   }
 }
@@ -1020,12 +1293,54 @@ function initTikTokInterface() {
     });
   }
 
-  // Interactive TikTok Shop Anchor Buy Button
+  // Interactive TikTok Shop Anchor Buy Button -> Live FastAPI Order + Payment
   if (simShopAnchorBtn) {
-    simShopAnchorBtn.addEventListener('click', () => {
-      const itemTitle = simAnchorTitle?.textContent || 'Studio Pro Wireless';
-      const itemPrice = simAnchorPrice?.textContent || '$189.00';
-      showToast(`TikTok Shop Express Checkout: Order placed for ${itemTitle} (${itemPrice})!`, { variant: 'success' });
+    simShopAnchorBtn.addEventListener('click', async () => {
+      const selectedId = Number(scriptProductSelect?.value);
+      const anchorText = (simAnchorTitle?.textContent || '').trim().toLowerCase();
+      const prod =
+        catalog.find((p) => p.id === selectedId) ||
+        catalog.find((p) => p.title.toLowerCase().includes(anchorText)) ||
+        catalog.find((p) => p.stock > 0) ||
+        catalog[0];
+
+      const itemTitle = prod?.title || simAnchorTitle?.textContent || 'Studio Pro Wireless';
+      const itemPrice = prod ? formatPrice(prod.price, 'USD') : simAnchorPrice?.textContent || '$189.00';
+
+      if (prod?.fromBackend && Number(prod.stock ?? 0) > 0) {
+        simShopAnchorBtn.disabled = true;
+        try {
+          const createdOrder = await ordersApi.create({
+            product_id: prod.id,
+            quantity: 1,
+            address: 'TikTok Shop In-App Express Order',
+            contact: '+256700000001',
+            payment_method: 'MOBILE MONEY',
+          });
+          await paymentsApi.pay({
+            order_id: createdOrder.id,
+            payment_method: 'MOBILE MONEY',
+            amount: createdOrder.total_price,
+          });
+          await refreshBackendDashboardData();
+          showToast(
+            `TikTok Shop Express Order #${createdOrder.id} created & paid for "${itemTitle}" (${itemPrice})!`,
+            { variant: 'success' }
+          );
+          return;
+        } catch (err) {
+          if (!err.isNetworkError) {
+            showToast(err.message || 'TikTok Express order failed.', { variant: 'error' });
+            return;
+          }
+        } finally {
+          simShopAnchorBtn.disabled = false;
+        }
+      }
+
+      showToast(`TikTok Shop Express Checkout: Simulated order for ${itemTitle} (${itemPrice})!`, {
+        variant: 'success',
+      });
     });
   }
 }
@@ -1054,7 +1369,7 @@ function switchDashboardTab(tabName) {
 }
 
 /* ============================================================
-   Auth Form Handlers (Sign In & Sign Up)
+   Auth Form Handlers (Connected to /api/v1/auth/*)
    ============================================================ */
 function initAuth() {
   const tabSignIn = document.getElementById('tab-btn-signin');
@@ -1086,76 +1401,111 @@ function initAuth() {
     });
   }
 
-  // Quick Demo Logins
+  // Quick Demo Logins -> Authenticate with seeded FastAPI Admin
   document.querySelectorAll('[data-demo-login]').forEach((btn) => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const key = btn.dataset.demoLogin;
       const demo = DEMO_STORES[key] || DEMO_STORES.acoustics;
-      showToast(`Welcome back, ${demo.storeName}! Loading Seller Dashboard...`, { variant: 'success' });
-      setTimeout(() => {
-        showDashboardView(demo);
-      }, 400);
+      btn.disabled = true;
+
+      try {
+        const session = await authApi.login({
+          email: 'admin@urbanventures.com',
+          password: 'admin123',
+        });
+        const sellerData = mapSellerProfileFromUser(session.user, demo);
+        await refreshBackendDashboardData();
+        showToast(`Authenticated as Admin (${demo.storeName})! Live DB connected.`, {
+          variant: 'success',
+        });
+        showDashboardView(sellerData);
+      } catch (err) {
+        if (err.isNetworkError) {
+          showToast(`Backend offline — opening ${demo.storeName} in local preview mode.`, {
+            variant: 'info',
+          });
+          showDashboardView(demo);
+        } else {
+          showToast(err.message || 'Demo login failed.', { variant: 'error' });
+        }
+      } finally {
+        btn.disabled = false;
+      }
     });
   });
 
-  // Sign In submit
+  // Sign In submit -> POST /api/v1/auth/login
   if (formSignIn) {
-    formSignIn.addEventListener('submit', (e) => {
+    formSignIn.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('signin-email')?.value.trim() || 'demo@urbanscenery.io';
-      const handle = email.includes('@') ? `@${email.split('@')[0]}` : `@${email}`;
+      const email = document.getElementById('signin-email')?.value.trim() || '';
+      const password = document.getElementById('signin-password')?.value || '';
+      const submitBtn = formSignIn.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
 
-      const sellerData = {
-        storeName: email.split('@')[0].toUpperCase() + ' Studio',
-        handle,
-        email,
-        category: 'Audio',
-        plan: 'Verified Merchant · All Tools Included',
-        rating: 4.9,
-        ordersCount: 142,
-        revenue: 48290,
-        activeAgents: 4,
-      };
-
-      showToast('Signed in successfully! Launching Seller Central...', { variant: 'success' });
-      setTimeout(() => {
+      try {
+        const session = await authApi.login({ email, password });
+        const sellerData = mapSellerProfileFromUser(session.user);
+        await refreshBackendDashboardData();
+        showToast(`Signed in as ${session.user.name} (${session.user.role})!`, {
+          variant: 'success',
+        });
         showDashboardView(sellerData);
-      }, 400);
+      } catch (err) {
+        showToast(err.message || 'Invalid email or password.', { variant: 'error' });
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 
-  // Sign Up submit
+  // Sign Up submit -> POST /api/v1/auth/register
   if (formSignUp) {
-    formSignUp.addEventListener('submit', (e) => {
+    formSignUp.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const storeName = document.getElementById('signup-store-name')?.value.trim() || 'My Merchant Store';
-      const handle = document.getElementById('signup-handle')?.value.trim() || '@store';
-      const email = document.getElementById('signup-email')?.value.trim() || 'seller@brand.com';
+      const storeName = document.getElementById('signup-store-name')?.value.trim() || 'Merchant Store';
+      const rawHandle = document.getElementById('signup-handle')?.value.trim() || '@store';
+      const handle = rawHandle.startsWith('@') ? rawHandle : `@${rawHandle}`;
+      const email = document.getElementById('signup-email')?.value.trim() || '';
+      const password = document.getElementById('signup-password')?.value || '';
       const category = document.getElementById('signup-category')?.value || 'Audio';
-      const plan = 'Verified Merchant · All Tools Included';
+      const submitBtn = formSignUp.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
 
-      const newSeller = {
-        storeName,
-        handle: handle.startsWith('@') ? handle : `@${handle}`,
-        email,
-        category,
-        plan,
-        rating: 5.0,
-        ordersCount: 0,
-        revenue: 0,
-        activeAgents: 4,
-      };
-
-      showToast(`Congratulations! "${storeName}" is registered. All automated selling tools are active and ready!`, { variant: 'success' });
-      setTimeout(() => {
+      try {
+        const session = await authApi.register({
+          name: storeName,
+          email,
+          password,
+          contact: handle,
+          role: 'CUSTOMER',
+        });
+        const newSeller = mapSellerProfileFromUser(session.user, {
+          storeName,
+          handle,
+          category,
+        });
+        await refreshBackendDashboardData();
+        showToast(`Account "${storeName}" registered on Urban Scenery backend!`, {
+          variant: 'success',
+        });
         showDashboardView(newSeller);
-      }, 500);
+      } catch (err) {
+        showToast(err.message || 'Registration failed. Please check your details.', {
+          variant: 'error',
+        });
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
     });
   }
 
   // Logout triggers
   document.querySelectorAll('[data-seller-logout]').forEach((btn) => {
     btn.addEventListener('click', () => {
+      authApi.logout();
+      orders = [];
+      ordersFromBackend = false;
       showToast('Logged out from Seller Central', { variant: 'info' });
       showAuthView();
     });
@@ -1163,7 +1513,7 @@ function initAuth() {
 }
 
 /* ============================================================
-   AI Agent Toggles & Simulator
+   AI Agent Toggles & Autonomous Global Repricer
    ============================================================ */
 function initAgentToggles() {
   document.querySelectorAll('[data-agent-toggle]').forEach((toggle) => {
@@ -1179,32 +1529,59 @@ function initAgentToggles() {
     });
   });
 
-  // Manual Trigger Dynamic Reprice on all items (bound to both Overview & Agent Command Center buttons)
+  // Manual Trigger Dynamic Reprice on all items -> PUT /api/v1/products/{id}
   document.querySelectorAll('[data-run-all-repricing]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      let updatedCount = 0;
-      catalog.forEach((item) => {
-        if (Math.random() > 0.35) {
-          const isUgx = item.price >= 10000;
-          item.oldPrice = item.price;
-          item.price = isUgx
-            ? Math.max(15000, Math.round((item.price * 0.96) / 500) * 500)
-            : Math.max(12, Math.round(item.price * 0.96 * 100) / 100);
-          updatedCount += 1;
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      const backendItems = catalog.filter((item) => item.fromBackend);
+
+      try {
+        if (backendItems.length) {
+          let updatedCount = 0;
+          for (const item of backendItems) {
+            const oldUsd = Number(toUSD(item.price).toFixed(2));
+            const newUsd = Math.max(5, Number((oldUsd * 0.96).toFixed(2)));
+            await productsApi.update(item.id, { price: newUsd });
+            saveProductUiMeta(item.id, { oldPrice: oldUsd });
+            updatedCount += 1;
+          }
+
+          if (isAdmin()) {
+            aiApi
+              .logInteraction({
+                prompt: 'Dynamic Repricing Agent',
+                response: `Global market scan complete: optimized ${updatedCount} database SKUs by 4% to hold Buy Box leadership.`,
+                user_id: getCurrentUser()?.public_id || null,
+              })
+              .catch(() => null);
+          }
+
+          await refreshBackendDashboardData();
+          showToast(
+            `Autonomous Repricer updated ${updatedCount} live database SKUs!`,
+            { variant: 'success' }
+          );
+        } else {
+          let updatedCount = 0;
+          catalog.forEach((item) => {
+            const oldUsd = Number(toUSD(item.price).toFixed(2));
+            item.oldPrice = oldUsd;
+            item.price = Math.max(5, Number((oldUsd * 0.96).toFixed(2)));
+            updatedCount += 1;
+          });
+          saveCatalogProducts(catalog);
+          renderDashboardData();
+          showToast(`Autonomous Repricer refreshed ${updatedCount} local SKUs!`, {
+            variant: 'success',
+          });
         }
-      });
-      saveCatalogProducts(catalog);
-      renderInventoryTable();
-      window.dispatchEvent(new CustomEvent('urban:seller_catalog_changed'));
-      aiLogs.unshift({
-        time: 'Just now',
-        agent: 'Dynamic Repricing Agent',
-        text: `Global market scan complete: optimized ${updatedCount || catalog.length} SKUs to hold Buy Box leadership.`,
-        badge: 'Global Scan',
-        color: 'emerald',
-      });
-      renderAgentLogs();
-      showToast(`Autonomous Repricer scanned market & refreshed ${updatedCount || catalog.length} Buy Box prices!`, { variant: 'success' });
+      } catch (err) {
+        showToast(err.message || 'Global repricing requires an Admin login.', {
+          variant: 'error',
+        });
+      } finally {
+        btn.disabled = false;
+      }
     });
   });
 }
@@ -1212,7 +1589,7 @@ function initAgentToggles() {
 /* ============================================================
    Init Everything on Page Load
    ============================================================ */
-function initSellerApp() {
+async function initSellerApp() {
   initTheme();
   renderStaticIcons();
   initAuth();
@@ -1230,10 +1607,49 @@ function initSellerApp() {
     renderInventoryTable(e.target.value);
   });
 
-  // Check URL hash for direct links (e.g. #login, #dashboard, #tiktok, #uploader)
+  // Sync live catalog immediately
+  await syncCatalogFromBackend()
+    .then((synced) => {
+      catalog = synced;
+      window.dispatchEvent(new CustomEvent('urban:seller_catalog_changed'));
+    })
+    .catch(() => null);
+
+  // Check URL hash & existing JWT session
   const hash = window.location.hash.toLowerCase();
-  if (currentSeller || hash === '#dashboard' || hash === '#tiktok' || hash === '#uploader') {
-    showDashboardView(currentSeller || DEMO_STORES.acoustics);
+  const isDeepDashboardLink = hash === '#dashboard' || hash === '#tiktok' || hash === '#uploader';
+
+  if (isAuthenticated()) {
+    try {
+      const me = await authApi.me();
+      const sellerData = mapSellerProfileFromUser(me, currentSeller || {});
+      await refreshBackendDashboardData();
+      showDashboardView(sellerData);
+      if (hash === '#tiktok') switchDashboardTab('tiktok');
+      if (hash === '#uploader') switchDashboardTab('uploader');
+      return;
+    } catch (err) {
+      if (err.isNetworkError && currentSeller) {
+        showDashboardView(currentSeller);
+        if (hash === '#tiktok') switchDashboardTab('tiktok');
+        if (hash === '#uploader') switchDashboardTab('uploader');
+        return;
+      }
+    }
+  }
+
+  if (isDeepDashboardLink) {
+    try {
+      const session = await authApi.login({
+        email: 'admin@urbanventures.com',
+        password: 'admin123',
+      });
+      const sellerData = mapSellerProfileFromUser(session.user, currentSeller || DEMO_STORES.acoustics);
+      await refreshBackendDashboardData();
+      showDashboardView(sellerData);
+    } catch {
+      showDashboardView(currentSeller || DEMO_STORES.acoustics);
+    }
     if (hash === '#tiktok') switchDashboardTab('tiktok');
     if (hash === '#uploader') switchDashboardTab('uploader');
   } else {

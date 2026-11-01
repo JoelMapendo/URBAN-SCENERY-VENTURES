@@ -41,8 +41,10 @@ FROM nginx:1.27-alpine AS runner
 # Remove default nginx static assets
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy custom high-performance, security-hardened Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom high-performance, security-hardened Nginx configuration template
+ENV BACKEND_URL=http://host.docker.internal:8000
+ENV NGINX_ENVSUBST_FILTER=BACKEND_URL
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 # Copy compiled static assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html

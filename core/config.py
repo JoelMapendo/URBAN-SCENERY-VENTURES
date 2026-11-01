@@ -20,14 +20,27 @@ class Settings:
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
     
+    # Auto-seed initial users and sample electronics on startup if missing
+    AUTO_SEED: bool = os.getenv("AUTO_SEED", "true").strip().lower() in ("1", "true", "yes")
+
     # CORS
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-        "*",
-    ]
+    _raw_cors: str = os.getenv("CORS_ORIGINS", "")
+    CORS_ORIGINS: List[str] = (
+        [origin.strip() for origin in _raw_cors.split(",") if origin.strip()]
+        if _raw_cors.strip()
+        else [
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:4173",
+            "http://127.0.0.1:4173",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:8000",
+            "http://127.0.0.1:8000",
+            "http://localhost:8080",
+            "http://127.0.0.1:8080",
+        ]
+    )
 
 
 settings = Settings()
