@@ -105,14 +105,16 @@
           <!-- Category dropdown within search bar -->
           <div class="absolute right-28 sm:right-32 flex items-center pr-2 border-r border-slate-200 dark:border-slate-700/80">
             <select id="search-category-select" class="bg-transparent text-xs text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer pr-1">
-              <option value="all" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Categories</option>
-              <option value="Computers" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Computers</option>
+              <option value="all" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Electronics</option>
+              <option value="Computers" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Laptops & PCs</option>
               <option value="Phones & Tablets" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Phones & Tablets</option>
               <option value="Audio & Sound" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Audio & Sound</option>
-              <option value="Jewelry" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Jewelry</option>
+              <option value="Gaming & VR" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Gaming & VR</option>
+              <option value="Cameras & Drones" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Cameras & Drones</option>
+              <option value="Wearables" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Wearables</option>
+              <option value="Smart Home & IoT" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Smart Home</option>
+              <option value="Power & Charging" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Power & Energy</option>
               <option value="Computer Accessories" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Accessories</option>
-              <option value="Beauty & Personal Care" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Beauty</option>
-              <option value="Home & Living" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Home & Living</option>
             </select>
           </div>
 
@@ -200,15 +202,16 @@
         <!-- Category Link Chips -->
         <div id="ribbon-category-links" class="flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-300 shrink-0">
           <button type="button" data-cat-link="Computers" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computers</button>
-          <button type="button" data-cat-link="Beauty & Personal Care" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Beauty & Personal Care</button>
-          <button type="button" data-cat-link="Audio & Sound" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Audio & Sound</button>
-          <button type="button" data-cat-link="Wearables" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Wearables</button>
           <button type="button" data-cat-link="Phones & Tablets" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Phones & Tablets</button>
-          <button type="button" data-cat-link="Office Supplies" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Office Supplies</button>
-          <button type="button" data-cat-link="Computer Accessories" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Computer Accessories</button>
-          <button type="button" data-cat-link="Jewelry" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Jewelry</button>
+          <button type="button" data-cat-link="Audio & Sound" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Audio & Sound</button>
+          <button type="button" data-cat-link="Gaming & VR" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Gaming & VR</button>
+          <button type="button" data-cat-link="Cameras & Drones" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Cameras & Drones</button>
+          <button type="button" data-cat-link="Wearables" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Wearables</button>
+          <button type="button" data-cat-link="Smart Home & IoT" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Smart Home</button>
+          <button type="button" data-cat-link="Power & Charging" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Power & Energy</button>
+          <button type="button" data-cat-link="Computer Accessories" class="hover:text-brand-500 dark:hover:text-accent-400 transition whitespace-nowrap">Accessories</button>
           <button type="button" data-cat-link="all" class="text-slate-400 hover:text-brand-500 dark:hover:text-white transition whitespace-nowrap flex items-center gap-1">
-            <span>More</span>
+            <span>All Tech</span>
             <i data-lucide="chevron-down" class="h-3 w-3"></i>
           </button>
         </div>
@@ -256,44 +259,44 @@
             <nav id="hero-categories-sidebar" class="flex flex-col space-y-1 text-xs font-medium text-slate-600 dark:text-slate-300" aria-label="Hero category navigation">
               <!-- Dynamically populated or rendered with live item count badges -->
               <button type="button" data-hero-cat="Computers" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Computers</span>
+                <span>Laptops & Computers</span>
                 <span data-cat-count="Computers" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
-              </button>
-              <button type="button" data-hero-cat="Beauty & Personal Care" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Beauty & Personal Care</span>
-                <span data-cat-count="Beauty & Personal Care" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
-              </button>
-              <button type="button" data-hero-cat="Audio & Sound" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Audio & Sound</span>
-                <span data-cat-count="Audio & Sound" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">3</span>
-              </button>
-              <button type="button" data-hero-cat="Wearables" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Wearables</span>
-                <span data-cat-count="Wearables" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
               </button>
               <button type="button" data-hero-cat="Phones & Tablets" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
                 <span>Phones & Tablets</span>
                 <span data-cat-count="Phones & Tablets" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
               </button>
-              <button type="button" data-hero-cat="Office Supplies" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Office Supplies</span>
-                <span data-cat-count="Office Supplies" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              <button type="button" data-hero-cat="Audio & Sound" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Audio & Sound</span>
+                <span data-cat-count="Audio & Sound" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Gaming & VR" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Gaming & VR</span>
+                <span data-cat-count="Gaming & VR" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+              <button type="button" data-hero-cat="Cameras & Drones" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Cameras & Drones</span>
+                <span data-cat-count="Cameras & Drones" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              </button>
+              <button type="button" data-hero-cat="Wearables" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Wearables & Watches</span>
+                <span data-cat-count="Wearables" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Smart Home & IoT" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Smart Home & IoT</span>
+                <span data-cat-count="Smart Home & IoT" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+              </button>
+              <button type="button" data-hero-cat="Power & Charging" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
+                <span>Power & Charging</span>
+                <span data-cat-count="Power & Charging" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
               </button>
               <button type="button" data-hero-cat="Computer Accessories" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
                 <span>Computer Accessories</span>
-                <span data-cat-count="Computer Accessories" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
+                <span data-cat-count="Computer Accessories" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
               </button>
-              <button type="button" data-hero-cat="Jewelry" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Jewelry</span>
-                <span data-cat-count="Jewelry" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
-              </button>
-              <button type="button" data-hero-cat="Agriculture & Farming" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Agriculture & Farming</span>
-                <span data-cat-count="Agriculture & Farming" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">1</span>
-              </button>
-              <button type="button" data-hero-cat="Consumer Electronics" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left">
-                <span>Consumer Electronics</span>
-                <span data-cat-count="Consumer Electronics" class="rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 group-hover:bg-amber-400/20 group-hover:text-amber-600 dark:group-hover:text-amber-300">2</span>
+              <button type="button" data-hero-cat="all" class="group flex items-center justify-between py-2 px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-amber-500 dark:hover:text-amber-400 transition text-left font-semibold text-brand-600 dark:text-brand-400">
+                <span>View All Electronics</span>
+                <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 px-2 py-0.5 text-[10px] font-bold text-brand-700 dark:text-brand-300">14+</span>
               </button>
             </nav>
           </aside>
@@ -558,23 +561,39 @@
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
               <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=300&q=80" alt="Computers" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Computers</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Laptops & PCs</span>
           </button>
 
-          <!-- Card: Beauty & Personal Care -->
-          <button type="button" data-select-cat="Beauty & Personal Care" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+          <!-- Card: Phones & Tablets -->
+          <button type="button" data-select-cat="Phones & Tablets" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=300&q=80" alt="Beauty & Personal Care" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=300&q=80" alt="Phones & Tablets" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Beauty & Care</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Phones & Tablets</span>
           </button>
 
           <!-- Card: Audio & Sound -->
           <button type="button" data-select-cat="Audio & Sound" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=300&q=80" alt="Audio & Sound" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80" alt="Audio & Sound" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
             <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Audio & Sound</span>
+          </button>
+
+          <!-- Card: Gaming & VR -->
+          <button type="button" data-select-cat="Gaming & VR" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?auto=format&fit=crop&w=300&q=80" alt="Gaming & VR" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Gaming & VR</span>
+          </button>
+
+          <!-- Card: Cameras & Drones -->
+          <button type="button" data-select-cat="Cameras & Drones" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
+              <img src="https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=300&q=80" alt="Cameras & Drones" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+            </div>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Cameras & Drones</span>
           </button>
 
           <!-- Card: Wearables -->
@@ -582,55 +601,31 @@
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
               <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80" alt="Wearables" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Wearables</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Smartwatches</span>
           </button>
 
-          <!-- Card: Phones & Tablets -->
-          <button type="button" data-select-cat="Phones & Tablets" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+          <!-- Card: Power & Charging -->
+          <button type="button" data-select-cat="Power & Charging" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80" alt="Phones & Tablets" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=300&q=80" alt="Power & Charging" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Phones & Tablets</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Power & Solar</span>
           </button>
 
-          <!-- Card: Office Supplies -->
-          <button type="button" data-select-cat="Office Supplies" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
+          <!-- Card: Smart Home & IoT -->
+          <button type="button" data-select-cat="Smart Home & IoT" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?auto=format&fit=crop&w=300&q=80" alt="Office Supplies" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=300&q=80" alt="Smart Home & IoT" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Office Supplies</span>
+            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Smart Home</span>
           </button>
 
           <!-- Card: Computer Accessories -->
           <button type="button" data-select-cat="Computer Accessories" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
             <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=300&q=80" alt="Computer Accessories" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+              <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=300&q=80" alt="Computer Accessories" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
             </div>
             <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Accessories</span>
-          </button>
-
-          <!-- Card: Jewelry -->
-          <button type="button" data-select-cat="Jewelry" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
-            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=300&q=80" alt="Jewelry" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
-            </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Jewelry</span>
-          </button>
-
-          <!-- Card: Consumer Electronics -->
-          <button type="button" data-select-cat="Consumer Electronics" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
-            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=300&q=80" alt="Consumer Electronics" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
-            </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Electronics</span>
-          </button>
-
-          <!-- Card: Home & Living -->
-          <button type="button" data-select-cat="Home & Living" class="group flex flex-col shrink-0 w-28 sm:w-32 rounded-xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 dark:hover:border-accent-400 transition text-center shadow-sm">
-            <div class="aspect-square w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
-              <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=300&q=80" alt="Home & Living" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
-            </div>
-            <span class="py-2 px-1 text-[11px] font-semibold text-slate-700 dark:text-slate-300 group-hover:text-brand-500 dark:group-hover:text-accent-400 truncate">Home & Living</span>
           </button>
 
         </div>
@@ -932,16 +927,16 @@
 
         <!-- Column 2: Shop Collections -->
         <div>
-          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Shop Collections</h3>
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">Electronics Departments</h3>
           <ul class="mt-4 space-y-2.5 text-sm text-slate-600 dark:text-slate-400">
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Audio & Sound</a></li>
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Computers & Laptops</a></li>
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Phones & Tablets</a></li>
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Beauty & Personal Care</a></li>
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Jewelry & Watches</a></li>
-            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Office Supplies</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Audio & Studio Sound</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Laptops & Workstations</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Smartphones & Tablets</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Gaming & Mixed Reality VR</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Cameras, Drones & Optics</a></li>
+            <li><a href="#products" class="transition hover:text-brand-500 dark:hover:text-accent-400">Smart Home, Matter & IoT</a></li>
             <li><a href="#products" class="inline-flex items-center gap-1.5 font-medium text-brand-600 dark:text-accent-400 transition hover:underline">
-              New Season Drops <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 px-1.5 py-0.5 text-[10px] font-bold">New</span>
+              New Flagship Tech Drops <span class="rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 px-1.5 py-0.5 text-[10px] font-bold">New</span>
             </a></li>
           </ul>
         </div>

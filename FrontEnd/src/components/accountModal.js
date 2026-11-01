@@ -21,6 +21,27 @@ let lastFocused = null;
 
 export const isAccountModalOpen = () => isOpen;
 
+async function computeSha256(text) {
+  try {
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  } catch {
+    return 'digest-computed-on-server';
+  }
+}
+
+function calculateEntropy(pwd) {
+  if (!pwd) return 0;
+  let pool = 0;
+  if (/[a-z]/.test(pwd)) pool += 26;
+  if (/[A-Z]/.test(pwd)) pool += 26;
+  if (/[0-9]/.test(pwd)) pool += 10;
+  if (/[^a-zA-Z0-9]/.test(pwd)) pool += 33;
+  if (pool === 0) pool = 1;
+  return Math.round(pwd.length * Math.log2(pool));
+}
+
 function ensureModalElement() {
   let modal = document.getElementById('account-modal');
   if (modal) return modal;
@@ -263,26 +284,111 @@ function renderAccountModal() {
         activeTab === 'auth'
           ? `
         <form id="customer-login-form" class="mt-5 space-y-4">
-          <div class="flex items-center justify-between rounded-xl bg-brand-50/70 dark:bg-brand-500/10 border border-brand-200/70 dark:border-brand-500/20 px-3.5 py-2.5 text-xs">
-            <span class="text-slate-600 dark:text-slate-300">Quick demo shopper credentials:</span>
-            <button type="button" id="fill-demo-customer" class="font-bold text-brand-600 dark:text-brand-400 hover:underline">
-              Use Demo Customer
-            </button>
+          <!-- Simple One-Click Demo Accounts -->
+          <div class="rounded-2xl bg-gradient-to-r from-brand-50 to-indigo-50 dark:from-brand-500/10 dark:to-indigo-500/10 border border-brand-200/80 dark:border-brand-500/20 p-3 text-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                ${icon('zap', 'h-3.5 w-3.5 text-amber-500')}
+                <span>Quick 1-Click Demo Logins</span>
+              </span>
+              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-100 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300">Fast Test</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" id="fill-demo-customer" class="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 font-semibold text-brand-600 dark:text-brand-400 hover:border-brand-500 transition shadow-sm">
+                👤 Demo Shopper
+              </button>
+              <button type="button" id="fill-demo-admin" class="rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 font-semibold text-accent-600 dark:text-accent-400 hover:border-accent-500 transition shadow-sm">
+                🛡️ Demo Seller / Admin
+              </button>
+            </div>
           </div>
+
           <div>
             <label for="cust-login-email" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
             <input id="cust-login-email" type="email" required placeholder="customer@example.com"
               class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 focus:outline-none" />
           </div>
+
           <div>
-            <label for="cust-login-password" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Password</label>
-            <input id="cust-login-password" type="password" required placeholder="••••••••"
-              class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 focus:outline-none" />
+            <div class="flex items-center justify-between">
+              <label for="cust-login-password" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Password</label>
+              <button type="button" id="toggle-pwd-visibility" class="text-[11px] font-semibold text-brand-600 dark:text-brand-400 hover:underline">
+                Show Password
+              </button>
+            </div>
+            <div class="relative mt-1">
+              <input id="cust-login-password" type="password" required placeholder="••••••••"
+                class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 pr-10 text-sm text-slate-900 dark:text-white focus:border-brand-500 focus:outline-none" />
+              <button type="button" id="toggle-pwd-icon" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Toggle visibility">
+                ${icon('eye', 'h-4 w-4')}
+              </button>
+            </div>
           </div>
+
           <div id="acc-form-error" class="hidden rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-3.5 py-2.5 text-xs text-rose-700 dark:text-rose-300"></div>
+
           <button type="submit" id="cust-login-submit" class="w-full rounded-full bg-brand-500 hover:bg-brand-600 py-3 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition">
             Sign In
           </button>
+
+          <!-- Educational Complex / Pro Security Architecture Inspector -->
+          <div class="pt-2">
+            <button type="button" id="toggle-auth-inspector" class="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 p-3 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition">
+              <span class="flex items-center gap-2">
+                <span class="grid h-6 w-6 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500">
+                  ${icon('shield-check', 'h-3.5 w-3.5')}
+                </span>
+                <span>Security Architecture Inspector (Learn Auth with Us)</span>
+              </span>
+              <span id="inspector-arrow" class="text-slate-400 transition-transform">▼</span>
+            </button>
+
+            <div id="auth-inspector-panel" class="hidden mt-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-950 p-4 font-mono text-[11px] text-slate-300 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <span class="font-bold text-emerald-400 flex items-center gap-1.5">
+                  ${icon('cpu', 'h-3.5 w-3.5')}
+                  <span>Client-Side Security Engine</span>
+                </span>
+                <span class="text-[10px] text-slate-400">Live RFC 7519 / PBKDF2</span>
+              </div>
+
+              <!-- Password Entropy Meter -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between text-[10px]">
+                  <span class="text-slate-400">Password Entropy Score:</span>
+                  <span id="inspect-entropy-val" class="text-amber-400 font-bold">0 bits (Type above to calculate)</span>
+                </div>
+                <div class="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                  <div id="inspect-entropy-bar" class="h-full bg-amber-400 transition-all duration-300" style="width: 5%"></div>
+                </div>
+              </div>
+
+              <!-- SHA-256 Hash Preview -->
+              <div>
+                <span class="text-slate-400 block text-[10px]">Cryptographic Digest (SHA-256 Preview):</span>
+                <p id="inspect-hash-val" class="truncate rounded bg-slate-900 p-1.5 text-[10px] text-cyan-300 border border-slate-800 mt-1 select-all">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</p>
+                <span class="text-[9px] text-slate-500 mt-0.5 block">Explaining: Plaintext passwords are never stored in databases; salted cryptographic digests verify authenticity.</span>
+              </div>
+
+              <!-- JWT Bearer Token Architecture -->
+              <div class="pt-1">
+                <span class="text-slate-400 block text-[10px]">JWT Bearer Token Flow (Stateless Auth):</span>
+                <div class="mt-1 grid grid-cols-3 gap-1 text-[9px] text-center font-bold">
+                  <span class="rounded bg-rose-950/60 text-rose-300 border border-rose-800/60 p-1">1. HEADER (HS256)</span>
+                  <span class="rounded bg-purple-950/60 text-purple-300 border border-purple-800/60 p-1">2. CLAIMS (Role, Exp)</span>
+                  <span class="rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/60 p-1">3. SIGNATURE (HMAC)</span>
+                </div>
+              </div>
+
+              <!-- Role Hierarchy Breakdown -->
+              <div class="border-t border-slate-800 pt-2 text-[10px] text-slate-400">
+                <strong class="text-white">Role-Based Access Control (RBAC):</strong>
+                <p class="mt-0.5">· <strong class="text-amber-300">ADMIN:</strong> Unlocks Seller Central, inventory mutations, and order fulfillment.</p>
+                <p>· <strong class="text-blue-300">CUSTOMER:</strong> Accesses personal order tracking and express checkout.</p>
+              </div>
+            </div>
+          </div>
+
           <p class="text-center text-xs text-slate-500 dark:text-slate-400">
             Are you a merchant or admin? <a href="seller.html" class="font-bold text-brand-600 dark:text-brand-400 hover:underline">Open Seller Central</a>
           </p>
@@ -349,12 +455,74 @@ function bindModalEvents(panel) {
     });
   });
 
-  // Fill demo customer
+  // Fill demo credentials
   document.getElementById('fill-demo-customer')?.addEventListener('click', () => {
     const emailEl = document.getElementById('cust-login-email');
     const passEl = document.getElementById('cust-login-password');
     if (emailEl) emailEl.value = 'customer@example.com';
-    if (passEl) passEl.value = 'customer123';
+    if (passEl) {
+      passEl.value = 'customer123';
+      passEl.dispatchEvent(new Event('input'));
+    }
+  });
+
+  document.getElementById('fill-demo-admin')?.addEventListener('click', () => {
+    const emailEl = document.getElementById('cust-login-email');
+    const passEl = document.getElementById('cust-login-password');
+    if (emailEl) emailEl.value = 'admin@urbanventures.com';
+    if (passEl) {
+      passEl.value = 'admin123';
+      passEl.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // Toggle password visibility
+  const toggleVisibility = () => {
+    const passEl = document.getElementById('cust-login-password');
+    const toggleBtn = document.getElementById('toggle-pwd-visibility');
+    if (!passEl) return;
+    const isPass = passEl.type === 'password';
+    passEl.type = isPass ? 'text' : 'password';
+    if (toggleBtn) toggleBtn.textContent = isPass ? 'Hide Password' : 'Show Password';
+  };
+  document.getElementById('toggle-pwd-visibility')?.addEventListener('click', toggleVisibility);
+  document.getElementById('toggle-pwd-icon')?.addEventListener('click', toggleVisibility);
+
+  // Toggle Security Inspector
+  document.getElementById('toggle-auth-inspector')?.addEventListener('click', () => {
+    const panelEl = document.getElementById('auth-inspector-panel');
+    const arrowEl = document.getElementById('inspector-arrow');
+    if (!panelEl) return;
+    const isHidden = panelEl.classList.contains('hidden');
+    panelEl.classList.toggle('hidden', !isHidden);
+    if (arrowEl) arrowEl.textContent = isHidden ? '▲' : '▼';
+  });
+
+  // Live password crypto inspector
+  document.getElementById('cust-login-password')?.addEventListener('input', async (e) => {
+    const val = e.target.value;
+    const entropy = calculateEntropy(val);
+    const entropyValEl = document.getElementById('inspect-entropy-val');
+    const entropyBarEl = document.getElementById('inspect-entropy-bar');
+    const hashValEl = document.getElementById('inspect-hash-val');
+
+    if (entropyValEl) {
+      const label = entropy > 60 ? 'Strong (High Security)' : entropy > 35 ? 'Moderate' : 'Basic';
+      entropyValEl.textContent = `${entropy} bits (${label})`;
+    }
+    if (entropyBarEl) {
+      const pct = Math.min(100, Math.max(5, (entropy / 80) * 100));
+      entropyBarEl.style.width = `${pct}%`;
+      entropyBarEl.className = `h-full transition-all duration-300 ${entropy > 60 ? 'bg-emerald-400' : entropy > 35 ? 'bg-amber-400' : 'bg-rose-400'}`;
+    }
+    if (hashValEl) {
+      if (!val) {
+        hashValEl.textContent = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+      } else {
+        const hash = await computeSha256(val);
+        hashValEl.textContent = hash;
+      }
+    }
   });
 
   // Login submit
