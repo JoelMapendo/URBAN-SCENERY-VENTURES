@@ -5,6 +5,8 @@ import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
 import '@fontsource/poppins/800.css';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import './style.css';
 
 import {
@@ -1646,6 +1648,351 @@ function getStoredStoreProfile() {
   }
 }
 
+let signupMap = null;
+let signupMarker = null;
+let storeCfgMap = null;
+let storeCfgMarker = null;
+
+function createStoreMapIcon(label = 'Store Location') {
+  return L.divIcon({
+    className: 'custom-store-pin',
+    html: `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); cursor: pointer;">
+        <div style="background: linear-gradient(135deg, #0284c7, #0ea5e9); color: white; padding: 4px 10px; border-radius: 9999px; font-weight: 700; font-size: 11px; white-space: nowrap; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45); border: 2px solid #ffffff; display: flex; align-items: center; gap: 5px;">
+          <span>📍</span>
+          <span>${label}</span>
+        </div>
+        <div style="width: 14px; height: 14px; background: #0284c7; border: 3px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.35); margin-top: -3px;"></div>
+        <div style="width: 8px; height: 8px; background: rgba(14, 165, 233, 0.5); border-radius: 50%; margin-top: 1px; animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+      </div>
+    `,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
+}
+
+async function reverseGeocodeCoords(lat, lon) {
+  try {
+    const resp = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      const addr = data.address || {};
+      const city = addr.city || addr.town || addr.county || addr.state || 'Kampala Central';
+      const road = addr.road || addr.pedestrian || addr.suburb || 'Electronics Boulevard';
+      const house = addr.house_number ? `Plot ${addr.house_number}, ` : 'Plot 48, ';
+      return {
+        city,
+        address: `${house}${road}, ${city}`,
+        displayName: data.display_name || `${road}, ${city}`,
+      };
+    }
+  } catch {
+    // fallback
+  }
+  return {
+    city: 'Kampala Central',
+    address: `Plot 48, Electronics Boulevard, Innovation Hub Suite 4A`,
+    displayName: 'Electronics Innovation Concourse, Kampala Central',
+  };
+}
+
+async function forwardGeocodeQuery(query) {
+  if (!query || !query.trim()) return null;
+  try {
+    const resp = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    if (resp.ok) {
+      const results = await resp.json();
+      if (results && results.length > 0) {
+        return {
+          lat: parseFloat(results[0].lat),
+          lon: parseFloat(results[0].lon),
+          displayName: results[0].display_name,
+        };
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return null;
+}
+
+function initSignupMap() {
+  const container = document.getElementById('signup-interactive-map');
+  if (!container || signupMap) return;
+
+  const defaultLat = 0.3476;
+  const defaultLon = 32.5825;
+
+  signupMap = L.map(container, {
+    zoomControl: true,
+    scrollWheelZoom: true,
+  }).setView([defaultLat, defaultLon], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors',
+  }).addTo(signupMap);
+
+  signupMarker = L.marker([defaultLat, defaultLon], {
+    draggable: true,
+    icon: createStoreMapIcon('Your Store Location'),
+  }).addTo(signupMap);
+
+  async function applySignupMapLocation(lat, lon, triggerGeocode = true, notify = false) {
+    const coordsInput = document.getElementById('signup-store-coords');
+    const flagInput = document.getElementById('signup-map-pinned-flag');
+    const statusEl = document.getElementById('signup-geo-status');
+    const cardEl = document.getElementById('signup-location-card');
+    const cityInput = document.getElementById('signup-store-city');
+    const addressInput = document.getElementById('signup-store-address');
+
+    const formattedCoords = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+    if (coordsInput) coordsInput.value = formattedCoords;
+    if (flagInput) flagInput.value = 'true';
+
+    // Update status badge to Confirmed
+    if (statusEl) {
+      statusEl.className = 'inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+      statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>✅ Pin Confirmed on Map</span>';
+    }
+
+    // Update card styling
+    if (cardEl) {
+      cardEl.classList.remove('border-amber-300', 'dark:border-amber-700', 'bg-amber-50/40', 'dark:bg-amber-950/20', 'ring-4', 'ring-rose-500', 'border-rose-500', 'animate-pulse');
+      cardEl.classList.add('border-emerald-300', 'dark:border-emerald-700', 'bg-emerald-50/40', 'dark:bg-emerald-950/20');
+    }
+
+    if (triggerGeocode) {
+      if (statusEl) {
+        statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span><span>Locating address...</span>';
+      }
+      const geo = await reverseGeocodeCoords(lat, lon);
+      if (cityInput) cityInput.value = geo.city;
+      if (addressInput) addressInput.value = geo.address;
+      if (statusEl) {
+        statusEl.className = 'inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+        statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>✅ Pin Confirmed on Map</span>';
+      }
+      const storeName = document.getElementById('signup-store-name')?.value || 'Your Store';
+      signupMarker.bindPopup(`<div class="text-xs font-semibold p-1">📍 <b>${storeName}</b><br><span class="text-slate-500">${geo.address}</span></div>`).openPopup();
+    }
+
+    if (notify) {
+      showToast(`Store location pinned on map: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, { variant: 'success' });
+    }
+  }
+
+  // Click on map moves pin and confirms location
+  signupMap.on('click', (e) => {
+    const { lat, lng } = e.latlng;
+    signupMarker.setLatLng([lat, lng]);
+    applySignupMapLocation(lat, lng, true, true);
+  });
+
+  // Drag marker updates location
+  signupMarker.on('dragend', () => {
+    const pos = signupMarker.getLatLng();
+    applySignupMapLocation(pos.lat, pos.lng, true, true);
+  });
+
+  // Search input & button
+  const searchBtn = document.getElementById('btn-signup-map-search');
+  const searchInput = document.getElementById('signup-map-search');
+  async function runSignupSearch() {
+    const q = searchInput?.value.trim();
+    if (!q) {
+      showToast('Please enter an area, street or landmark to find.', { variant: 'info' });
+      return;
+    }
+    if (searchBtn) searchBtn.disabled = true;
+    const res = await forwardGeocodeQuery(q);
+    if (res) {
+      signupMap.flyTo([res.lat, res.lon], 16, { duration: 1.2 });
+      signupMarker.setLatLng([res.lat, res.lon]);
+      await applySignupMapLocation(res.lat, res.lon, true, true);
+    } else {
+      showToast(`Location "${q}" not found. Try another landmark or click on map directly.`, { variant: 'warning' });
+    }
+    if (searchBtn) searchBtn.disabled = false;
+  }
+  if (searchBtn) searchBtn.addEventListener('click', runSignupSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        runSignupSearch();
+      }
+    });
+  }
+
+  // "Confirm Pin" button
+  const confirmBtn = document.getElementById('btn-signup-confirm-pin');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', () => {
+      const pos = signupMarker.getLatLng();
+      applySignupMapLocation(pos.lat, pos.lng, true, true);
+    });
+  }
+
+  // Autolocate button
+  const autolocateBtn = document.getElementById('btn-signup-autolocate');
+  if (autolocateBtn) {
+    autolocateBtn.addEventListener('click', async () => {
+      autolocateBtn.disabled = true;
+      try {
+        const position = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) return reject(new Error('Geolocation unavailable'));
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 7000,
+          });
+        });
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        signupMap.flyTo([lat, lon], 16, { duration: 1.2 });
+        signupMarker.setLatLng([lat, lon]);
+        await applySignupMapLocation(lat, lon, true, true);
+      } catch {
+        showToast('GPS unavailable. Click anywhere on the map to set your store pin.', { variant: 'info' });
+      } finally {
+        autolocateBtn.disabled = false;
+      }
+    });
+  }
+}
+
+function initStoreConfigMap() {
+  const container = document.getElementById('store-cfg-interactive-map');
+  if (!container || storeCfgMap) return;
+
+  const saved = getStoredStoreProfile();
+  let defaultLat = 0.3476;
+  let defaultLon = 32.5825;
+
+  if (saved && saved.coords) {
+    const parts = saved.coords.split(',').map((s) => parseFloat(s.trim()));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      defaultLat = parts[0];
+      defaultLon = parts[1];
+    }
+  }
+
+  storeCfgMap = L.map(container, {
+    zoomControl: true,
+    scrollWheelZoom: true,
+  }).setView([defaultLat, defaultLon], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors',
+  }).addTo(storeCfgMap);
+
+  storeCfgMarker = L.marker([defaultLat, defaultLon], {
+    draggable: true,
+    icon: createStoreMapIcon(saved?.storeName || 'Store Location'),
+  }).addTo(storeCfgMap);
+
+  async function applyStoreCfgMapLocation(lat, lon, triggerGeocode = true, notify = false) {
+    const coordsInput = document.getElementById('store-cfg-coords');
+    const cityInput = document.getElementById('store-cfg-city');
+    const addressInput = document.getElementById('store-cfg-address');
+    const statusEl = document.getElementById('store-geo-status');
+
+    const formattedCoords = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+    if (coordsInput) coordsInput.value = formattedCoords;
+
+    if (triggerGeocode) {
+      if (statusEl) {
+        statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span><span>Locating address...</span>';
+      }
+      const geo = await reverseGeocodeCoords(lat, lon);
+      if (cityInput) cityInput.value = geo.city;
+      if (addressInput) addressInput.value = geo.address;
+      if (statusEl) {
+        statusEl.className = 'inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+        statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Store Location Pinned</span>';
+      }
+      const storeName = document.getElementById('store-cfg-name')?.value || 'Store';
+      storeCfgMarker.bindPopup(`<div class="text-xs font-semibold p-1">📍 <b>${storeName}</b><br><span class="text-slate-500">${geo.address}</span></div>`).openPopup();
+    }
+
+    if (notify) {
+      showToast(`Store location updated on map: ${lat.toFixed(4)}, ${lon.toFixed(4)}`, { variant: 'success' });
+    }
+  }
+
+  storeCfgMap.on('click', (e) => {
+    const { lat, lng } = e.latlng;
+    storeCfgMarker.setLatLng([lat, lng]);
+    applyStoreCfgMapLocation(lat, lng, true, true);
+  });
+
+  storeCfgMarker.on('dragend', () => {
+    const pos = storeCfgMarker.getLatLng();
+    applyStoreCfgMapLocation(pos.lat, pos.lng, true, true);
+  });
+
+  const searchBtn = document.getElementById('btn-store-cfg-map-search');
+  const searchInput = document.getElementById('store-cfg-map-search');
+  async function runStoreCfgSearch() {
+    const q = searchInput?.value.trim();
+    if (!q) {
+      showToast('Please enter an address or area to search.', { variant: 'info' });
+      return;
+    }
+    if (searchBtn) searchBtn.disabled = true;
+    const res = await forwardGeocodeQuery(q);
+    if (res) {
+      storeCfgMap.flyTo([res.lat, res.lon], 16, { duration: 1.2 });
+      storeCfgMarker.setLatLng([res.lat, res.lon]);
+      await applyStoreCfgMapLocation(res.lat, res.lon, true, true);
+    } else {
+      showToast(`Location "${q}" not found on map.`, { variant: 'warning' });
+    }
+    if (searchBtn) searchBtn.disabled = false;
+  }
+  if (searchBtn) searchBtn.addEventListener('click', runStoreCfgSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        runStoreCfgSearch();
+      }
+    });
+  }
+
+  const autolocateBtn = document.getElementById('btn-store-autolocate');
+  if (autolocateBtn) {
+    autolocateBtn.addEventListener('click', async () => {
+      autolocateBtn.disabled = true;
+      try {
+        const position = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) return reject(new Error('Geolocation unavailable'));
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 7000,
+          });
+        });
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        storeCfgMap.flyTo([lat, lon], 16, { duration: 1.2 });
+        storeCfgMarker.setLatLng([lat, lon]);
+        await applyStoreCfgMapLocation(lat, lon, true, true);
+      } catch {
+        showToast('GPS unavailable. Click anywhere on the map to pin your store location.', { variant: 'info' });
+      } finally {
+        autolocateBtn.disabled = false;
+      }
+    });
+  }
+}
+
 async function detectAutomatedStoreLocation(target = 'store-cfg') {
   const isSignup = target === 'signup';
   const statusEl = document.getElementById(isSignup ? 'signup-geo-status' : 'store-geo-status');
@@ -1653,7 +2000,6 @@ async function detectAutomatedStoreLocation(target = 'store-cfg') {
   const coordsInput = document.getElementById(isSignup ? 'signup-store-coords' : 'store-cfg-coords');
   const cityInput = document.getElementById(isSignup ? 'signup-store-city' : 'store-cfg-city');
   const addressInput = document.getElementById(isSignup ? 'signup-store-address' : 'store-cfg-address');
-  const mapIframe = document.getElementById('store-map-embed');
 
   if (statusEl) {
     statusEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping"></span><span>Triangulating GPS...</span>`;
@@ -1679,34 +2025,22 @@ async function detectAutomatedStoreLocation(target = 'store-cfg') {
 
     if (coordsInput) coordsInput.value = `${lat}, ${lon}`;
 
-    // Attempt reverse geocoding via OpenStreetMap Nominatim
-    let detectedCity = 'Kampala Central';
-    let detectedAddress = `Plot ${Math.floor(20 + Math.random() * 80)}, Electronics Boulevard, Tech Concourse Suite 4A`;
+    const geo = await reverseGeocodeCoords(lat, lon);
+    if (cityInput) cityInput.value = geo.city;
+    if (addressInput) addressInput.value = geo.address;
 
-    try {
-      const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, {
-        headers: { 'Accept-Language': 'en' },
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        const addr = data.address || {};
-        detectedCity = addr.city || addr.town || addr.county || addr.state || 'Kampala Central';
-        const road = addr.road || addr.pedestrian || addr.suburb || 'Electronics Boulevard';
-        const house = addr.house_number ? `Plot ${addr.house_number}, ` : '';
-        detectedAddress = `${house}${road}, ${detectedCity}`;
+    if (isSignup) {
+      const flagInput = document.getElementById('signup-map-pinned-flag');
+      if (flagInput) flagInput.value = 'true';
+      if (signupMap && signupMarker) {
+        signupMap.flyTo([lat, lon], 16, { duration: 1.2 });
+        signupMarker.setLatLng([lat, lon]);
       }
-    } catch {
-      /* fallback to electronic hub address */
-    }
-
-    if (cityInput) cityInput.value = detectedCity;
-    if (addressInput) addressInput.value = detectedAddress;
-
-    // Update map preview iframe
-    if (mapIframe) {
-      const delta = 0.015;
-      const bbox = `${lon - delta},${lat - delta},${lon + delta},${lat + delta}`;
-      mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+    } else {
+      if (storeCfgMap && storeCfgMarker) {
+        storeCfgMap.flyTo([lat, lon], 16, { duration: 1.2 });
+        storeCfgMarker.setLatLng([lat, lon]);
+      }
     }
 
     if (statusEl) {
@@ -1714,8 +2048,8 @@ async function detectAutomatedStoreLocation(target = 'store-cfg') {
       statusEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>GPS Locked (±${accuracy}m)</span>`;
     }
 
-    showToast(`Physical store location detected via GPS: ${detectedCity} (${lat}, ${lon})!`, { variant: 'success' });
-  } catch (err) {
+    showToast(`Physical store location detected via GPS: ${geo.city} (${lat}, ${lon})!`, { variant: 'success' });
+  } catch {
     const fallbackLat = 0.3476;
     const fallbackLon = 32.5825;
     if (coordsInput) coordsInput.value = `${fallbackLat}, ${fallbackLon}`;
@@ -1734,15 +2068,8 @@ async function detectAutomatedStoreLocation(target = 'store-cfg') {
 
 function initStoreConfig() {
   const form = document.getElementById('store-config-form');
-  const btnAutolocate = document.getElementById('btn-store-autolocate');
-  const btnSignupAutolocate = document.getElementById('btn-signup-autolocate');
 
-  if (btnAutolocate) {
-    btnAutolocate.addEventListener('click', () => detectAutomatedStoreLocation('store-cfg'));
-  }
-  if (btnSignupAutolocate) {
-    btnSignupAutolocate.addEventListener('click', () => detectAutomatedStoreLocation('signup'));
-  }
+  initStoreConfigMap();
 
   // Populate from existing stored profile
   const saved = getStoredStoreProfile();
@@ -1894,6 +2221,14 @@ function switchDashboardTab(tabName) {
       navBtn.classList.toggle('dark:hover:bg-slate-800', !isActive);
     }
   });
+
+  if (tabName === 'store') {
+    initStoreConfigMap();
+    setTimeout(() => {
+      if (storeCfgMap) storeCfgMap.invalidateSize();
+    }, 150);
+  }
+
   window.scrollTo({ top: 120, behavior: 'smooth' });
 }
 
@@ -1942,6 +2277,10 @@ function initAuth() {
       tabSignIn.classList.add(...inactiveTabCls);
       formSignUp.classList.remove('hidden');
       formSignIn.classList.add('hidden');
+      initSignupMap();
+      setTimeout(() => {
+        if (signupMap) signupMap.invalidateSize();
+      }, 150);
     });
   }
 
@@ -2007,6 +2346,28 @@ function initAuth() {
   if (formSignUp) {
     formSignUp.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      // MANDATORY MAP PIN CHECK: The seller MUST pinpoint their store on the interactive map
+      const isMapPinned = document.getElementById('signup-map-pinned-flag')?.value === 'true';
+      const coords = document.getElementById('signup-store-coords')?.value.trim();
+
+      if (!isMapPinned || !coords) {
+        const locationCard = document.getElementById('signup-location-card');
+        if (locationCard) {
+          locationCard.classList.remove('border-amber-300', 'border-emerald-300', 'dark:border-amber-700', 'dark:border-emerald-700');
+          locationCard.classList.add('ring-4', 'ring-rose-500', 'border-rose-500', 'animate-pulse');
+          locationCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            locationCard.classList.remove('animate-pulse');
+          }, 2000);
+        }
+        showToast('⚠️ Map Location Required: You must interact with the map to pinpoint your store location before creating your store!', {
+          variant: 'warning',
+          duration: 6000,
+        });
+        return;
+      }
+
       const storeName = document.getElementById('signup-store-name')?.value.trim() || 'Merchant Store';
       const rawHandle = document.getElementById('signup-handle')?.value.trim() || '@store';
       const handle = rawHandle.startsWith('@') ? rawHandle : `@${rawHandle}`;
@@ -2014,7 +2375,6 @@ function initAuth() {
       const password = document.getElementById('signup-password')?.value || '';
       const category = document.getElementById('signup-category')?.value || 'Audio';
       const city = document.getElementById('signup-store-city')?.value.trim() || 'Kampala Central';
-      const coords = document.getElementById('signup-store-coords')?.value.trim() || '0.3476, 32.5825';
       const address = document.getElementById('signup-store-address')?.value.trim() || 'Plot 48, Electronics Boulevard, Innovation Hub Suite 4A';
       const submitBtn = formSignUp.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
