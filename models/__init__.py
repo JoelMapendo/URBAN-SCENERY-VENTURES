@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .order_model import Order
 from .payment_model import Payment
 from .products_model import Product

@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Unit and integration test script for Urban Scenery Ventures FastAPI backend."""
 from decimal import Decimal
 import sys

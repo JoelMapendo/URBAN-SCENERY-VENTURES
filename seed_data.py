@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Seed database with sample electronics products and initial admin user."""
 from decimal import Decimal
 from core.database import init_db, sessionlocal

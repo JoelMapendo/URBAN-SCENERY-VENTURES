@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
+from typing import Optional
 import uuid
 from sqlalchemy import DateTime, Integer, TEXT, func, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
@@ -13,4 +16,4 @@ class AIInteraction(Model):
     prompt: Mapped[str] = mapped_column(TEXT, nullable=False)
     response: Mapped[str] = mapped_column(TEXT, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True)
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(Uuid, nullable=True)

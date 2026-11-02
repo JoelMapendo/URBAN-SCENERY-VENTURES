@@ -1,0 +1,13 @@
+{
+  "name": "urban-scenery-ventures",
+  "private": true,
+  "workspaces": [
+    "FrontEnd"
+  ],
+  "scripts": {
+    "dev": "npm --prefix FrontEnd run dev",
+    "build": "npm --prefix FrontEnd run build",
+    "preview": "npm --prefix FrontEnd run preview",
+    "install:all": "npm install && npm --prefix FrontEnd install"
+  }
+}

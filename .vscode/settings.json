@@ -1,0 +1,11 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/routers",
+    "${workspaceFolder}/models",
+    "${workspaceFolder}/schemas",
+    "${workspaceFolder}/services"
+  ],
+  "html.validate.scripts": false
+}

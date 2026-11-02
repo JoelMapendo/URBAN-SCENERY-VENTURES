@@ -1,3 +1,4 @@
+from __future__ import annotations
 from decimal import Decimal
 from typing import Optional, List, Dict, Any
 from sqlalchemy import select, or_

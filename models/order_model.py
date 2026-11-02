@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from uuid import UUID
 
 from sqlalchemy import DECIMAL, DateTime, ForeignKey, Integer, String, func
@@ -32,7 +34,7 @@ class Order(Model):
     payment_status_id: Mapped[int] = mapped_column(
         ForeignKey("payment_statuses.id"), nullable=False
     )
-    user_id: Mapped[UUID | None] = mapped_column(
+    user_id: Mapped[Optional[UUID]] = mapped_column(
         ForeignKey("users.private_id"), nullable=True
     )
     product_id: Mapped[int] = mapped_column(
@@ -42,9 +44,9 @@ class Order(Model):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    user: Mapped["User | None"] = relationship(back_populates="orders")
+    user: Mapped[Optional["User"]] = relationship(back_populates="orders")
     product: Mapped["Product"] = relationship(back_populates="orders")
-    payment: Mapped["Payment | None"] = relationship(
+    payment: Mapped[Optional["Payment"]] = relationship(
         back_populates="order", cascade="all, delete-orphan"
     )
     order_status: Mapped["OrderStatus"] = relationship(back_populates="orders")

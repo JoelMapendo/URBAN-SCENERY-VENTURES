@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,7 +20,7 @@ class UserRole(Model, Timestamp):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     users: Mapped[list["User"]] = relationship(back_populates="user_role")
 
 
@@ -27,7 +29,7 @@ class OrderStatus(Model, Timestamp):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     orders: Mapped[list["Order"]] = relationship(back_populates="order_status")
 
 
@@ -36,7 +38,7 @@ class PaymentStatus(Model, Timestamp):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     orders: Mapped[list["Order"]] = relationship(back_populates="payment_status")
 
 
@@ -45,7 +47,7 @@ class PaymentMethod(Model, Timestamp):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     orders: Mapped[list["Order"]] = relationship(back_populates="payment_method")
     payments: Mapped[list["Payment"]] = relationship(back_populates="payment_method")
 
@@ -55,5 +57,5 @@ class ProductStatus(Model, Timestamp):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(32), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[Optional[str]] = mapped_column(Text)
     products: Mapped[list["Product"]] = relationship(back_populates="product_status")

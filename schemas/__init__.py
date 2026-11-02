@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .user_schema import UserRegister, UserLogin, UserUpdate, UserOut, TokenOut
 from .product_schema import ProductCreate, ProductUpdate, ProductOut
 from .order_schema import OrderCreate, OrderStatusUpdate, OrderOut

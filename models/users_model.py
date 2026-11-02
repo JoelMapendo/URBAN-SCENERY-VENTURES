@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import ForeignKey, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -23,8 +25,8 @@ class User(Model, Timestamp):
     )
     name: Mapped[str] = mapped_column(String(32), nullable=False)
     email: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
-    contact: Mapped[str | None] = mapped_column(String(128))
-    hashed_password: Mapped[str | None] = mapped_column(String(255))
+    contact: Mapped[Optional[str]] = mapped_column(String(128))
+    hashed_password: Mapped[Optional[str]] = mapped_column(String(255))
     role_id: Mapped[int] = mapped_column(ForeignKey("user_roles.id"), nullable=False)
 
     user_role: Mapped["UserRole"] = relationship(back_populates="users")

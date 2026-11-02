@@ -1,3 +1,4 @@
+from __future__ import annotations
 """Compatibility exports for code that still imports database objects here."""
 
 from core.config import settings
