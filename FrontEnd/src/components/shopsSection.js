@@ -4,11 +4,58 @@ import { showToast } from './toast.js';
 
 let preferredStoreId = localStorage.getItem('lumen:preferred_store') || 'soho-ny';
 
+function getCustomSellerShops() {
+  try {
+    const raw = localStorage.getItem('urban:seller_store_profile');
+    if (!raw) return [];
+    const p = JSON.parse(raw);
+    return [
+      {
+        id: p.id || 'custom-seller-shop',
+        name: p.name || p.storeName || 'Verified Electronics Hub',
+        handle: p.handle || '@seller-hub',
+        location: p.city || 'Kampala Central',
+        bio: p.bio || 'Verified high-tech electronics retail hub with automated GPS tracking.',
+        badge: p.badge || 'Verified Merchant',
+        rating: p.rating || 4.95,
+        reviews: p.reviews || 42,
+        icon: p.icon || 'cpu',
+        bg: p.bg || 'from-cyan-600 to-blue-700',
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
+function getCustomSellerRetailStores() {
+  try {
+    const raw = localStorage.getItem('urban:seller_store_profile');
+    if (!raw) return [];
+    const p = JSON.parse(raw);
+    return [
+      {
+        id: p.id || 'custom-seller-retail',
+        name: p.name || p.storeName || 'Verified Electronics Hub',
+        address: p.address || `${p.city || 'Kampala Central'} (Automated GPS)`,
+        phone: p.phone || '+256 700 892 104',
+        hours: p.hours || 'Mon-Sat: 8:00 AM - 8:00 PM',
+        pickup: p.pickup || 'Ready for pickup in 15 mins',
+        status: p.status || 'Open · Express Pickup Ready',
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
 export function renderShopsGrid() {
   const container = document.getElementById('curated-shops-grid');
   if (!container) return;
 
-  container.innerHTML = curatedShops
+  const allShops = [...getCustomSellerShops(), ...curatedShops];
+
+  container.innerHTML = allShops
     .map(
       (s) => `
       <article class="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-500 hover:shadow-xl">
@@ -50,7 +97,9 @@ export function renderRetailStores() {
   const container = document.getElementById('retail-stores-grid');
   if (!container) return;
 
-  container.innerHTML = retailStores
+  const allRetail = [...getCustomSellerRetailStores(), ...retailStores];
+
+  container.innerHTML = allRetail
     .map((store) => {
       const isSelected = store.id === preferredStoreId;
       return `
@@ -109,6 +158,12 @@ export function renderRetailStores() {
 export function initShopsSection({ onSelectShop } = {}) {
   renderShopsGrid();
   renderRetailStores();
+
+  // Re-render whenever seller configures store profile and GPS location
+  window.addEventListener('urban:store_profile_updated', () => {
+    renderShopsGrid();
+    renderRetailStores();
+  });
 
   // Curated shop filter click
   document.addEventListener('click', (e) => {

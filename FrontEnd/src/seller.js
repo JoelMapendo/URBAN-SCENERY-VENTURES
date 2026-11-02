@@ -66,9 +66,12 @@ const DEMO_STORES = {
     ordersCount: 0,
     revenue: 0,
     activeAgents: 4,
+    location: 'Plot 48, Electronics Boulevard, Innovation Hub Suite 4A',
+    city: 'Kampala Central',
+    coords: '0.3476, 32.5825',
   },
   wearables: {
-    storeName: 'Apex Wearables',
+    storeName: 'Apex Wearables & Biotech',
     handle: '@apex-wearables',
     email: 'admin@urbanventures.com',
     category: 'Wearables',
@@ -77,17 +80,23 @@ const DEMO_STORES = {
     ordersCount: 0,
     revenue: 0,
     activeAgents: 4,
+    location: 'Silicon Square, Level 3',
+    city: 'Kampala Tech District',
+    coords: '0.3341, 32.5710',
   },
-  kinetic: {
-    storeName: 'Acro Kinetic Lab',
-    handle: '@acro-kinetic',
+  drones: {
+    storeName: 'Horizon Drones & Robotics',
+    handle: '@horizon-drones',
     email: 'admin@urbanventures.com',
-    category: 'Footwear',
+    category: 'Drones & Robotics',
     plan: 'Verified Merchant · All Tools Included',
-    rating: 4.7,
+    rating: 4.95,
     ordersCount: 0,
     revenue: 0,
-    activeAgents: 3,
+    activeAgents: 4,
+    location: 'UAV Innovation Park, Hangar 2',
+    city: 'Entebbe Aerospace Hub',
+    coords: '0.0512, 32.4637',
   },
 };
 
@@ -887,6 +896,7 @@ function initTikTokInterface() {
   // 2. Sub-tab switching inside TikTok Interface
   const subtabBtns = document.querySelectorAll('[data-tt-subtab-btn]');
   const subpanes = {
+    'live-studio': document.getElementById('tt-subpane-live-studio'),
     catalog: document.getElementById('tt-subpane-catalog'),
     script: document.getElementById('tt-subpane-script'),
     affiliate: document.getElementById('tt-subpane-affiliate'),
@@ -1343,13 +1353,532 @@ function initTikTokInterface() {
       });
     });
   }
+
+  // Initialize TikTok Live Shopping Broadcast Studio
+  initTikTokLiveStudio();
+}
+
+/* ============================================================
+   TikTok Live Shopping Broadcast Studio Controller
+   ============================================================ */
+function initTikTokLiveStudio() {
+  const liveVideo = document.getElementById('tt-live-webcam');
+  const livePoster = document.getElementById('tt-live-poster');
+  const goLiveBtn = document.getElementById('btn-tt-go-live');
+  const goLiveLabel = document.getElementById('btn-tt-go-live-label');
+  const statusPill = document.getElementById('tt-live-status-pill');
+  const pillTag = document.getElementById('tt-live-pill-tag');
+  const viewersCountEl = document.getElementById('tt-live-viewers-count');
+  const likesCountEl = document.getElementById('tt-live-likes-count');
+  const timerEl = document.getElementById('tt-live-timer');
+  const camBtn = document.getElementById('btn-tt-toggle-cam');
+  const camLabel = document.getElementById('btn-tt-toggle-cam-label');
+  const micBtn = document.getElementById('btn-tt-toggle-mic');
+  const micLabel = document.getElementById('btn-tt-toggle-mic-label');
+  const rtmpToggleBtn = document.getElementById('btn-tt-live-rtmp-toggle');
+  const rtmpDrawer = document.getElementById('tt-live-rtmp-drawer');
+  const productSelect = document.getElementById('tt-live-product-selector');
+  const couponBtn = document.getElementById('btn-tt-trigger-coupon');
+  const chatBox = document.getElementById('tt-live-chat-box');
+  const hostForm = document.getElementById('tt-live-host-chat-form');
+  const hostInput = document.getElementById('tt-live-host-input');
+
+  const pinnedImg = document.getElementById('tt-pinned-img');
+  const pinnedTitle = document.getElementById('tt-pinned-title');
+  const pinnedPrice = document.getElementById('tt-pinned-price');
+  const pinnedBuyBtn = document.getElementById('btn-tt-pinned-buy-demo');
+
+  let isLive = false;
+  let liveDurationSeconds = 0;
+  let timerInterval = null;
+  let viewerSimulationInterval = null;
+  let chatSimulationInterval = null;
+  let cameraStream = null;
+  let cameraActive = false;
+  let micActive = true;
+  let simulatedLikes = 4820;
+
+  // Populate product selector from catalog
+  function populateLiveProducts() {
+    if (!productSelect) return;
+    productSelect.innerHTML = catalog
+      .map((p) => `<option value="${p.id}">${p.title} — $${p.price.toFixed(2)} (${p.category})</option>`)
+      .join('');
+    updatePinnedCard();
+  }
+
+  function updatePinnedCard() {
+    const selectedId = Number(productSelect?.value);
+    const prod = catalog.find((p) => p.id === selectedId) || catalog[0];
+    if (prod) {
+      if (pinnedImg) pinnedImg.src = prod.image;
+      if (pinnedTitle) pinnedTitle.textContent = prod.title;
+      if (pinnedPrice) pinnedPrice.textContent = `$${prod.price.toFixed(2)}`;
+    }
+  }
+
+  if (productSelect) {
+    productSelect.addEventListener('change', () => {
+      updatePinnedCard();
+      const selectedId = Number(productSelect.value);
+      const prod = catalog.find((p) => p.id === selectedId);
+      if (prod) {
+        addChatMessage('system', `🛍️ Host pinned "${prod.title}" ($${prod.price.toFixed(2)}) to stream! Tap yellow basket to order.`);
+      }
+    });
+  }
+
+  // RTMP Drawer toggle
+  if (rtmpToggleBtn && rtmpDrawer) {
+    rtmpToggleBtn.addEventListener('click', () => {
+      rtmpDrawer.classList.toggle('hidden');
+    });
+  }
+
+  // Camera toggle (WebRTC getUserMedia)
+  if (camBtn) {
+    camBtn.addEventListener('click', async () => {
+      if (!cameraActive) {
+        try {
+          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            cameraStream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 }, audio: true });
+            if (liveVideo) {
+              liveVideo.srcObject = cameraStream;
+              liveVideo.classList.remove('hidden');
+              if (livePoster) livePoster.classList.add('hidden');
+            }
+            cameraActive = true;
+            if (camLabel) camLabel.textContent = 'Disable Camera';
+            showToast('WebRTC Camera active · Stream studio connected!', { variant: 'success' });
+          } else {
+            throw new Error('MediaDevices not supported');
+          }
+        } catch (err) {
+          showToast('Webcam in Studio Broadcast Preview Mode.', { variant: 'info' });
+          cameraActive = true;
+          if (camLabel) camLabel.textContent = 'Camera Active (Preview)';
+          if (liveVideo) liveVideo.classList.add('hidden');
+          if (livePoster) livePoster.classList.remove('hidden');
+        }
+      } else {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+        }
+        if (liveVideo) {
+          liveVideo.srcObject = null;
+          liveVideo.classList.add('hidden');
+        }
+        if (livePoster) livePoster.classList.remove('hidden');
+        cameraActive = false;
+        if (camLabel) camLabel.textContent = 'Enable Camera';
+        showToast('Camera stopped.', { variant: 'info' });
+      }
+    });
+  }
+
+  // Mic toggle
+  if (micBtn) {
+    micBtn.addEventListener('click', () => {
+      micActive = !micActive;
+      if (cameraStream) {
+        cameraStream.getAudioTracks().forEach((t) => (t.enabled = micActive));
+      }
+      if (micLabel) micLabel.textContent = micActive ? 'Mic Ready' : 'Mic Muted';
+      showToast(micActive ? 'Microphone unmuted' : 'Microphone muted', { variant: 'info' });
+    });
+  }
+
+  function addChatMessage(user, text, isOrder = false) {
+    if (!chatBox) return;
+    const msg = document.createElement('div');
+    if (isOrder) {
+      msg.className = 'rounded-lg bg-emerald-500/20 border border-emerald-500/40 p-2 text-[11px] text-emerald-200';
+      msg.innerHTML = `🛒 <strong class="text-white">${user}</strong> just ordered <span class="font-bold text-amber-300">${text}</span>!`;
+    } else if (user === 'host') {
+      msg.className = 'rounded-lg bg-pink-500/25 border border-pink-500/40 p-2 text-[11px] text-pink-200';
+      msg.innerHTML = `🎤 <strong class="text-white font-bold">HOST (@${currentSeller?.storeName || 'Store'}):</strong> ${text}`;
+    } else if (user === 'system') {
+      msg.className = 'rounded-lg bg-amber-500/20 border border-amber-500/40 p-2 text-[11px] text-amber-200';
+      msg.innerHTML = `⚡ ${text}`;
+    } else {
+      msg.className = 'rounded-lg bg-white/5 p-2 text-[11px] text-slate-300';
+      msg.innerHTML = `<span class="font-bold text-[#25F4EE]">${user}:</span> ${text}`;
+    }
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Host Chat submit
+  if (hostForm && hostInput) {
+    hostForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const txt = hostInput.value.trim();
+      if (!txt) return;
+      addChatMessage('host', txt);
+      hostInput.value = '';
+    });
+  }
+
+  // Drop Flash Coupon button
+  if (couponBtn) {
+    couponBtn.addEventListener('click', () => {
+      addChatMessage('system', '🔥 FLASH SALE UNLOCKED! Host released promo code TIKTOK10 for 10% off the pinned product!');
+      showToast('10% Flash Coupon dropped live into TikTok stream chat!', { variant: 'success' });
+    });
+  }
+
+  // Pinned buy demo button
+  if (pinnedBuyBtn) {
+    pinnedBuyBtn.addEventListener('click', () => {
+      const selectedId = Number(productSelect?.value);
+      const prod = catalog.find((p) => p.id === selectedId) || catalog[0];
+      const buyerHandle = `@buyer_${Math.floor(1000 + Math.random() * 9000)}`;
+      addChatMessage(buyerHandle, prod?.title || 'Electronics Gadget', true);
+      showToast(`Simulated Live Buyer Order from ${buyerHandle}!`, { variant: 'success' });
+    });
+  }
+
+  // GO LIVE button toggle
+  if (goLiveBtn) {
+    goLiveBtn.addEventListener('click', () => {
+      isLive = !isLive;
+      if (isLive) {
+        // Start streaming
+        goLiveBtn.className = 'inline-flex items-center gap-2 rounded-full bg-rose-600 hover:bg-rose-700 px-5 py-2 text-xs sm:text-sm font-extrabold text-white shadow-lg transition active:scale-95 animate-pulse';
+        if (goLiveLabel) goLiveLabel.textContent = 'END LIVE STREAM';
+        if (statusPill) {
+          statusPill.className = 'inline-flex items-center gap-1.5 rounded-full bg-rose-500/20 px-2.5 py-0.5 text-[11px] font-bold text-rose-300 border border-rose-500/40';
+          statusPill.innerHTML = '<span class="h-2 w-2 rounded-full bg-rose-500 animate-ping"></span><span>ON AIR · LIVE BROADCAST</span>';
+        }
+        if (pillTag) {
+          pillTag.className = 'inline-flex items-center gap-1 rounded-md bg-rose-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow animate-pulse';
+          pillTag.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-white animate-ping"></span><span>LIVE NOW</span>';
+        }
+
+        // Start timer
+        liveDurationSeconds = 0;
+        timerInterval = setInterval(() => {
+          liveDurationSeconds += 1;
+          const hrs = String(Math.floor(liveDurationSeconds / 3600)).padStart(2, '0');
+          const mins = String(Math.floor((liveDurationSeconds % 3600) / 60)).padStart(2, '0');
+          const secs = String(liveDurationSeconds % 60).padStart(2, '0');
+          if (timerEl) timerEl.textContent = `${hrs}:${mins}:${secs}`;
+        }, 1000);
+
+        // Start viewer counter simulation
+        let baseViewers = 1420;
+        if (viewersCountEl) viewersCountEl.textContent = baseViewers.toLocaleString();
+        if (likesCountEl) likesCountEl.textContent = simulatedLikes.toLocaleString();
+
+        viewerSimulationInterval = setInterval(() => {
+          const delta = Math.floor(Math.random() * 25) - 10;
+          baseViewers = Math.max(800, baseViewers + delta);
+          simulatedLikes += Math.floor(Math.random() * 8) + 1;
+          if (viewersCountEl) viewersCountEl.textContent = baseViewers.toLocaleString();
+          if (likesCountEl) likesCountEl.textContent = simulatedLikes.toLocaleString();
+        }, 2500);
+
+        // Start simulated chat stream
+        const sampleComments = [
+          { u: '@gadget_hunter', t: 'Can you show the noise cancelling switch?' },
+          { u: '@tech_girl_256', t: 'Is there same-day delivery to Kampala?' },
+          { u: '@dave_audio', t: 'The sound frequency response on that is top notch 🔥' },
+          { u: '@gamer_sam', t: 'Does this come with official manufacturer warranty?' },
+          { u: '@sarah_k', t: 'Just ordered via the yellow basket! Can\'t wait!' },
+          { u: '@crypto_mike', t: 'How long does the battery last in real usage?' },
+        ];
+        let commentIdx = 0;
+        chatSimulationInterval = setInterval(() => {
+          if (!isLive) return;
+          const item = sampleComments[commentIdx % sampleComments.length];
+          commentIdx += 1;
+          addChatMessage(item.u, item.t);
+
+          // Every 3rd comment, simulate an order
+          if (commentIdx % 3 === 0) {
+            const selectedId = Number(productSelect?.value);
+            const prod = catalog.find((p) => p.id === selectedId) || catalog[0];
+            const randomBuyer = `@shopper_${Math.floor(100 + Math.random() * 900)}`;
+            addChatMessage(randomBuyer, prod?.title || 'Audio Gear', true);
+          }
+        }, 4000);
+
+        addChatMessage('system', '🚀 Broadcast started! Real-time TikTok Live audience and catalog synchronization enabled.');
+        showToast('You are now LIVE on TikTok Shop! Audience connected.', { variant: 'success' });
+      } else {
+        // End streaming
+        goLiveBtn.className = 'inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#FE2C55] via-pink-600 to-[#FE2C55] hover:opacity-95 px-5 py-2 text-xs sm:text-sm font-extrabold text-white shadow-lg shadow-pink-500/30 transition active:scale-95';
+        if (goLiveLabel) goLiveLabel.textContent = 'GO LIVE ON TIKTOK';
+        if (statusPill) {
+          statusPill.className = 'inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-2.5 py-0.5 text-[11px] font-bold text-slate-300 border border-slate-700';
+          statusPill.innerHTML = '<span class="h-2 w-2 rounded-full bg-slate-500"></span><span>STUDIO STANDBY</span>';
+        }
+        if (pillTag) {
+          pillTag.className = 'inline-flex items-center gap-1 rounded-md bg-rose-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow';
+          pillTag.innerHTML = '<span class="h-1.5 w-1.5 rounded-full bg-white animate-ping"></span><span>STANDBY</span>';
+        }
+        clearInterval(timerInterval);
+        clearInterval(viewerSimulationInterval);
+        clearInterval(chatSimulationInterval);
+        if (timerEl) timerEl.textContent = '00:00:00';
+        addChatMessage('system', '⏹️ Broadcast concluded. Stream analytics and buyer orders logged to Seller Central.');
+        showToast('TikTok Live session ended. Orders saved to inventory.', { variant: 'info' });
+      }
+    });
+  }
+
+  populateLiveProducts();
+  window.addEventListener('urban:seller_catalog_changed', populateLiveProducts);
+}
+
+/* ============================================================
+   Automated Physical Store Geolocation & Configuration Engine
+   ============================================================ */
+const STORE_PROFILE_KEY = 'urban:seller_store_profile';
+
+function getStoredStoreProfile() {
+  try {
+    const raw = localStorage.getItem(STORE_PROFILE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function detectAutomatedStoreLocation(target = 'store-cfg') {
+  const isSignup = target === 'signup';
+  const statusEl = document.getElementById(isSignup ? 'signup-geo-status' : 'store-geo-status');
+  const btnEl = document.getElementById(isSignup ? 'btn-signup-autolocate' : 'btn-store-autolocate');
+  const coordsInput = document.getElementById(isSignup ? 'signup-store-coords' : 'store-cfg-coords');
+  const cityInput = document.getElementById(isSignup ? 'signup-store-city' : 'store-cfg-city');
+  const addressInput = document.getElementById(isSignup ? 'signup-store-address' : 'store-cfg-address');
+  const mapIframe = document.getElementById('store-map-embed');
+
+  if (statusEl) {
+    statusEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping"></span><span>Triangulating GPS...</span>`;
+  }
+  if (btnEl) btnEl.disabled = true;
+
+  try {
+    const position = await new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation not supported by browser.'));
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 8000,
+        maximumAge: 0,
+      });
+    });
+
+    const lat = Number(position.coords.latitude.toFixed(6));
+    const lon = Number(position.coords.longitude.toFixed(6));
+    const accuracy = Math.round(position.coords.accuracy || 10);
+
+    if (coordsInput) coordsInput.value = `${lat}, ${lon}`;
+
+    // Attempt reverse geocoding via OpenStreetMap Nominatim
+    let detectedCity = 'Kampala Central';
+    let detectedAddress = `Plot ${Math.floor(20 + Math.random() * 80)}, Electronics Boulevard, Tech Concourse Suite 4A`;
+
+    try {
+      const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`, {
+        headers: { 'Accept-Language': 'en' },
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        const addr = data.address || {};
+        detectedCity = addr.city || addr.town || addr.county || addr.state || 'Kampala Central';
+        const road = addr.road || addr.pedestrian || addr.suburb || 'Electronics Boulevard';
+        const house = addr.house_number ? `Plot ${addr.house_number}, ` : '';
+        detectedAddress = `${house}${road}, ${detectedCity}`;
+      }
+    } catch {
+      /* fallback to electronic hub address */
+    }
+
+    if (cityInput) cityInput.value = detectedCity;
+    if (addressInput) addressInput.value = detectedAddress;
+
+    // Update map preview iframe
+    if (mapIframe) {
+      const delta = 0.015;
+      const bbox = `${lon - delta},${lat - delta},${lon + delta},${lat + delta}`;
+      mapIframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+    }
+
+    if (statusEl) {
+      statusEl.className = 'inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700';
+      statusEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span><span>GPS Locked (±${accuracy}m)</span>`;
+    }
+
+    showToast(`Physical store location detected via GPS: ${detectedCity} (${lat}, ${lon})!`, { variant: 'success' });
+  } catch (err) {
+    const fallbackLat = 0.3476;
+    const fallbackLon = 32.5825;
+    if (coordsInput) coordsInput.value = `${fallbackLat}, ${fallbackLon}`;
+    if (cityInput && !cityInput.value) cityInput.value = 'Kampala Central';
+    if (addressInput && !addressInput.value) addressInput.value = 'Plot 48, Electronics Boulevard, Innovation Hub Suite 4A';
+
+    if (statusEl) {
+      statusEl.className = 'inline-flex items-center gap-1 rounded-full bg-blue-100 dark:bg-blue-950/60 px-2.5 py-0.5 text-[10px] font-bold text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700';
+      statusEl.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span><span>Electronics Hub GPS Default</span>`;
+    }
+    showToast('Store location initialized to Central Electronics Innovation Hub.', { variant: 'info' });
+  } finally {
+    if (btnEl) btnEl.disabled = false;
+  }
+}
+
+function initStoreConfig() {
+  const form = document.getElementById('store-config-form');
+  const btnAutolocate = document.getElementById('btn-store-autolocate');
+  const btnSignupAutolocate = document.getElementById('btn-signup-autolocate');
+
+  if (btnAutolocate) {
+    btnAutolocate.addEventListener('click', () => detectAutomatedStoreLocation('store-cfg'));
+  }
+  if (btnSignupAutolocate) {
+    btnSignupAutolocate.addEventListener('click', () => detectAutomatedStoreLocation('signup'));
+  }
+
+  // Populate from existing stored profile
+  const saved = getStoredStoreProfile();
+  if (saved) {
+    const nameEl = document.getElementById('store-cfg-name');
+    const handleEl = document.getElementById('store-cfg-handle');
+    const catEl = document.getElementById('store-cfg-category');
+    const bioEl = document.getElementById('store-cfg-bio');
+    const hoursEl = document.getElementById('store-cfg-hours');
+    const phoneEl = document.getElementById('store-cfg-phone');
+    const pickupEl = document.getElementById('store-cfg-pickup');
+    const coordsEl = document.getElementById('store-cfg-coords');
+    const cityEl = document.getElementById('store-cfg-city');
+    const addrEl = document.getElementById('store-cfg-address');
+    const landmarkEl = document.getElementById('store-cfg-landmark');
+
+    if (nameEl && saved.storeName) nameEl.value = saved.storeName;
+    if (handleEl && saved.handle) handleEl.value = saved.handle;
+    if (catEl && saved.category) catEl.value = saved.category;
+    if (bioEl && saved.bio) bioEl.value = saved.bio;
+    if (hoursEl && saved.hours) hoursEl.value = saved.hours;
+    if (phoneEl && saved.phone) phoneEl.value = saved.phone;
+    if (pickupEl && saved.pickup) pickupEl.value = saved.pickup;
+    if (coordsEl && saved.coords) coordsEl.value = saved.coords;
+    if (cityEl && saved.city) cityEl.value = saved.city;
+    if (addrEl && saved.address) addrEl.value = saved.address;
+    if (landmarkEl && saved.landmark) landmarkEl.value = saved.landmark;
+  }
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const storeName = document.getElementById('store-cfg-name')?.value.trim() || 'Apex Quantum Lab';
+      const rawHandle = document.getElementById('store-cfg-handle')?.value.trim() || '@apex-quantum';
+      const handle = rawHandle.startsWith('@') ? rawHandle : `@${rawHandle}`;
+      const category = document.getElementById('store-cfg-category')?.value || 'Audio & Sound';
+      const bio = document.getElementById('store-cfg-bio')?.value.trim() || '';
+      const hours = document.getElementById('store-cfg-hours')?.value.trim() || 'Mon-Sat: 8:00 AM - 8:00 PM';
+      const phone = document.getElementById('store-cfg-phone')?.value.trim() || '+256 700 892 104';
+      const pickup = document.getElementById('store-cfg-pickup')?.value.trim() || 'Ready for pickup within 15 mins';
+      const coords = document.getElementById('store-cfg-coords')?.value.trim() || '0.3476, 32.5825';
+      const city = document.getElementById('store-cfg-city')?.value.trim() || 'Kampala Central';
+      const address = document.getElementById('store-cfg-address')?.value.trim() || 'Plot 48, Electronics Boulevard, Innovation Hub Suite 4A';
+      const landmark = document.getElementById('store-cfg-landmark')?.value.trim() || '';
+
+      const profile = {
+        id: handle.replace('@', ''),
+        storeName,
+        name: storeName,
+        handle,
+        category,
+        bio,
+        hours,
+        phone,
+        pickup,
+        coords,
+        city,
+        address: `${address} · ${city}`,
+        landmark,
+        rating: 4.95,
+        reviews: 38,
+        badge: 'Verified Electronic Hub',
+        status: 'Open · Express Pickup Ready',
+        icon: 'cpu',
+        bg: 'from-cyan-600 to-blue-700',
+        location: city,
+      };
+
+      localStorage.setItem(STORE_PROFILE_KEY, JSON.stringify(profile));
+
+      if (currentSeller) {
+        currentSeller.storeName = storeName;
+        currentSeller.handle = handle;
+        currentSeller.category = category;
+        currentSeller.location = city;
+        localStorage.setItem(SELLER_STORAGE_KEY, JSON.stringify(currentSeller));
+      }
+
+      renderDashboardData();
+      window.dispatchEvent(new CustomEvent('urban:store_profile_updated', { detail: profile }));
+      showToast(`Store configuration & automated location saved! Synced to Urban Scenery storefront.`, { variant: 'success' });
+    });
+  }
+}
+
+async function updatePasswordEntropyInspector(pw, prefix = 'seller') {
+  const shaEl = document.getElementById(`${prefix}-pw-sha256`);
+  const badgeEl = document.getElementById(`${prefix}-entropy-badge`);
+
+  if (!pw) {
+    if (shaEl) shaEl.textContent = 'None (Enter password)';
+    if (badgeEl) {
+      badgeEl.className = 'font-mono text-[10px] text-slate-500 font-bold bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full';
+      badgeEl.textContent = 'Entropy: 0 bits';
+    }
+    return;
+  }
+
+  let pool = 0;
+  if (/[a-z]/.test(pw)) pool += 26;
+  if (/[A-Z]/.test(pw)) pool += 26;
+  if (/[0-9]/.test(pw)) pool += 10;
+  if (/[^a-zA-Z0-9]/.test(pw)) pool += 33;
+  const entropyBits = Math.round(pw.length * Math.log2(pool || 1));
+
+  let rating = 'Weak';
+  let badgeColor = 'text-rose-600 bg-rose-100 dark:bg-rose-950/60 border-rose-300 dark:border-rose-800';
+  if (entropyBits >= 55) {
+    rating = 'Strong';
+    badgeColor = 'text-emerald-600 bg-emerald-100 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-800';
+  } else if (entropyBits >= 35) {
+    rating = 'Good';
+    badgeColor = 'text-amber-600 bg-amber-100 dark:bg-amber-950/60 border-amber-300 dark:border-amber-800';
+  }
+
+  if (badgeEl) {
+    badgeEl.className = `font-mono text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}`;
+    badgeEl.textContent = `Entropy: ${entropyBits} bits (${rating})`;
+  }
+
+  try {
+    const enc = new TextEncoder().encode(pw);
+    const hashBuf = await crypto.subtle.digest('SHA-256', enc);
+    const hashArr = Array.from(new Uint8Array(hashBuf));
+    const hashHex = hashArr.map((b) => b.toString(16).padStart(2, '0')).join('');
+    if (shaEl) shaEl.textContent = `${hashHex.slice(0, 16)}...${hashHex.slice(-8)}`;
+  } catch {
+    if (shaEl) shaEl.textContent = 'SHA-256 active';
+  }
 }
 
 /* ============================================================
    Dashboard Tabs
    ============================================================ */
 function switchDashboardTab(tabName) {
-  const tabs = ['overview', 'tiktok', 'uploader', 'inventory', 'agents', 'orders'];
+  const tabs = ['overview', 'tiktok', 'uploader', 'inventory', 'agents', 'orders', 'store'];
   tabs.forEach((t) => {
     const section = document.getElementById(`dash-tab-${t}`);
     const navBtn = document.getElementById(`dash-nav-${t}`);
@@ -1376,6 +1905,21 @@ function initAuth() {
   const tabSignUp = document.getElementById('tab-btn-signup');
   const formSignIn = document.getElementById('seller-signin-form');
   const formSignUp = document.getElementById('seller-signup-form');
+
+  // Password Visibility Toggle & Educational Security Inspector
+  const pwInput = document.getElementById('signin-password');
+  const togglePwBtn = document.getElementById('btn-seller-toggle-pw');
+  if (pwInput) {
+    if (togglePwBtn) {
+      togglePwBtn.addEventListener('click', () => {
+        const isPw = pwInput.type === 'password';
+        pwInput.type = isPw ? 'text' : 'password';
+        togglePwBtn.innerHTML = isPw ? icon('eye-off', 'h-4 w-4 text-brand-600') : icon('eye', 'h-4 w-4');
+      });
+    }
+    pwInput.addEventListener('input', () => updatePasswordEntropyInspector(pwInput.value, 'seller'));
+    updatePasswordEntropyInspector(pwInput.value, 'seller');
+  }
 
   // Toggle Tab
   if (tabSignIn && tabSignUp) {
@@ -1469,6 +2013,9 @@ function initAuth() {
       const email = document.getElementById('signup-email')?.value.trim() || '';
       const password = document.getElementById('signup-password')?.value || '';
       const category = document.getElementById('signup-category')?.value || 'Audio';
+      const city = document.getElementById('signup-store-city')?.value.trim() || 'Kampala Central';
+      const coords = document.getElementById('signup-store-coords')?.value.trim() || '0.3476, 32.5825';
+      const address = document.getElementById('signup-store-address')?.value.trim() || 'Plot 48, Electronics Boulevard, Innovation Hub Suite 4A';
       const submitBtn = formSignUp.querySelector('button[type="submit"]');
       if (submitBtn) submitBtn.disabled = true;
 
@@ -1484,9 +2031,38 @@ function initAuth() {
           storeName,
           handle,
           category,
+          location: city,
+          coords,
+          address,
         });
+
+        // Persist newly configured store profile and automated GPS location
+        const storeProfile = {
+          id: handle.replace('@', ''),
+          storeName,
+          name: storeName,
+          handle,
+          category,
+          bio: `${storeName} · Verified Electronics Store on Urban Scenery Ventures.`,
+          hours: 'Mon-Sat: 8:00 AM - 8:00 PM',
+          phone: '+256 700 892 104',
+          pickup: 'Ready for pickup within 15 mins',
+          coords,
+          city,
+          address: `${address} · ${city}`,
+          rating: 4.95,
+          reviews: 1,
+          badge: 'Verified Electronic Hub',
+          status: 'Open · Express Pickup Ready',
+          icon: 'cpu',
+          bg: 'from-cyan-600 to-blue-700',
+          location: city,
+        };
+        localStorage.setItem(STORE_PROFILE_KEY, JSON.stringify(storeProfile));
+        window.dispatchEvent(new CustomEvent('urban:store_profile_updated', { detail: storeProfile }));
+
         await refreshBackendDashboardData();
-        showToast(`Account "${storeName}" registered on Urban Scenery backend!`, {
+        showToast(`Account "${storeName}" & Automated GPS Store registered on Urban Scenery!`, {
           variant: 'success',
         });
         showDashboardView(newSeller);
@@ -1596,9 +2172,10 @@ async function initSellerApp() {
   initProductUploader();
   initAgentToggles();
   initTikTokInterface();
+  initStoreConfig();
 
   // Navigation tab links in dashboard
-  ['overview', 'tiktok', 'uploader', 'inventory', 'agents', 'orders'].forEach((tab) => {
+  ['overview', 'tiktok', 'uploader', 'inventory', 'agents', 'orders', 'store'].forEach((tab) => {
     document.getElementById(`dash-nav-${tab}`)?.addEventListener('click', () => switchDashboardTab(tab));
   });
 

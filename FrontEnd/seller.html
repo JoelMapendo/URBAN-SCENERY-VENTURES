@@ -128,9 +128,9 @@
                     <i data-lucide="watch" class="h-3.5 w-3.5 text-accent-300"></i>
                     <span>Apex Wearables Demo</span>
                   </button>
-                  <button type="button" data-demo-login="kinetic" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white transition">
-                    <i data-lucide="footprints" class="h-3.5 w-3.5 text-emerald-300"></i>
-                    <span>Acro Kinetic Demo</span>
+                  <button type="button" data-demo-login="drones" class="inline-flex items-center gap-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white transition">
+                    <i data-lucide="compass" class="h-3.5 w-3.5 text-cyan-300"></i>
+                    <span>Horizon Drones Demo</span>
                   </button>
                 </div>
               </div>
@@ -147,7 +147,7 @@
                     Sign In
                   </button>
                   <button type="button" id="tab-btn-signup" class="flex-1 rounded-xl py-2.5 text-center transition text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">
-                    Create Seller Account
+                    Create Seller Store & Location
                   </button>
                 </div>
 
@@ -170,14 +170,41 @@
                     <div class="relative mt-1.5">
                       <i data-lucide="lock" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
                       <input id="signin-password" type="password" required value="admin123" placeholder="••••••••"
-                        class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2.5 pl-10 pr-4 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition" />
+                        class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2.5 pl-10 pr-10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition" />
+                      <button type="button" id="btn-seller-toggle-pw" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                        <i data-lucide="eye" class="h-4 w-4"></i>
+                      </button>
                     </div>
                   </div>
 
-                  <div class="flex items-center">
+                  <!-- Educational Security Architecture Inspector -->
+                  <div class="rounded-2xl border border-slate-200/90 dark:border-slate-700/80 bg-slate-50/80 dark:bg-slate-800/50 p-3.5 space-y-2.5 text-xs">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-[11px]">
+                        <i data-lucide="shield-check" class="h-3.5 w-3.5 text-brand-500"></i>
+                        <span>Security & Architecture Inspector</span>
+                      </span>
+                      <span id="seller-entropy-badge" class="font-mono text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-800">
+                        Entropy: 48 bits (Good)
+                      </span>
+                    </div>
+
+                    <div class="space-y-1 font-mono text-[10px] text-slate-600 dark:text-slate-300">
+                      <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-sans">SHA-256 Digest:</span>
+                        <span id="seller-pw-sha256" class="truncate max-w-[200px] text-slate-700 dark:text-slate-300">Calculating...</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-slate-400 font-sans">Auth Architecture:</span>
+                        <span class="text-brand-600 dark:text-accent-400 font-semibold font-sans">JWT Bearer (FastAPI / OAuth2)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between text-xs">
                     <label class="flex items-center gap-2 cursor-pointer select-none">
                       <input type="checkbox" checked class="h-3.5 w-3.5 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
-                      <span class="text-xs text-slate-600 dark:text-slate-400">Remember this seller workstation</span>
+                      <span class="text-slate-600 dark:text-slate-400">Remember seller session</span>
                     </label>
                   </div>
 
@@ -197,7 +224,7 @@
                 <form id="seller-signup-form" class="hidden space-y-3.5">
                   <div>
                     <label for="signup-store-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Brand / Store Name</label>
-                    <input id="signup-store-name" type="text" required placeholder="e.g. Aura Sound Studio"
+                    <input id="signup-store-name" type="text" required placeholder="e.g. Apex Quantum Audio"
                       class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2 px-3 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition" />
                   </div>
 
@@ -206,19 +233,57 @@
                       <label for="signup-handle" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Store Handle</label>
                       <div class="relative mt-1">
                         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono">@</span>
-                        <input id="signup-handle" type="text" required placeholder="aurasound"
+                        <input id="signup-handle" type="text" required placeholder="apexquantum"
                           class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2 pl-7 pr-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition" />
                       </div>
                     </div>
                     <div>
-                      <label for="signup-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Category</label>
+                      <label for="signup-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Electronics Specialty</label>
                       <select id="signup-category" class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2 px-2.5 text-xs text-slate-900 dark:text-white focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition">
                         <option value="Audio">Audio & Acoustics</option>
-                        <option value="Wearables">Wearables & Tech</option>
-                        <option value="Footwear">Footwear & Apparel</option>
-                        <option value="Bags">Bags & Carry</option>
-                        <option value="Home">Home & Living</option>
+                        <option value="Drones">Drones & Robotics</option>
+                        <option value="Wearables">Wearables & Biotech</option>
+                        <option value="Computers">Computers & Gaming</option>
+                        <option value="Smartphones">Smartphones & Flagships</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <!-- Automated Store Location Block -->
+                  <div class="rounded-2xl border border-emerald-200/90 dark:border-emerald-800/80 bg-emerald-50/60 dark:bg-emerald-950/40 p-3.5 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <i data-lucide="map-pin" class="h-4 w-4 text-emerald-500 animate-bounce"></i>
+                        <span>Store Location (Automated GPS)</span>
+                      </span>
+                      <span id="signup-geo-status" class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span>Auto-Detect Ready</span>
+                      </span>
+                    </div>
+
+                    <button type="button" id="btn-signup-autolocate" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-2 px-3 text-xs font-bold hover:bg-brand-600 dark:hover:bg-brand-400 dark:hover:text-white transition shadow-sm">
+                      <i data-lucide="crosshair" class="h-3.5 w-3.5 text-cyan-400 dark:text-cyan-600"></i>
+                      <span>🛰️ Auto-Detect My Physical Store Location</span>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                      <div>
+                        <label for="signup-store-city" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Store City / Region</label>
+                        <input id="signup-store-city" type="text" placeholder="Auto-detecting..." value="Kampala Central"
+                          class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 px-2.5 text-xs text-slate-900 dark:text-white font-medium" />
+                      </div>
+                      <div>
+                        <label for="signup-store-coords" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">GPS Coordinates</label>
+                        <input id="signup-store-coords" type="text" readonly placeholder="Lat, Lon" value="0.3476, 32.5825"
+                          class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 py-1.5 px-2.5 text-xs text-slate-600 dark:text-slate-300 font-mono" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="signup-store-address" class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">Physical Store Street Address</label>
+                      <input id="signup-store-address" type="text" placeholder="Automated GPS Address" value="Plot 48, Electronics Boulevard, Innovation Hub Suite 4A"
+                        class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 px-2.5 text-xs text-slate-900 dark:text-white" />
                     </div>
                   </div>
 
@@ -253,12 +318,12 @@
                   </div>
 
                   <button type="submit" class="w-full mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-accent-500 py-3 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-accent-500/30 hover:bg-accent-600 active:scale-[0.99] transition">
-                    <span>Create Seller Account & Launch</span>
+                    <span>Create Seller Store & Launch</span>
                     <i data-lucide="arrow-right" class="h-4 w-4"></i>
                   </button>
 
                   <p class="text-[11px] text-slate-400 text-center">
-                    By signing up, you agree to Urban Scenery Ventures' Seller Agreement and Automated Merchant Protocols.
+                    By signing up, your verified electronic store and GPS location will be published live to Urban Scenery Ventures.
                   </p>
                 </form>
 
@@ -722,6 +787,13 @@
 
             <!-- Sub-Navigation for TikTok Tools -->
             <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3 overflow-x-auto no-scrollbar">
+              <button type="button" data-tt-subtab-btn="live-studio" class="inline-flex items-center gap-1.5 rounded-full border border-pink-500/50 bg-gradient-to-r from-pink-500/15 via-[#FE2C55]/15 to-purple-500/15 text-pink-600 dark:text-pink-400 hover:text-pink-700 px-4 py-1.5 text-xs font-bold transition shadow-sm">
+                <span class="flex h-2 w-2 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FE2C55] opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-[#FE2C55]"></span>
+                </span>
+                <span>🔴 TikTok Live Studio</span>
+              </button>
               <button type="button" data-tt-subtab-btn="catalog" class="inline-flex items-center gap-1.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-1.5 text-xs font-bold transition shadow-sm">
                 <i data-lucide="package" class="h-3.5 w-3.5"></i>
                 <span>Product Catalog & Sync</span>
@@ -738,6 +810,187 @@
                 <i data-lucide="terminal" class="h-3.5 w-3.5 text-emerald-500"></i>
                 <span>API Inspector & Keys</span>
               </button>
+            </div>
+
+            <!-- SUB-PANE 0: TikTok Live Shopping Broadcast Studio -->
+            <div id="tt-subpane-live-studio" class="hidden space-y-5">
+              <div class="rounded-3xl border border-pink-200/80 dark:border-pink-900/40 bg-gradient-to-b from-slate-900 via-[#0B0F19] to-black p-6 sm:p-7 text-white shadow-2xl relative overflow-hidden">
+                <div class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#FE2C55]/20 blur-3xl"></div>
+                <div class="pointer-events-none absolute -left-24 -bottom-24 h-72 w-72 rounded-full bg-[#25F4EE]/20 blur-3xl"></div>
+
+                <!-- Live Header & Broadcast Status -->
+                <div class="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-tr from-[#FE2C55] to-pink-600 text-white shadow-lg shadow-pink-500/30">
+                      <i data-lucide="radio" class="h-5 w-5"></i>
+                    </span>
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h4 class="font-bold text-base sm:text-lg text-white">TikTok Live Shopping Broadcast Studio</h4>
+                        <span id="tt-live-status-pill" class="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-2.5 py-0.5 text-[11px] font-bold text-slate-300 border border-slate-700">
+                          <span class="h-2 w-2 rounded-full bg-slate-500"></span>
+                          <span>STUDIO STANDBY</span>
+                        </span>
+                      </div>
+                      <p class="text-xs text-slate-400">Broadcast your electronic products live to TikTok viewers with interactive in-stream purchasing.</p>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <button type="button" id="btn-tt-live-rtmp-toggle" class="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-slate-300 transition">
+                      <i data-lucide="key" class="h-3.5 w-3.5 text-amber-400"></i>
+                      <span>RTMP Credentials</span>
+                    </button>
+                    <button type="button" id="btn-tt-go-live" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#FE2C55] via-pink-600 to-[#FE2C55] hover:opacity-95 px-5 py-2 text-xs sm:text-sm font-extrabold text-white shadow-lg shadow-pink-500/30 transition active:scale-95">
+                      <i data-lucide="video" class="h-4 w-4"></i>
+                      <span id="btn-tt-go-live-label">GO LIVE ON TIKTOK</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- RTMP Stream Details Drawer (Expandable) -->
+                <div id="tt-live-rtmp-drawer" class="hidden relative mt-4 rounded-2xl border border-white/10 bg-black/60 p-4 text-xs font-mono space-y-2.5">
+                  <div class="flex items-center justify-between text-slate-400">
+                    <span class="font-sans font-bold text-slate-200">OBS & Streamlabs RTMP Server Ingestion:</span>
+                    <span class="text-[10px] text-emerald-400">Ultra-Low Latency Mode</span>
+                  </div>
+                  <div class="grid gap-2 sm:grid-cols-2">
+                    <div>
+                      <span class="text-[10px] text-slate-500">RTMP Server URL</span>
+                      <div class="flex items-center gap-2 mt-0.5 bg-slate-900/90 rounded-lg p-2 border border-white/10 text-slate-200">
+                        <span class="truncate flex-1">rtmp://live-push.tiktokglobalshop.com/live/</span>
+                        <button type="button" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('rtmp://live-push.tiktokglobalshop.com/live/')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
+                      </div>
+                    </div>
+                    <div>
+                      <span class="text-[10px] text-slate-500">Stream Key (Keep Private)</span>
+                      <div class="flex items-center gap-2 mt-0.5 bg-slate-900/90 rounded-lg p-2 border border-white/10 text-slate-200">
+                        <span class="truncate flex-1">live_usv_77291a9b20_sec</span>
+                        <button type="button" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('live_usv_77291a9b20_sec')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Stage Viewport & Live Stream Controls Grid -->
+                <div class="relative mt-5 grid gap-6 lg:grid-cols-12">
+                  
+                  <!-- Main Live Stage Viewport (7 Cols) -->
+                  <div class="lg:col-span-7 flex flex-col">
+                    <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl bg-black border border-white/10 overflow-hidden shadow-2xl flex items-center justify-center">
+                      
+                      <!-- Video Stream Element (WebRTC Camera or Fallback) -->
+                      <video id="tt-live-webcam" autoplay playsinline muted class="hidden h-full w-full object-cover"></video>
+                      <img id="tt-live-poster" src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=1200&q=80" alt="Live Stream Stage" class="h-full w-full object-cover" />
+                      
+                      <!-- Dark Vignette Overlay -->
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none"></div>
+
+                      <!-- Stream HUD Overlay (Top-Left): LIVE Badge & Viewers -->
+                      <div class="absolute top-3 left-3 flex items-center gap-2 z-10">
+                        <span id="tt-live-pill-tag" class="inline-flex items-center gap-1 rounded-md bg-rose-600 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow">
+                          <span class="h-1.5 w-1.5 rounded-full bg-white animate-ping"></span>
+                          <span>STANDBY</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[11px] font-bold text-white border border-white/10">
+                          <i data-lucide="users" class="h-3 w-3 text-[#25F4EE]"></i>
+                          <span id="tt-live-viewers-count">0</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[11px] font-bold text-white border border-white/10">
+                          <i data-lucide="heart" class="h-3 w-3 text-[#FE2C55]"></i>
+                          <span id="tt-live-likes-count">0</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-md bg-black/60 backdrop-blur px-2 py-0.5 text-[11px] font-mono text-slate-300 border border-white/10">
+                          <i data-lucide="clock" class="h-3 w-3 text-amber-400"></i>
+                          <span id="tt-live-timer">00:00:00</span>
+                        </span>
+                      </div>
+
+                      <!-- Pinned Yellow Shopping Basket Widget Overlay (Bottom-Left) -->
+                      <div id="tt-live-pinned-basket" class="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-xs z-10 rounded-2xl bg-amber-400 text-slate-950 p-2.5 shadow-2xl flex items-center justify-between gap-3 border border-amber-300">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                          <img id="tt-pinned-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=150&q=80" alt="Pinned Product" class="h-11 w-11 rounded-xl object-cover border border-amber-500 shrink-0" />
+                          <div class="min-w-0">
+                            <span class="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-amber-950">
+                              <span>🛍️ #1 PINNED IN LIVE</span>
+                              <span class="rounded bg-rose-600 px-1 text-[8px] font-bold text-white">LIVE DEAL</span>
+                            </span>
+                            <p id="tt-pinned-title" class="font-extrabold text-xs truncate text-slate-950">Sony WH-1000XM5</p>
+                            <p class="text-xs font-black text-slate-950"><span id="tt-pinned-price">$349.00</span> <span class="text-[10px] line-through text-slate-700 font-normal">$399.00</span></p>
+                          </div>
+                        </div>
+                        <button type="button" id="btn-tt-pinned-buy-demo" class="shrink-0 rounded-xl bg-slate-950 hover:bg-slate-900 text-white px-3 py-1.5 text-xs font-black transition active:scale-95 shadow">
+                          BUY NOW
+                        </button>
+                      </div>
+
+                    </div>
+
+                    <!-- Hardware Controls Bar -->
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-white/5 border border-white/10 p-2.5">
+                      <div class="flex items-center gap-2">
+                        <button type="button" id="btn-tt-toggle-cam" class="inline-flex items-center gap-1.5 rounded-xl bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-semibold text-white transition">
+                          <i data-lucide="video" class="h-3.5 w-3.5 text-cyan-400"></i>
+                          <span id="btn-tt-toggle-cam-label">Enable Camera</span>
+                        </button>
+                        <button type="button" id="btn-tt-toggle-mic" class="inline-flex items-center gap-1.5 rounded-xl bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-semibold text-white transition">
+                          <i data-lucide="mic" class="h-3.5 w-3.5 text-emerald-400"></i>
+                          <span id="btn-tt-toggle-mic-label">Mic Ready</span>
+                        </button>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <button type="button" id="btn-tt-trigger-coupon" class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 px-3 py-1.5 text-xs font-bold text-slate-950 transition active:scale-95 shadow-md">
+                          <i data-lucide="zap" class="h-3.5 w-3.5"></i>
+                          <span>Drop 10% Flash Coupon</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: Interactive Stream Management & Live Chat (5 Cols) -->
+                  <div class="lg:col-span-5 flex flex-col space-y-4">
+                    
+                    <!-- Pinned Product Selector -->
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-2">
+                      <label for="tt-live-product-selector" class="block text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
+                        <span>Select Product to Pin on Screen</span>
+                        <span class="text-[10px] text-amber-400 font-semibold">Instant In-Stream Link</span>
+                      </label>
+                      <select id="tt-live-product-selector" class="w-full rounded-xl border border-white/15 bg-slate-900 p-2.5 text-xs text-white focus:border-pink-500 focus:outline-none">
+                        <!-- Populated dynamically from catalog -->
+                      </select>
+                    </div>
+
+                    <!-- Live TikTok Chat & Buyer Activity Stream -->
+                    <div class="flex-1 flex flex-col rounded-2xl border border-white/10 bg-black/60 p-4 space-y-3">
+                      <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                        <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                          <i data-lucide="message-square" class="h-3.5 w-3.5 text-[#25F4EE]"></i>
+                          <span>Live Viewer Chat & Buyer Feed</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400">Sync: Real-time</span>
+                      </div>
+
+                      <!-- Chat Messages Scroll Area -->
+                      <div id="tt-live-chat-box" class="h-44 sm:h-52 overflow-y-auto space-y-2 font-sans text-xs pr-1">
+                        <div class="rounded-lg bg-white/5 p-2 text-slate-300">
+                          <span class="font-bold text-[#FE2C55]">@tiktok_moderator:</span> Welcome to the official live stream! Tap the yellow shopping basket below to claim live-exclusive electronics pricing.
+                        </div>
+                      </div>
+
+                      <!-- Host Chat Input -->
+                      <form id="tt-live-host-chat-form" class="flex items-center gap-2 pt-1 border-t border-white/10">
+                        <input id="tt-live-host-input" type="text" placeholder="Type message as Host..." class="flex-1 rounded-xl border border-white/15 bg-slate-900 px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-pink-500" />
+                        <button type="submit" class="rounded-xl bg-[#FE2C55] hover:bg-pink-600 px-3 py-1.5 text-xs font-bold text-white transition">
+                          Send
+                        </button>
+                      </form>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
             </div>
 
             <!-- SUB-PANE 1: Product Catalog & Sync Table -->
@@ -1466,6 +1719,169 @@
               <tbody id="orders-table-body" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
             </table>
           </div>
+
+        </div>
+
+      </div>
+
+      <!-- =========================================================
+           TAB 6: STORE CONFIGURATION & AUTOMATED PHYSICAL LOCATION
+           ========================================================= -->
+      <div id="dash-tab-store" class="hidden space-y-6">
+        
+        <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="grid h-9 w-9 place-items-center rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
+                  <i data-lucide="map-pin" class="h-5 w-5"></i>
+                </span>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Store Identity & Automated Physical Location</h3>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                Configure your verified electronics store profile. Your physical location is automated via satellite GPS so buyers can discover your hub for same-day local pickup and fast regional dispatch.
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <span id="store-sync-badge" class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Marketplace Synced</span>
+              </span>
+            </div>
+          </div>
+
+          <form id="store-config-form" class="mt-8 space-y-8">
+            <div class="grid gap-8 lg:grid-cols-12">
+              
+              <!-- LEFT COLUMN (6 cols): Automated GPS Geolocation Engine & Map -->
+              <div class="lg:col-span-6 space-y-5">
+                <div class="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/30 p-5 space-y-4">
+                  
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-900 dark:text-emerald-300 flex items-center gap-2">
+                      <i data-lucide="navigation" class="h-4 w-4 text-emerald-600"></i>
+                      <span>Automated Geolocation Engine</span>
+                    </span>
+                    <span id="store-geo-status" class="inline-flex items-center gap-1 rounded-full bg-emerald-100 dark:bg-emerald-900/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700">
+                      <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                      <span>GPS Online · Ready</span>
+                    </span>
+                  </div>
+
+                  <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Click below to automatically detect your physical store location using browser geolocation, Wi-Fi tri-lateration, and OpenStreetMap reverse geocoding.
+                  </p>
+
+                  <button type="button" id="btn-store-autolocate" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 py-3 px-4 text-xs sm:text-sm font-bold shadow-md transition active:scale-[0.99]">
+                    <i data-lucide="crosshair" class="h-4 w-4 text-cyan-400 dark:text-cyan-600"></i>
+                    <span>🛰️ Auto-Detect My Physical Store Location</span>
+                  </button>
+
+                  <!-- Map Preview Embed -->
+                  <div class="rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 h-52 relative">
+                    <iframe id="store-map-embed" class="w-full h-full border-0" src="https://www.openstreetmap.org/export/embed.html?bbox=32.56,0.32,32.61,0.36&layer=mapnik&marker=0.3476,32.5825" loading="lazy"></iframe>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label for="store-cfg-coords" class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300">GPS Coordinates (Lat, Lon)</label>
+                      <input id="store-cfg-coords" type="text" readonly value="0.3476, 32.5825"
+                        class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/70 p-2.5 font-mono text-xs text-slate-800 dark:text-slate-200 font-semibold" />
+                    </div>
+                    <div>
+                      <label for="store-cfg-city" class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300">City / Commercial District</label>
+                      <input id="store-cfg-city" type="text" required value="Kampala Central"
+                        class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white font-medium" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label for="store-cfg-address" class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300">Physical Store Street Address</label>
+                    <input id="store-cfg-address" type="text" required value="Plot 48, Electronics Boulevard, Innovation Hub Suite 4A"
+                      class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white" />
+                  </div>
+
+                  <div>
+                    <label for="store-cfg-landmark" class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300">Pickup Landmark & Floor Instructions</label>
+                    <input id="store-cfg-landmark" type="text" value="Opposite Tech Concourse, Ground Floor Express Pickup Desk"
+                      class="mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white" />
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- RIGHT COLUMN (6 cols): Store Branding & Electronics Profile -->
+              <div class="lg:col-span-6 space-y-4">
+                
+                <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 p-5 space-y-4">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <i data-lucide="store" class="h-4 w-4 text-brand-500"></i>
+                    <span>Storefront Profile & Specialty</span>
+                  </span>
+
+                  <div>
+                    <label for="store-cfg-name" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Store Brand Name</label>
+                    <input id="store-cfg-name" type="text" required value="Apex Quantum Lab"
+                      class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs sm:text-sm text-slate-900 dark:text-white font-bold" />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label for="store-cfg-handle" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Store Handle (@slug)</label>
+                      <input id="store-cfg-handle" type="text" required value="@apex-quantum"
+                        class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs font-mono text-brand-600 dark:text-accent-400 font-bold" />
+                    </div>
+                    <div>
+                      <label for="store-cfg-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Primary Electronics Department</label>
+                      <select id="store-cfg-category" class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white font-medium">
+                        <option value="Audio & Sound" selected>Audio & Acoustics (Studio Monitors, Hi-Fi)</option>
+                        <option value="Drones & Robotics">Drones & Robotics (UAVs, Gimbals)</option>
+                        <option value="Smartphones & Tablets">Smartphones & Tablets (Flagships, Foldables)</option>
+                        <option value="Computers & Gaming">Computers & Gaming (Rig Components, GPUs)</option>
+                        <option value="Wearables & Biotech">Wearables & Biotech (Smartwatches, Health)</option>
+                        <option value="Smart Home & Power">Smart Home & Power (Solar, Battery Hubs)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label for="store-cfg-bio" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Store Bio & Warranty Notice</label>
+                    <textarea id="store-cfg-bio" rows="3"
+                      class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white leading-relaxed">East Africa's premier destination for studio-grade audio monitors, active noise-cancelling headphones, and audiophile gear. Official manufacturer warranty on all items.</textarea>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label for="store-cfg-hours" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Operating Hours</label>
+                      <input id="store-cfg-hours" type="text" value="Mon-Sat: 8:00 AM - 8:00 PM"
+                        class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white" />
+                    </div>
+                    <div>
+                      <label for="store-cfg-phone" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Customer Support Phone / WhatsApp</label>
+                      <input id="store-cfg-phone" type="text" value="+256 700 892 104"
+                        class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white font-mono" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label for="store-cfg-pickup" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Pickup Speed SLA</label>
+                    <input id="store-cfg-pickup" type="text" value="Ready for pickup within 15 mins"
+                      class="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs text-slate-900 dark:text-white" />
+                  </div>
+
+                </div>
+
+                <button type="submit" id="btn-save-store-profile" class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-accent-500 hover:bg-accent-600 text-white py-3.5 px-4 text-xs sm:text-sm font-bold shadow-lg shadow-accent-500/30 transition active:scale-[0.99]">
+                  <i data-lucide="check-circle" class="h-4 w-4"></i>
+                  <span>Save Store Configuration & Sync to Global Marketplace</span>
+                </button>
+
+              </div>
+
+            </div>
+          </form>
 
         </div>
 
