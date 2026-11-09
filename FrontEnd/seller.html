@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Urban Scenery Ventures · Seller Central — Taking your business to the world</title>
   <meta name="description" content="Sell on Urban Scenery Ventures. Effortless product listing, automated dynamic repricing, 24/7 customer support, and real-time merchant analytics." />
-  <meta name="theme-color" content="#0B0F19" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
   <script>
@@ -171,7 +170,7 @@
                       <i data-lucide="lock" class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
                       <input id="signin-password" type="password" required value="admin123" placeholder="••••••••"
                         class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800 py-2.5 pl-10 pr-10 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-500/20 transition" />
-                      <button type="button" id="btn-seller-toggle-pw" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                      <button type="button" id="btn-seller-toggle-pw" aria-label="Toggle password visibility" title="Toggle password visibility" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
                         <i data-lucide="eye" class="h-4 w-4"></i>
                       </button>
                     </div>
@@ -890,14 +889,14 @@
                       <span class="text-[10px] text-slate-500">RTMP Server URL</span>
                       <div class="flex items-center gap-2 mt-0.5 bg-slate-900/90 rounded-lg p-2 border border-white/10 text-slate-200">
                         <span class="truncate flex-1">rtmp://live-push.tiktokglobalshop.com/live/</span>
-                        <button type="button" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('rtmp://live-push.tiktokglobalshop.com/live/')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
+                        <button type="button" aria-label="Copy RTMP Server URL" title="Copy RTMP Server URL" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('rtmp://live-push.tiktokglobalshop.com/live/')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
                       </div>
                     </div>
                     <div>
                       <span class="text-[10px] text-slate-500">Stream Key (Keep Private)</span>
                       <div class="flex items-center gap-2 mt-0.5 bg-slate-900/90 rounded-lg p-2 border border-white/10 text-slate-200">
                         <span class="truncate flex-1">live_usv_77291a9b20_sec</span>
-                        <button type="button" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('live_usv_77291a9b20_sec')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
+                        <button type="button" aria-label="Copy Stream Key" title="Copy Stream Key" class="text-cyan-400 hover:text-white" onclick="navigator.clipboard.writeText('live_usv_77291a9b20_sec')"><i data-lucide="copy" class="h-3.5 w-3.5"></i></button>
                       </div>
                     </div>
                   </div>
@@ -1619,8 +1618,9 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Targeting Buy Box algorithmically</p>
                   </div>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked data-agent-toggle="repricer" class="sr-only peer" />
+                <label for="agent-toggle-repricer" class="relative inline-flex items-center cursor-pointer">
+                  <input id="agent-toggle-repricer" type="checkbox" checked data-agent-toggle="repricer" aria-label="Toggle Dynamic Repricing Agent" title="Toggle Dynamic Repricing Agent" class="sr-only peer" />
+                  <span class="sr-only">Toggle Dynamic Repricing Agent</span>
                   <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                 </label>
               </div>
@@ -1645,8 +1645,9 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Autonomous A/B content testing</p>
                   </div>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked data-agent-toggle="copywriter" class="sr-only peer" />
+                <label for="agent-toggle-copywriter" class="relative inline-flex items-center cursor-pointer">
+                  <input id="agent-toggle-copywriter" type="checkbox" checked data-agent-toggle="copywriter" aria-label="Toggle Listing Copywriter & SEO Agent" title="Toggle Listing Copywriter & SEO Agent" class="sr-only peer" />
+                  <span class="sr-only">Toggle Listing Copywriter & SEO Agent</span>
                   <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                 </label>
               </div>
@@ -1671,8 +1672,9 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Inventory risk intelligence</p>
                   </div>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked data-agent-toggle="forecaster" class="sr-only peer" />
+                <label for="agent-toggle-forecaster" class="relative inline-flex items-center cursor-pointer">
+                  <input id="agent-toggle-forecaster" type="checkbox" checked data-agent-toggle="forecaster" aria-label="Toggle Predictive Restock Forecaster" title="Toggle Predictive Restock Forecaster" class="sr-only peer" />
+                  <span class="sr-only">Toggle Predictive Restock Forecaster</span>
                   <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                 </label>
               </div>
@@ -1697,8 +1699,9 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Autonomous inquiry resolver</p>
                   </div>
                 </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" checked data-agent-toggle="supportBot" class="sr-only peer" />
+                <label for="agent-toggle-support-bot" class="relative inline-flex items-center cursor-pointer">
+                  <input id="agent-toggle-support-bot" type="checkbox" checked data-agent-toggle="supportBot" aria-label="Toggle 24/7 AI Customer Support Bot" title="Toggle 24/7 AI Customer Support Bot" class="sr-only peer" />
+                  <span class="sr-only">Toggle 24/7 AI Customer Support Bot</span>
                   <div class="w-11 h-6 bg-slate-300 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                 </label>
               </div>
@@ -1943,7 +1946,7 @@
     <div class="flex items-center gap-3 rounded-2xl bg-slate-900 px-4 py-3.5 text-white shadow-2xl">
       <span id="toast-icon" class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald-500"></span>
       <p id="toast-message" class="flex-1 text-sm font-medium">Notification</p>
-      <button id="toast-action" type="button" class="hidden shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"></button>
+      <button id="toast-action" type="button" aria-label="Toast action" title="Toast action" class="hidden shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"></button>
     </div>
   </div>
 

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Urban Scenery Ventures — Taking your business to the world</title>
   <meta name="description" content="Shop Urban Scenery Ventures: curated metropolitan tech, acoustics, and everyday essentials. Taking your business to the world." />
-  <meta name="theme-color" content="#0B0F19" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/urban-scenery-logo.png" />
   <!-- Theme immediate initialization to prevent flash -->
@@ -60,7 +59,7 @@
           <span class="text-slate-300 dark:text-slate-700">|</span>
           <!-- Currency selector -->
           <div class="flex items-center gap-1">
-            <select id="currency-select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-bold text-[#E6007E] dark:text-accent-400 focus:outline-none cursor-pointer">
+            <select id="currency-select" aria-label="Select Currency" title="Select Currency" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-1.5 py-0.5 text-[11px] font-bold text-[#E6007E] dark:text-accent-400 focus:outline-none cursor-pointer">
               <option value="UGX">UGX (USh)</option>
               <option value="USD">USD ($)</option>
               <option value="EUR">EUR (€)</option>
@@ -104,7 +103,7 @@
 
           <!-- Category dropdown within search bar -->
           <div class="absolute right-28 sm:right-32 flex items-center pr-2 border-r border-slate-200 dark:border-slate-700/80">
-            <select id="search-category-select" class="bg-transparent text-xs text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer pr-1">
+            <select id="search-category-select" aria-label="Search Category" title="Search Category" class="bg-transparent text-xs text-slate-600 dark:text-slate-300 focus:outline-none cursor-pointer pr-1">
               <option value="all" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Electronics</option>
               <option value="Computers" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Laptops & PCs</option>
               <option value="Phones & Tablets" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Phones & Tablets</option>
@@ -694,10 +693,10 @@
           </div>
 
           <!-- Verified Sellers Only Toggle -->
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <label for="sidebar-verified-only" class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between cursor-pointer">
             <span class="text-xs text-slate-700 dark:text-slate-300 font-medium">Verified Sellers Only</span>
-            <input type="checkbox" id="sidebar-verified-only" class="rounded text-brand-500 focus:ring-brand-400 h-4 w-4 cursor-pointer accent-[#E6007E]" />
-          </div>
+            <input type="checkbox" id="sidebar-verified-only" aria-label="Verified Sellers Only" title="Verified Sellers Only" class="rounded text-brand-500 focus:ring-brand-400 h-4 w-4 cursor-pointer accent-[#E6007E]" />
+          </label>
         </aside>
 
         <!-- Right Main Catalog Column -->
@@ -724,7 +723,7 @@
               </button>
 
               <div class="lg:hidden relative">
-                <select id="sort-select" class="appearance-none rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 pl-3 pr-8 text-xs font-medium text-slate-700 dark:text-slate-200">
+                <select id="sort-select" aria-label="Sort products" title="Sort products" class="appearance-none rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 py-1.5 pl-3 pr-8 text-xs font-medium text-slate-700 dark:text-slate-200">
                   <option value="featured">Featured</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
@@ -1080,7 +1079,7 @@
     <div id="cart-shipping" class="hidden border-b border-slate-100 dark:border-slate-800 bg-brand-50/60 dark:bg-brand-500/10 px-5 py-3">
       <p id="cart-shipping-text" class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300"></p>
       <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-        <div id="cart-shipping-bar" class="h-full rounded-full bg-brand-500 transition-all duration-500" style="width: 0%"></div>
+        <div id="cart-shipping-bar" class="h-full w-0 rounded-full bg-brand-500 transition-all duration-500"></div>
       </div>
     </div>
 
@@ -1298,7 +1297,7 @@
     <div class="flex items-center gap-3 rounded-2xl bg-slate-900 px-4 py-3.5 text-white shadow-2xl">
       <span id="toast-icon" class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald-500"></span>
       <p id="toast-message" class="flex-1 text-sm font-medium">Added to cart</p>
-      <button id="toast-action" type="button" class="hidden shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"></button>
+      <button id="toast-action" type="button" aria-label="Toast action" title="Toast action" class="hidden shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"></button>
     </div>
   </div>
 

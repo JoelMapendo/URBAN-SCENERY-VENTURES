@@ -7,7 +7,7 @@ const ENV_API_BASE = import.meta.env.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL).replace(/\/+$/, '')
   : null;
 
-const FALLBACK_DIRECT_API = 'http://127.0.0.1:8000/api/v1';
+const FALLBACK_DIRECT_API = 'https://agentic-connexa-backend.onrender.com/api/v1';
 const AUTH_STORAGE_KEY = 'urban:auth_session';
 const RECENT_ORDERS_KEY = 'urban:recent_order_ids';
 
@@ -215,8 +215,8 @@ export async function checkBackendHealth() {
       return healthy;
     }
     if (!ENV_API_BASE) {
-      const directRes = await fetch('http://127.0.0.1:8000/health', { headers: { Accept: 'application/json' } });
-      if (directRes.ok) {
+      const directRes = await fetch('https://agentic-connexa-backend.onrender.com/health', { headers: { Accept: 'application/json' } }).catch(() => null);
+      if (directRes && directRes.ok) {
         resolvedApiBase = FALLBACK_DIRECT_API;
         setBackendOnline(true);
         return true;
@@ -225,7 +225,7 @@ export async function checkBackendHealth() {
   } catch {
     if (!ENV_API_BASE) {
       try {
-        const directRes = await fetch('http://127.0.0.1:8000/health', { headers: { Accept: 'application/json' } });
+        const directRes = await fetch('https://agentic-connexa-backend.onrender.com/health', { headers: { Accept: 'application/json' } });
         if (directRes.ok) {
           resolvedApiBase = FALLBACK_DIRECT_API;
           setBackendOnline(true);

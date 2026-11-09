@@ -7,6 +7,13 @@
     "${workspaceFolder}/schemas",
     "${workspaceFolder}/services"
   ],
-  "html.validate.scripts": false
+  "html.validate.scripts": false,
+  "html.validate.styles": false,
+  "microsoft-edge-tools.webhint.validBrowsers": [
+    "edge >= 90",
+    "chrome >= 90",
+    "safari >= 14",
+    "firefox >= 90"
+  ]
 }
 

@@ -34,10 +34,13 @@ export function applyTheme(theme) {
   }
 
   // Update theme meta color
-  const metaTheme = document.querySelector('meta[name="theme-color"]');
-  if (metaTheme) {
-    metaTheme.setAttribute('content', isDark ? '#0B0F19' : '#FFFFFF');
+  let metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (!metaTheme) {
+    metaTheme = document.createElement('meta');
+    metaTheme.setAttribute('name', 'theme-color');
+    document.head.appendChild(metaTheme);
   }
+  metaTheme.setAttribute('content', isDark ? '#0B0F19' : '#FFFFFF');
 
   // Update all theme toggle buttons across the page
   document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
