@@ -199,6 +199,36 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
               <span>{mode === 'LOGIN' ? 'Sign In' : 'Create Account'}</span>
             )}
           </button>
+
+          {mode === 'LOGIN' && (
+            <div className="pt-2 text-center">
+              <span className="text-[10px] text-slate-400 uppercase font-mono block mb-1.5">
+                Quick Demo Autofill:
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('admin@urbanventures.com');
+                    setPassword('admin123');
+                  }}
+                  className="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold transition-all border border-slate-200 dark:border-slate-700"
+                >
+                  Admin Hub
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('customer@example.com');
+                    setPassword('customer123');
+                  }}
+                  className="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-mono font-bold transition-all border border-slate-200 dark:border-slate-700"
+                >
+                  Customer User
+                </button>
+              </div>
+            </div>
+          )}
         </form>
 
         <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800/80 text-center">

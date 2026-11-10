@@ -3,6 +3,7 @@ import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { HeroBanner } from './components/storefront/HeroBanner';
 import { ProductGrid } from './components/storefront/ProductGrid';
+import { TechShowcaseSections } from './components/storefront/TechShowcaseSections';
 import { CartDrawer } from './components/storefront/CartDrawer';
 import { CheckoutModal } from './components/storefront/CheckoutModal';
 import { AuthModal } from './components/auth/AuthModal';
@@ -26,6 +27,19 @@ export const App: React.FC = () => {
     if (gridElem) {
       gridElem.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleCategorySelect = (category: string) => {
+    const queryMap: Record<string, string> = {
+      All: '',
+      'Smart Home': 'smart',
+      Audio: 'audio',
+      Wearables: 'watch',
+      Accessories: 'accessories',
+      Sale: 'deal',
+    };
+    const targetQuery = queryMap[category] !== undefined ? queryMap[category] : category.toLowerCase();
+    handleHeroSearch(targetQuery);
   };
 
   const handleFocusSearch = () => {
@@ -59,6 +73,7 @@ export const App: React.FC = () => {
         onNavigate={(v) => setCurrentView(v)}
         onOpenAuth={() => setAuthModalOpen(true)}
         onFocusSearch={handleFocusSearch}
+        onSelectCategory={handleCategorySelect}
       />
 
       {/* Main Content Area */}
@@ -71,12 +86,19 @@ export const App: React.FC = () => {
                 setAssistantPrompt('What are your top trending electronics this week?')
               }
               onExploreProducts={handleExploreProducts}
+              onSelectCategory={handleCategorySelect}
             />
 
             <ProductGrid
               initialSearchQuery={searchQuery}
               onClearInitialSearch={() => setSearchQuery('')}
               onOpenShoppingAssistant={(prompt) => setAssistantPrompt(prompt)}
+            />
+
+            {/* Curated Tech Ideas, Exclusive Deals Promo & Trust Badges (Reference 2) */}
+            <TechShowcaseSections
+              onSelectIdea={(query) => handleHeroSearch(query)}
+              onExploreDeals={() => handleHeroSearch('sale')}
             />
 
             {/* Persistent AI Shopping Assistant */}

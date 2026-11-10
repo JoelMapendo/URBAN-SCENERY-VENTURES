@@ -11,6 +11,14 @@ import {
   Search,
   Sun,
   Moon,
+  Heart,
+  Laptop,
+  Home as HomeIcon,
+  Headphones,
+  Watch,
+  Sliders,
+  Tag,
+  Globe,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
@@ -21,6 +29,7 @@ interface HeaderProps {
   onNavigate: (view: 'store' | 'admin') => void;
   onOpenAuth: () => void;
   onFocusSearch: () => void;
+  onSelectCategory?: (category: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigate,
   onOpenAuth,
   onFocusSearch,
+  onSelectCategory,
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const { getTotalItems, setIsOpen: setCartOpen } = useCartStore();
@@ -35,25 +45,47 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(3);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const totalCartItems = getTotalItems();
   const isDark = theme === 'dark';
 
+  const subCategories = [
+    { id: 'All', label: 'Gadgets', icon: Laptop },
+    { id: 'Smart Home', label: 'Smart Home', icon: HomeIcon },
+    { id: 'Audio', label: 'Audio', icon: Headphones },
+    { id: 'Wearables', label: 'Wearables', icon: Watch },
+    { id: 'Accessories', label: 'Accessories', icon: Sliders },
+    { id: 'Sale', label: 'Sale', icon: Tag, highlight: true },
+  ];
+
+  const handleCategoryClick = (catId: string) => {
+    setActiveCategory(catId);
+    if (onSelectCategory) {
+      onSelectCategory(catId);
+    }
+    if (currentView !== 'store') {
+      onNavigate('store');
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-urban-darker/90 backdrop-blur-md transition-colors duration-300">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-urban-darker/95 backdrop-blur-md transition-colors duration-300">
       {/* Top Banner with Logo Signature Gradient */}
-      <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1.5 text-center text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-sm">
+      <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1 text-center text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-sm">
         <Sparkles className="w-3.5 h-3.5 animate-pulse text-accent-200" />
         <span>Urban Scenery Ventures — Intelligent Electronics Grounded in AI</span>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* Main Header Bar */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-4">
         {/* Brand Logo & Name */}
         <div
           onClick={() => onNavigate('store')}
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
         >
-          <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-400 p-0.5 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
+          <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-400 p-0.5 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
             <img
               src="/urban-scenery-logo.png"
               alt="Urban Scenery Ventures"
@@ -64,38 +96,49 @@ export const Header: React.FC<HeaderProps> = ({
             />
           </div>
           <div>
-            <div className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 font-heading">
+            <div className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 font-heading">
               <span>URBAN</span>
               <span className="text-brand-500">SCENERY</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30 uppercase tracking-widest font-mono">
+              <span className="hidden sm:inline text-[9px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30 uppercase tracking-widest font-mono">
                 Ventures
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-wider">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-wider hidden sm:block">
               ELECTRONICS & AI PLATFORM
             </p>
           </div>
         </div>
 
-        {/* Center Navigation Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-full border border-slate-200 dark:border-slate-800">
+        {/* Center Search Bar in Header (as seen in TechVerse / NovaShop Reference 2 & 3) */}
+        <div className="hidden lg:flex flex-1 max-w-lg mx-4">
+          <div
+            onClick={onFocusSearch}
+            className="w-full relative flex items-center cursor-pointer group"
+          >
+            <input
+              type="text"
+              readOnly
+              placeholder="Search for tech gadgets, ideas and more..."
+              className="w-full pl-10 pr-10 py-2 bg-slate-100 hover:bg-slate-200/70 dark:bg-slate-900 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-full text-xs text-slate-700 dark:text-slate-200 placeholder-slate-400 cursor-pointer transition-all"
+            />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 group-hover:text-brand-500 transition-colors" />
+            <div className="absolute right-2 px-2 py-0.5 rounded-full bg-brand-500 text-white text-[10px] font-bold">
+              AI
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Switcher (Store vs Admin) */}
+        <nav className="hidden md:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/80 p-1 rounded-full border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => onNavigate('store')}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               currentView === 'store'
                 ? 'bg-brand-500 text-white shadow-md shadow-brand-500/30'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Storefront
-          </button>
-
-          <button
-            onClick={onFocusSearch}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all"
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>AI Search</span>
           </button>
 
           <button
@@ -103,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               currentView === 'admin'
                 ? 'bg-gradient-to-r from-brand-600 to-accent-600 text-white shadow-md shadow-brand-500/20'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
@@ -114,15 +157,15 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </nav>
 
-        {/* Right Actions: Theme Toggle, Cart, User */}
-        <div className="flex items-center gap-2.5">
+        {/* Right Actions: Theme, Wishlist, Cart, Profile */}
+        <div className="flex items-center gap-2">
           {/* Light / Dark Mode Toggle Button */}
           <button
             onClick={toggleTheme}
             data-theme-toggle
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all hover:scale-105"
+            className="p-2 sm:p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all hover:scale-105"
           >
             {isDark ? (
               <Sun className="w-4 h-4 text-accent-400 hover:rotate-45 transition-transform duration-300" />
@@ -131,11 +174,25 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
+          {/* Wishlist Button (Reference 2 & 3) */}
+          <button
+            onClick={() => setWishlistCount((prev) => prev + 1)}
+            title="Wishlist"
+            className="relative p-2 sm:p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-brand-500 dark:hover:text-brand-400 border border-slate-200 dark:border-slate-800 transition-all hidden sm:flex"
+          >
+            <Heart className="w-4 h-4" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-brand-500 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                {wishlistCount}
+              </span>
+            )}
+          </button>
+
           {/* Cart Trigger */}
           <button
             onClick={() => setCartOpen(true)}
             aria-label="View Shopping Cart"
-            className="relative p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 transition-all"
+            className="relative p-2 sm:p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 transition-all"
           >
             <ShoppingBag className="w-4.5 h-4.5" />
             {totalCartItems > 0 && (
@@ -221,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={onOpenAuth}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all hover:scale-102"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all hover:scale-102"
             >
               <User className="w-4 h-4" />
               <span>Sign In</span>
@@ -235,6 +292,47 @@ export const Header: React.FC<HeaderProps> = ({
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
+        </div>
+      </div>
+
+      {/* Sub-Category Navigation Bar (TechVerse Reference 2 Style) */}
+      <div className="border-t border-slate-200/80 dark:border-slate-800/60 bg-slate-50/60 dark:bg-urban-darker/60 px-4 sm:px-6 lg:px-8 py-2 overflow-x-auto scrollbar-none">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
+            {subCategories.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryClick(cat.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? 'bg-brand-500 text-white shadow-sm'
+                      : cat.highlight
+                      ? 'text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10 font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{cat.label}</span>
+                  {cat.highlight && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Region Switcher & Tagline (Reference 2) */}
+          <div className="hidden md:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-mono">
+            <div className="flex items-center gap-1">
+              <Globe className="w-3.5 h-3.5 text-accent-500" />
+              <span>US | UK | UAE</span>
+            </div>
+            <span className="text-slate-300 dark:text-slate-700">|</span>
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Fast Air Express</span>
+          </div>
         </div>
       </div>
 
