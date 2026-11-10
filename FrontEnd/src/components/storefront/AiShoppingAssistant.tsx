@@ -8,9 +8,7 @@ import {
   Loader2,
   Minimize2,
   Maximize2,
-  Cpu,
   ShoppingBag,
-  ExternalLink,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { AgentResponse, ProductOut } from '../../types';
@@ -136,25 +134,25 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
 
   const starterChips = [
     'Recommend a laptop under $1000',
-    'Which headphones have the best audio quality?',
-    'Show me smartphones in stock',
+    'Which headphones have the best ANC?',
+    'Show me flagship phones in stock',
   ];
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
-      {/* Floating Trigger Button */}
+      {/* Floating Trigger Button with Logo Signature Colors */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="group relative flex items-center gap-2.5 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 text-white font-bold text-xs shadow-2xl shadow-sky-500/30 hover:scale-105 transition-all ai-glow"
+          className="group relative flex items-center gap-2.5 px-4 py-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 text-white font-bold text-xs shadow-2xl shadow-brand-500/30 hover:scale-105 transition-all ai-glow"
         >
           <div className="relative">
-            <Sparkles className="w-5 h-5 text-amber-300 animate-spin" style={{ animationDuration: '4s' }} />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-slate-950 animate-ping" />
+            <Sparkles className="w-5 h-5 text-accent-200 animate-spin" style={{ animationDuration: '4s' }} />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent-400 rounded-full ring-2 ring-white dark:ring-slate-950 animate-ping" />
           </div>
           <div className="text-left hidden sm:block">
-            <div className="leading-tight">AI Assistant</div>
-            <div className="text-[10px] text-sky-200 font-normal font-mono">Catalogue Grounded</div>
+            <div className="leading-tight font-heading">AI Assistant</div>
+            <div className="text-[10px] text-accent-100 font-normal font-mono">Catalogue Grounded</div>
           </div>
         </button>
       )}
@@ -162,24 +160,24 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
       {/* Expanded Chat Box */}
       {isOpen && (
         <div
-          className={`w-[92vw] sm:w-[420px] rounded-3xl glass-dropdown border border-sky-500/30 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
+          className={`w-[92vw] sm:w-[420px] rounded-3xl bg-white dark:glass-dropdown border border-slate-200 dark:border-brand-500/30 shadow-2xl flex flex-col overflow-hidden transition-all duration-300 ${
             isMinimized ? 'h-16' : 'h-[560px] max-h-[85vh]'
           }`}
         >
           {/* Header */}
-          <div className="p-4 border-b border-slate-800 bg-slate-900/80 flex items-center justify-between">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-500 flex items-center justify-center text-white shadow-md">
                 <Bot className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-heading">
                   <span>Shopping Assistant</span>
-                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-400 font-mono">
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/10 text-brand-600 dark:text-brand-400 font-mono font-bold">
                     ONLINE
                   </span>
                 </h3>
-                <p className="text-[10px] text-slate-400 font-mono">Grounded Database AI</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Grounded Database AI</p>
               </div>
             </div>
 
@@ -187,14 +185,14 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
                 aria-label={isMinimized ? "Maximize assistant window" : "Minimize assistant window"}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
               >
                 {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
               </button>
               <button
                 onClick={() => setIsOpen(false)}
                 aria-label="Close assistant window"
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -204,7 +202,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
           {!isMinimized && (
             <>
               {/* Message History */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs bg-slate-50/50 dark:bg-transparent">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
@@ -213,7 +211,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
                     }`}
                   >
                     {msg.sender === 'assistant' && (
-                      <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0 mt-0.5">
+                      <div className="w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-500/10 border border-brand-200 dark:border-brand-500/30 flex items-center justify-center text-brand-600 dark:text-brand-400 flex-shrink-0 mt-0.5">
                         <Bot className="w-4 h-4" />
                       </div>
                     )}
@@ -221,34 +219,34 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
                     <div
                       className={`max-w-[82%] rounded-2xl p-3.5 leading-relaxed ${
                         msg.sender === 'user'
-                          ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-                          : 'bg-slate-900/90 text-slate-200 border border-slate-800'
+                          ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20 font-medium'
+                          : 'bg-white dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-sm'
                       }`}
                     >
                       <p className="whitespace-pre-wrap">{msg.text}</p>
 
                       {/* Attached Product Recommendations */}
                       {msg.recommendations && msg.recommendations.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-slate-800/80 space-y-2">
-                          <p className="text-[10px] font-mono text-sky-400 uppercase font-semibold">
+                        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/80 space-y-2">
+                          <p className="text-[10px] font-mono text-brand-600 dark:text-brand-400 uppercase font-bold">
                             Recommended Matches:
                           </p>
                           {msg.recommendations.map((item) => (
                             <div
                               key={item.id}
-                              className="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-2"
+                              className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-2"
                             >
                               <div className="truncate min-w-0">
-                                <div className="font-semibold text-white truncate text-[11px]">
+                                <div className="font-bold text-slate-900 dark:text-white truncate text-[11px]">
                                   {item.name}
                                 </div>
-                                <div className="text-[10px] font-mono text-sky-400">
+                                <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-bold">
                                   {formatCurrency(item.price)}
                                 </div>
                               </div>
                               <button
                                 onClick={() => addItem(item, 1)}
-                                className="px-2 py-1 rounded-lg bg-sky-500 hover:bg-sky-400 text-white text-[10px] font-bold flex items-center gap-1 flex-shrink-0"
+                                className="px-2.5 py-1 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-bold flex items-center gap-1 flex-shrink-0 shadow-sm"
                               >
                                 <ShoppingBag className="w-3 h-3" />
                                 <span>Add</span>
@@ -260,7 +258,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
                     </div>
 
                     {msg.sender === 'user' && (
-                      <div className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-slate-300 flex-shrink-0 mt-0.5">
+                      <div className="w-7 h-7 rounded-lg bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0 mt-0.5">
                         <User className="w-4 h-4" />
                       </div>
                     )}
@@ -269,11 +267,11 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
 
                 {loading && (
                   <div className="flex gap-2.5 justify-start">
-                    <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                    <div className="w-7 h-7 rounded-lg bg-brand-50 dark:bg-brand-500/10 border border-brand-200 dark:border-brand-500/30 flex items-center justify-center text-brand-600 dark:text-brand-400">
                       <Bot className="w-4 h-4" />
                     </div>
-                    <div className="rounded-2xl p-3 bg-slate-900 border border-slate-800 text-slate-400 flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                    <div className="rounded-2xl p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 flex items-center gap-2 shadow-sm">
+                      <Loader2 className="w-4 h-4 animate-spin text-brand-500" />
                       <span className="text-[11px] font-mono">Consulting catalogue database...</span>
                     </div>
                   </div>
@@ -283,12 +281,12 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
 
               {/* Starter Chips */}
               {messages.length <= 2 && (
-                <div className="px-4 py-2 border-t border-slate-800/60 flex flex-wrap gap-1.5 bg-slate-950/40">
+                <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-800/60 flex flex-wrap gap-1.5 bg-slate-100/60 dark:bg-slate-950/40">
                   {starterChips.map((chip) => (
                     <button
                       key={chip}
                       onClick={() => handleSend(chip)}
-                      className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-400 hover:text-white hover:border-slate-700 transition-all text-left"
+                      className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-white hover:border-brand-500/30 transition-all text-left shadow-sm font-medium"
                     >
                       {chip}
                     </button>
@@ -302,7 +300,7 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
                   e.preventDefault();
                   handleSend();
                 }}
-                className="p-3 border-t border-slate-800 bg-slate-900/70 flex items-center gap-2"
+                className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 flex items-center gap-2"
               >
                 <input
                   type="text"
@@ -310,12 +308,12 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask about specs, budget, or stock..."
                   disabled={loading}
-                  className="flex-1 px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="flex-1 px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || loading}
-                  className="p-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all shadow-md shadow-sky-500/20"
+                  className="p-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 disabled:opacity-40 disabled:cursor-not-allowed text-white transition-all shadow-md shadow-brand-500/20"
                 >
                   <Send className="w-4 h-4" />
                 </button>
@@ -327,4 +325,3 @@ export const AiShoppingAssistant: React.FC<AiShoppingAssistantProps> = ({
     </div>
   );
 };
-

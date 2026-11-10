@@ -45,19 +45,38 @@ export function getStatusBadge(status: string): { label: string; bg: string; tex
     case 'PAID':
     case 'DELIVERED':
     case 'COMPLETED':
-      return { label: s, bg: 'bg-emerald-500/10 border-emerald-500/30', text: 'text-emerald-400' };
+      return {
+        label: s,
+        bg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30',
+        text: 'text-emerald-700 dark:text-emerald-400',
+      };
     case 'PROCESSING':
     case 'SHIPPED':
-      return { label: s, bg: 'bg-sky-500/10 border-sky-500/30', text: 'text-sky-400' };
+      return {
+        label: s,
+        bg: 'bg-brand-50 dark:bg-brand-500/10 border-brand-200 dark:border-brand-500/30',
+        text: 'text-brand-600 dark:text-brand-300',
+      };
     case 'PENDING':
-      return { label: s, bg: 'bg-amber-500/10 border-amber-500/30', text: 'text-amber-400' };
+      return {
+        label: s,
+        bg: 'bg-accent-50 dark:bg-accent-500/10 border-accent-200 dark:border-accent-500/30',
+        text: 'text-accent-800 dark:text-accent-400',
+      };
     case 'EMPTY':
     case 'OUT_OF_STOCK':
     case 'CANCELLED':
     case 'FAILED':
-      return { label: s, bg: 'bg-rose-500/10 border-rose-500/30', text: 'text-rose-400' };
+      return {
+        label: s,
+        bg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30',
+        text: 'text-rose-700 dark:text-rose-400',
+      };
     default:
-      return { label: s || 'UNKNOWN', bg: 'bg-slate-500/10 border-slate-500/30', text: 'text-slate-400' };
+      return {
+        label: s || 'UNKNOWN',
+        bg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+        text: 'text-slate-700 dark:text-slate-400',
+      };
   }
 }
-

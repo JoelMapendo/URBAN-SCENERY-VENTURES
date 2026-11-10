@@ -9,9 +9,12 @@ import {
   Menu,
   X,
   Search,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
+import { useThemeStore } from '../../store/useThemeStore';
 
 interface HeaderProps {
   currentView: 'store' | 'admin';
@@ -28,17 +31,20 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const { getTotalItems, setIsOpen: setCartOpen } = useCartStore();
+  const { theme, toggleTheme } = useThemeStore();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   const totalCartItems = getTotalItems();
+  const isDark = theme === 'dark';
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-md">
-      {/* Top Banner */}
-      <div className="bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 px-4 py-1.5 text-center text-xs font-medium text-white flex items-center justify-center gap-2">
-        <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-300" />
-        <span>Next-Gen AI Shopping Experience — Intelligent Product Discovery & Instant Checkout</span>
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800/80 bg-white/90 dark:bg-urban-darker/90 backdrop-blur-md transition-colors duration-300">
+      {/* Top Banner with Logo Signature Gradient */}
+      <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1.5 text-center text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-sm">
+        <Sparkles className="w-3.5 h-3.5 animate-pulse text-accent-200" />
+        <span>Urban Scenery Ventures — Intelligent Electronics Grounded in AI</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
@@ -47,38 +53,38 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => onNavigate('store')}
           className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-sky-500 to-indigo-600 p-0.5 shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
+          <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-400 p-0.5 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
             <img
               src="/urban-scenery-logo.png"
               alt="Urban Scenery Ventures"
-              className="w-full h-full object-cover rounded-[10px] bg-slate-950"
+              className="w-full h-full object-cover rounded-[10px] bg-white dark:bg-urban-darker"
               onError={(e) => {
-                // Fallback icon if image fails
                 (e.target as HTMLElement).style.display = 'none';
               }}
             />
           </div>
           <div>
-            <div className="font-bold text-lg text-white tracking-tight flex items-center gap-1.5">
-              <span>Urban Scenery</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 uppercase tracking-widest font-mono">
+            <div className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 font-heading">
+              <span>URBAN</span>
+              <span className="text-brand-500">SCENERY</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-400 border border-brand-500/30 uppercase tracking-widest font-mono">
                 Ventures
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-mono tracking-wider">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono tracking-wider">
               ELECTRONICS & AI PLATFORM
             </p>
           </div>
         </div>
 
         {/* Center Navigation Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-full border border-slate-800">
+        <nav className="hidden md:flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/80 p-1.5 rounded-full border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => onNavigate('store')}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               currentView === 'store'
-                ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/50'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-brand-500 text-white shadow-md shadow-brand-500/30'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
             }`}
           >
             Storefront
@@ -86,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onFocusSearch}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-slate-400 hover:text-sky-400 hover:bg-slate-800/60 transition-all"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition-all"
           >
             <Search className="w-3.5 h-3.5" />
             <span>AI Search</span>
@@ -94,31 +100,46 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onNavigate('admin')}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               currentView === 'admin'
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/50'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                ? 'bg-gradient-to-r from-brand-600 to-accent-600 text-white shadow-md shadow-brand-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60'
             }`}
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
             <span>Merchant Hub</span>
             {isAdmin && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-emerald-400/20"></span>
+              <span className="w-2 h-2 rounded-full bg-accent-400 ring-2 ring-accent-400/30"></span>
             )}
           </button>
         </nav>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-3">
+        {/* Right Actions: Theme Toggle, Cart, User */}
+        <div className="flex items-center gap-2.5">
+          {/* Light / Dark Mode Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            data-theme-toggle
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 transition-all hover:scale-105"
+          >
+            {isDark ? (
+              <Sun className="w-4 h-4 text-accent-400 hover:rotate-45 transition-transform duration-300" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700 hover:-rotate-12 transition-transform duration-300" />
+            )}
+          </button>
+
           {/* Cart Trigger */}
           <button
             onClick={() => setCartOpen(true)}
             aria-label="View Shopping Cart"
-            className="relative p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-center"
+            className="relative p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 transition-all"
           >
-            <ShoppingBag className="w-5 h-5" />
+            <ShoppingBag className="w-4.5 h-4.5" />
             {totalCartItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-sky-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md shadow-sky-500/40 animate-bounce">
+              <span className="absolute -top-1.5 -right-1.5 bg-brand-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md shadow-brand-500/40 animate-bounce">
                 {totalCartItems}
               </span>
             )}
@@ -129,16 +150,16 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 p-1.5 pl-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-left transition-all"
+                className="flex items-center gap-2 p-1.5 pl-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-left transition-all"
               >
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-xs font-bold text-white uppercase">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-500 to-accent-500 flex items-center justify-center text-xs font-bold text-white uppercase shadow-sm">
                   {user.name ? user.name[0] : 'U'}
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-xs font-semibold text-white leading-tight">
+                  <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
                     {user.name}
                   </div>
-                  <div className="text-[10px] text-sky-400 font-mono capitalize">
+                  <div className="text-[10px] text-brand-600 dark:text-brand-400 font-mono capitalize">
                     {user.role || 'customer'}
                   </div>
                 </div>
@@ -146,13 +167,13 @@ export const Header: React.FC<HeaderProps> = ({
 
               {/* User Dropdown */}
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl glass-dropdown p-2 text-sm shadow-2xl z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-3 py-2 border-b border-slate-800">
-                    <p className="text-xs text-slate-400">Signed in as</p>
-                    <p className="text-sm font-semibold text-white truncate">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-56 rounded-2xl glass-dropdown p-2 text-sm shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border border-slate-200 dark:border-brand-500/30">
+                  <div className="px-3 py-2 border-b border-slate-200 dark:border-slate-800">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Signed in as</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.email}</p>
                     <div className="mt-1 flex items-center gap-1.5">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span className="text-xs font-mono text-emerald-400 uppercase tracking-wide">
+                      <ShieldCheck className="w-3.5 h-3.5 text-accent-500" />
+                      <span className="text-xs font-mono text-accent-600 dark:text-accent-400 uppercase tracking-wide">
                         {user.role} Account
                       </span>
                     </div>
@@ -164,9 +185,9 @@ export const Header: React.FC<HeaderProps> = ({
                         onNavigate('store');
                         setUserDropdownOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2 text-xs"
+                      className="w-full text-left px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2 text-xs font-medium"
                     >
-                      <ShoppingBag className="w-4 h-4 text-sky-400" />
+                      <ShoppingBag className="w-4 h-4 text-brand-500" />
                       <span>Browse Store</span>
                     </button>
 
@@ -175,20 +196,20 @@ export const Header: React.FC<HeaderProps> = ({
                         onNavigate('admin');
                         setUserDropdownOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center gap-2 text-xs"
+                      className="w-full text-left px-3 py-2 rounded-lg text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 flex items-center gap-2 text-xs font-medium"
                     >
-                      <LayoutDashboard className="w-4 h-4 text-indigo-400" />
+                      <LayoutDashboard className="w-4 h-4 text-accent-500" />
                       <span>Merchant Dashboard</span>
                     </button>
                   </div>
 
-                  <div className="pt-1 border-t border-slate-800">
+                  <div className="pt-1 border-t border-slate-200 dark:border-slate-800">
                     <button
                       onClick={() => {
                         logout();
                         setUserDropdownOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 rounded-lg text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 text-xs font-medium"
+                      className="w-full text-left px-3 py-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 flex items-center gap-2 text-xs font-semibold"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Sign Out</span>
@@ -200,7 +221,7 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={onOpenAuth}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-medium text-xs shadow-md shadow-sky-500/30 transition-all hover:scale-102"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all hover:scale-102"
             >
               <User className="w-4 h-4" />
               <span>Sign In</span>
@@ -210,7 +231,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl bg-slate-900 text-slate-400 hover:text-white"
+            className="md:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -219,16 +240,16 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-800 bg-slate-950 px-4 py-4 space-y-2">
+        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-urban-darker px-4 py-4 space-y-2">
           <button
             onClick={() => {
               onNavigate('store');
               setMobileMenuOpen(false);
             }}
-            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold ${
+            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold ${
               currentView === 'store'
-                ? 'bg-sky-500 text-white'
-                : 'text-slate-300 hover:bg-slate-900'
+                ? 'bg-brand-500 text-white'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
             }`}
           >
             Electronics Storefront
@@ -238,9 +259,9 @@ export const Header: React.FC<HeaderProps> = ({
               onFocusSearch();
               setMobileMenuOpen(false);
             }}
-            className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-900 flex items-center gap-2"
+            className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-2"
           >
-            <Search className="w-4 h-4 text-sky-400" />
+            <Search className="w-4 h-4 text-brand-500" />
             <span>AI Smart Search</span>
           </button>
           <button
@@ -248,15 +269,15 @@ export const Header: React.FC<HeaderProps> = ({
               onNavigate('admin');
               setMobileMenuOpen(false);
             }}
-            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-between ${
+            className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-between ${
               currentView === 'admin'
-                ? 'bg-indigo-600 text-white'
-                : 'text-slate-300 hover:bg-slate-900'
+                ? 'bg-gradient-to-r from-brand-600 to-accent-600 text-white'
+                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900'
             }`}
           >
             <span>Merchant & AI Hub</span>
             {isAdmin && (
-              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-accent-500/20 text-accent-700 dark:text-accent-400 font-mono">
                 Admin
               </span>
             )}
@@ -266,4 +287,3 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
-

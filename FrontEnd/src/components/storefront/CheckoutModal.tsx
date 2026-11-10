@@ -44,19 +44,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-        <div className="w-full max-w-md rounded-3xl glass-dropdown p-6 text-center border border-slate-800 shadow-2xl">
-          <div className="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto mb-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md">
+        <div className="w-full max-w-md rounded-3xl bg-white dark:glass-dropdown p-6 text-center border border-slate-200 dark:border-slate-800 shadow-2xl">
+          <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto mb-4">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-white mb-2">Authentication Required</h3>
-          <p className="text-xs text-slate-400 mb-6">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 font-heading">
+            Authentication Required
+          </h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">
             Please sign in or create an account to securely place your electronics order and process your payment.
           </p>
           <div className="flex gap-3">
             <button
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+              className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold"
             >
               Cancel
             </button>
@@ -65,7 +67,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 onClose();
                 onOpenAuth();
               }}
-              className="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-bold shadow-md shadow-sky-500/20"
+              className="flex-1 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-md shadow-brand-500/25"
             >
               Sign In / Register
             </button>
@@ -125,15 +127,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-lg rounded-3xl glass-dropdown border border-slate-700/80 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-lg rounded-3xl bg-white dark:glass-dropdown border border-slate-200 dark:border-slate-700/80 p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white"
+          className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
         >
           <X className="w-5 h-5" />
         </button>
@@ -141,47 +143,51 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         {step === 'FORM' && (
           <form onSubmit={handlePlaceOrderAndPay}>
             <div className="flex items-center gap-2 mb-1">
-              <CreditCard className="w-5 h-5 text-sky-400" />
-              <h3 className="text-lg font-bold text-white">Checkout & Instant Payment</h3>
+              <CreditCard className="w-5 h-5 text-brand-500" />
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-heading">
+                Checkout & Instant Payment
+              </h3>
             </div>
-            <p className="text-xs text-slate-400 mb-6">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">
               Review delivery coordinates and select your payment rail.
             </p>
 
             {error && (
-              <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+              <div className="mb-4 p-3 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
             {/* Cart Summary Snippet */}
-            <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 mb-5">
-              <div className="text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-2">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 mb-5">
+              <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 font-bold">
                 Order Items ({items.length})
               </div>
               <div className="space-y-1.5 max-h-28 overflow-y-auto pr-1">
                 {items.map(({ product, quantity }) => (
-                  <div key={product.id} className="flex justify-between text-xs">
-                    <span className="text-slate-300 truncate max-w-[240px]">
+                  <div key={product.id} className="flex justify-between text-xs font-medium">
+                    <span className="text-slate-700 dark:text-slate-300 truncate max-w-[240px]">
                       {quantity}x {product.name}
                     </span>
-                    <span className="font-mono text-white">
+                    <span className="font-mono text-slate-900 dark:text-white font-bold">
                       {formatCurrency((parseFloat(product.price) || 0) * quantity)}
                     </span>
                   </div>
                 ))}
               </div>
-              <div className="pt-2 mt-2 border-t border-slate-800 flex justify-between text-xs font-bold">
-                <span className="text-slate-300">Total Payable:</span>
-                <span className="text-sky-400 font-mono text-sm">{formatCurrency(total)}</span>
+              <div className="pt-2 mt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-xs font-bold">
+                <span className="text-slate-600 dark:text-slate-300">Total Payable:</span>
+                <span className="text-brand-600 dark:text-brand-400 font-mono text-sm">
+                  {formatCurrency(total)}
+                </span>
               </div>
             </div>
 
             {/* Delivery Inputs */}
             <div className="space-y-4 mb-6">
               <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1 uppercase font-mono">
+                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1 uppercase font-mono">
                   Shipping Address *
                 </label>
                 <input
@@ -190,12 +196,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Street, Suite / Apt, City, Country"
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
               </div>
 
               <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1 uppercase font-mono">
+                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1 uppercase font-mono">
                   Contact Phone / WhatsApp *
                 </label>
                 <input
@@ -204,13 +210,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
                 />
               </div>
 
               {/* Payment Rail Options */}
               <div>
-                <label className="text-[11px] font-semibold text-slate-300 block mb-1.5 uppercase font-mono">
+                <label className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1.5 uppercase font-mono">
                   Select Payment Method
                 </label>
                 <div className="grid grid-cols-3 gap-2.5">
@@ -219,8 +225,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     onClick={() => setPaymentMethod('BANK')}
                     className={`p-3 rounded-xl border text-center transition-all ${
                       paymentMethod === 'BANK'
-                        ? 'bg-sky-500/10 border-sky-500 text-sky-400 shadow-sm'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-brand-50 dark:bg-brand-500/10 border-brand-500 text-brand-600 dark:text-brand-400 shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <Building2 className="w-5 h-5 mx-auto mb-1" />
@@ -232,8 +238,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     onClick={() => setPaymentMethod('MOBILE MONEY')}
                     className={`p-3 rounded-xl border text-center transition-all ${
                       paymentMethod === 'MOBILE MONEY'
-                        ? 'bg-sky-500/10 border-sky-500 text-sky-400 shadow-sm'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-brand-50 dark:bg-brand-500/10 border-brand-500 text-brand-600 dark:text-brand-400 shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <Smartphone className="w-5 h-5 mx-auto mb-1" />
@@ -245,8 +251,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     onClick={() => setPaymentMethod('CRYPTO')}
                     className={`p-3 rounded-xl border text-center transition-all ${
                       paymentMethod === 'CRYPTO'
-                        ? 'bg-sky-500/10 border-sky-500 text-sky-400 shadow-sm'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                        ? 'bg-brand-50 dark:bg-brand-500/10 border-brand-500 text-brand-600 dark:text-brand-400 shadow-sm'
+                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
                     <Coins className="w-5 h-5 mx-auto mb-1" />
@@ -259,7 +265,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <button
               type="submit"
               disabled={loading || items.length === 0}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-sky-500/25 flex items-center justify-center gap-2 transition-all hover:scale-102"
+              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-brand-500 to-accent-500 hover:from-brand-600 hover:to-accent-600 text-white font-bold text-xs shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition-all hover:scale-102"
             >
               <span>Confirm Order & Pay {formatCurrency(total)}</span>
               <ArrowRight className="w-4 h-4" />
@@ -269,9 +275,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {step === 'PROCESSING' && (
           <div className="py-12 text-center space-y-4">
-            <Loader2 className="w-12 h-12 text-sky-400 animate-spin mx-auto" />
-            <h3 className="text-base font-bold text-white">Authorizing Order & Payment</h3>
-            <p className="text-xs text-slate-400 max-w-xs mx-auto">
+            <Loader2 className="w-12 h-12 text-brand-500 animate-spin mx-auto" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white font-heading">
+              Authorizing Order & Payment
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
               Connecting with Urban Scenery Ventures payment gateway rail...
             </p>
           </div>
@@ -279,38 +287,38 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {step === 'SUCCESS' && createdOrder && paymentReceipt && (
           <div className="text-center py-4 space-y-4 animate-in fade-in">
-            <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
+            <div className="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
-            <h3 className="text-xl font-bold text-white">Payment Successful!</h3>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white font-heading">Payment Successful!</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto">
               Your order has been received, paid, and dispatched to our logistics team for fulfilment.
             </p>
 
             {/* Receipt Card */}
-            <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-left text-xs space-y-2">
-              <div className="flex justify-between border-b border-slate-800 pb-2">
-                <span className="text-slate-400">Order Reference:</span>
-                <span className="font-mono font-bold text-white">#{createdOrder.id}</span>
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-left text-xs space-y-2">
+              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span className="text-slate-500 dark:text-slate-400">Order Reference:</span>
+                <span className="font-mono font-bold text-slate-900 dark:text-white">#{createdOrder.id}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-800 pb-2">
-                <span className="text-slate-400">Payment ID:</span>
-                <span className="font-mono text-sky-400">#{paymentReceipt.id}</span>
+              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span className="text-slate-500 dark:text-slate-400">Payment ID:</span>
+                <span className="font-mono text-brand-600 dark:text-brand-400 font-bold">#{paymentReceipt.id}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-800 pb-2">
-                <span className="text-slate-400">Method:</span>
-                <span className="font-mono text-white">{paymentReceipt.payment_method}</span>
+              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span className="text-slate-500 dark:text-slate-400">Method:</span>
+                <span className="font-mono text-slate-900 dark:text-white">{paymentReceipt.payment_method}</span>
               </div>
-              <div className="flex justify-between border-b border-slate-800 pb-2">
-                <span className="text-slate-400">Amount Paid:</span>
-                <span className="font-mono font-bold text-emerald-400">
+              <div className="flex justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+                <span className="text-slate-500 dark:text-slate-400">Amount Paid:</span>
+                <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
                   {formatCurrency(paymentReceipt.amount)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Delivery Address:</span>
-                <span className="text-white text-right truncate max-w-[200px]">
+                <span className="text-slate-500 dark:text-slate-400">Delivery Address:</span>
+                <span className="text-slate-900 dark:text-white text-right truncate max-w-[200px]">
                   {createdOrder.address}
                 </span>
               </div>
@@ -318,7 +326,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs"
+              className="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-md shadow-brand-500/25"
             >
               Return to Storefront
             </button>
@@ -328,4 +336,3 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     </div>
   );
 };
-
