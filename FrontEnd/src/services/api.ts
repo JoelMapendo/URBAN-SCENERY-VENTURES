@@ -24,7 +24,10 @@ import {
   WhatsAppMessage,
 } from '../types';
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'https://agentic-connexa-backend.onrender.com').replace(/\/+$/, '');
+const LOCAL_BACKEND_URL = 'http://127.0.0.1:8000';
+const CLOUD_BACKEND_URL = 'https://agentic-connexa-backend.onrender.com';
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL || LOCAL_BACKEND_URL).replace(/\/+$/, '');
+const FALLBACK_URL = BASE_URL === LOCAL_BACKEND_URL ? CLOUD_BACKEND_URL : LOCAL_BACKEND_URL;
 const API_PREFIX = '/api/v1';
 
 export class ApiError extends Error {
@@ -55,10 +58,19 @@ async function request<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch (networkErr) {
+    // Automatic fallback if primary backend is unreachable
+    response = await fetch(`${FALLBACK_URL}${API_PREFIX}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  }
 
   // Handle 204 No Content
   if (response.status === 204) {

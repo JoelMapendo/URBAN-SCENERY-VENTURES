@@ -94,27 +94,37 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setStep('PROCESSING');
 
     try {
-      // Place order for primary cart item
-      const primaryItem = items[0];
-      const order = await api.placeOrder({
-        product_id: primaryItem.product.id,
-        quantity: primaryItem.quantity,
-        address: address.trim(),
-        contact: contact.trim(),
-        payment_method: paymentMethod,
-      });
+      let lastOrder: OrderOut | null = null;
+      let lastPayment: PaymentOut | null = null;
+      let totalPaidAmount = 0;
 
-      setCreatedOrder(order);
+      for (const item of items) {
+        const order = await api.placeOrder({
+          product_id: item.product.id,
+          quantity: item.quantity,
+          address: address.trim(),
+          contact: contact.trim(),
+          payment_method: paymentMethod,
+        });
+        lastOrder = order;
 
-      // Now immediately process payment on order
-      const amountToPay = order.total_price || primaryItem.product.price;
-      const payment = await api.processPayment({
-        order_id: order.id,
-        payment_method: paymentMethod,
-        amount: amountToPay,
-      });
+        const amountToPay = order.total_price || String((parseFloat(item.product.price) || 0) * item.quantity);
+        const payment = await api.processPayment({
+          order_id: order.id,
+          payment_method: paymentMethod,
+          amount: amountToPay,
+        });
+        lastPayment = payment;
+        totalPaidAmount += parseFloat(String(payment.amount)) || 0;
+      }
 
-      setPaymentReceipt(payment);
+      if (lastOrder && lastPayment) {
+        setCreatedOrder(lastOrder);
+        setPaymentReceipt({
+          ...lastPayment,
+          amount: String(totalPaidAmount.toFixed(2)),
+        });
+      }
       clearCart();
       setStep('SUCCESS');
     } catch (err: any) {

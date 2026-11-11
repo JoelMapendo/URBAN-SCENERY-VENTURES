@@ -23,7 +23,7 @@ const getInitialState = () => {
           token: parsed.token as string,
           user: parsed.user as UserOut,
           isAuthenticated: true,
-          isAdmin: parsed.user.role === 'admin',
+          isAdmin: parsed.user.role?.toLowerCase() === 'admin',
         };
       }
     }

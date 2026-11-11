@@ -80,13 +80,9 @@ type AdminTab =
   | 'PRODUCTS'
   | 'CUSTOMERS'
   | 'ORDERS'
-  | 'SHIPMENTS'
-  | 'SETTINGS'
-  | 'PLATFORM_PARTNER'
-  | 'FEEDBACK'
-  | 'HELP'
+  | 'PAYMENTS'
   | 'AI_STUDIO'
-  | 'PAYMENTS';
+  | 'PLATFORM_PARTNER';
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onBackToStore,
@@ -502,18 +498,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             </div>
 
-            {/* Navigation Menu (Matching Reference 1 Bestnext) */}
+            {/* Navigation Menu (Endpoint-Backed Modules) */}
             <nav className="space-y-1">
               {[
                 { id: 'OVERVIEW', label: 'Overview', icon: LayoutDashboard },
                 { id: 'PRODUCTS', label: 'Products', icon: Package, badge: products.length },
                 { id: 'CUSTOMERS', label: 'Customer', icon: Users, badge: users.length },
                 { id: 'ORDERS', label: 'Orders', icon: ShoppingCart, badge: orders.length },
-                { id: 'SHIPMENTS', label: 'Shipment', icon: Truck },
-                { id: 'SETTINGS', label: 'Store Setting', icon: Settings },
-                { id: 'PLATFORM_PARTNER', label: 'Platform Partner', icon: Share2 },
-                { id: 'FEEDBACK', label: 'Feedback', icon: MessageSquare },
-                { id: 'HELP', label: 'Help & Support', icon: HelpCircle },
+                { id: 'PAYMENTS', label: 'Payments', icon: CreditCard, badge: payments.length },
+                { id: 'AI_STUDIO', label: 'AI Enterprise Studio', icon: Sparkles },
+                { id: 'PLATFORM_PARTNER', label: 'Platform & Social Hub', icon: Share2 },
               ].map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
@@ -1399,7 +1393,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             Update Order Fulfilment:
                           </span>
                           <div className="flex items-center gap-1.5">
-                            {['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
+                            {['PENDING', 'APPROVED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map((st) => (
                               <button
                                 key={st}
                                 disabled={updatingOrderId === ord.id || ord.order_status === st}
@@ -1781,262 +1775,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {waSubmitting ? 'Transmitting...' : 'Send WhatsApp Message'}
                     </button>
                   </form>
-                </div>
-              </div>
-            )}
-
-            {/* ========================================================================= */}
-            {/* TAB: SHIPMENTS (LOGISTICS) */}
-            {/* ========================================================================= */}
-            {activeTab === 'SHIPMENTS' && (
-              <div className="space-y-6 animate-in fade-in">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 font-heading">
-                      <Truck className="w-5 h-5 text-brand-500" />
-                      <span>Shipments & Logistics Control</span>
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Real-time carrier tracking, dispatch verification, and international express logistics
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 text-xs font-bold font-mono">
-                      All Couriers Online (99.8% On-Time)
-                    </span>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-urban-dark shadow-sm">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-500 dark:text-slate-400 uppercase font-bold">
-                      <tr>
-                        <th className="py-3.5 px-4">Tracking ID</th>
-                        <th className="py-3.5 px-4">Order Ref</th>
-                        <th className="py-3.5 px-4">Courier</th>
-                        <th className="py-3.5 px-4">Destination</th>
-                        <th className="py-3.5 px-4">Status</th>
-                        <th className="py-3.5 px-4 text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-                      {[
-                        { tracking: 'TRK-982410', orderId: '#2456JL', courier: 'DHL Air Express', dest: 'Dubai, UAE', status: 'In Transit', statusColor: 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400' },
-                        { tracking: 'TRK-583120', orderId: '#5435DF', courier: 'FedEx Priority', dest: 'London, UK', status: 'Delivered', statusColor: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
-                        { tracking: 'TRK-109284', orderId: '#9876XC', courier: 'UPS Global', dest: 'New York, USA', status: 'Processing', statusColor: 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400' },
-                      ].map((item, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                          <td className="py-3.5 px-4 font-mono font-bold text-brand-600 dark:text-brand-400">
-                            {item.tracking}
-                          </td>
-                          <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
-                            {item.orderId}
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300">
-                            {item.courier}
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 text-xs">
-                            {item.dest}
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.statusColor}`}>
-                              {item.status}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            <button
-                              onClick={() => showStatus(`Tracking update dispatched for ${item.tracking}`)}
-                              className="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold"
-                            >
-                              Dispatch
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* ========================================================================= */}
-            {/* TAB: STORE SETTINGS */}
-            {/* ========================================================================= */}
-            {activeTab === 'SETTINGS' && (
-              <div className="space-y-6 animate-in fade-in max-w-4xl">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 font-heading">
-                    <Settings className="w-5 h-5 text-accent-500" />
-                    <span>Store Configuration & Preferences</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Manage store currency, regional taxes, automatic inventory sync, and webhook integrations
-                  </p>
-                </div>
-
-                <div className="p-6 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 space-y-5 shadow-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-bold text-slate-900 dark:text-white block mb-1">
-                        Default Currency
-                      </label>
-                      <select className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-brand-500">
-                        <option value="USD">USD ($ - US Dollar)</option>
-                        <option value="BDT">BDT (tk - Bangladesh Taka)</option>
-                        <option value="EUR">EUR (€ - Euro)</option>
-                        <option value="AED">AED (د.إ - UAE Dirham)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-bold text-slate-900 dark:text-white block mb-1">
-                        Backend API Base URL
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        value="https://agentic-connexa-backend.onrender.com"
-                        className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-mono text-slate-600 dark:text-slate-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-bold text-slate-900 dark:text-white">Auto-Fulfill Digital Receipts</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Transmit immediate email and WhatsApp confirmation on verified payment</div>
-                      </div>
-                      <input type="checkbox" defaultChecked className="rounded text-brand-500 focus:ring-brand-500 w-4 h-4" />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-xs font-bold text-slate-900 dark:text-white">AI Stock Depletion Alert</div>
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400">Trigger Restock recommendation when hardware stock drops below 5 units</div>
-                      </div>
-                      <input type="checkbox" defaultChecked className="rounded text-brand-500 focus:ring-brand-500 w-4 h-4" />
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => showStatus('Store settings persisted successfully!')}
-                    className="px-5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs shadow-md shadow-brand-500/25 transition-all"
-                  >
-                    Save Preferences
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ========================================================================= */}
-            {/* TAB: FEEDBACK (CUSTOMER REVIEWS & SENTIMENT) */}
-            {/* ========================================================================= */}
-            {activeTab === 'FEEDBACK' && (
-              <div className="space-y-6 animate-in fade-in max-w-4xl">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 font-heading">
-                      <MessageSquare className="w-5 h-5 text-brand-500" />
-                      <span>Customer Feedback & Ratings</span>
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Overall store satisfaction score: 4.9 / 5.0 (2,410 verified buyers)
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 font-mono font-bold text-xs border border-accent-200 dark:border-accent-500/30">
-                    <Star className="w-3.5 h-3.5 fill-current" />
-                    <span>4.9 / 5.0 Rating</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {[
-                    { user: 'Sarah Jenkins', rating: 5, date: '2 hours ago', comment: 'The AI shopping assistant recommended the exact ANC headphones I needed for my studio. Flawless delivery to London!', product: 'Sony WH-1000XM5' },
-                    { user: 'Omar Al-Mansoor', rating: 5, date: '1 day ago', comment: 'Super fast express shipping to Dubai. Paid with crypto seamlessly and received tracking within minutes.', product: 'MacBook Pro 16 M3 Max' },
-                    { user: 'David Chen', rating: 5, date: '3 days ago', comment: 'Genuine hardware distributor with authentic serial numbers verified on the official site. Top notch.', product: 'Samsung S24 Ultra' },
-                  ].map((fb, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-xs text-slate-900 dark:text-white">{fb.user}</span>
-                          <span className="text-[10px] text-slate-400">• {fb.date}</span>
-                        </div>
-                        <div className="flex items-center gap-0.5 text-accent-500">
-                          {Array.from({ length: fb.rating }).map((_, r) => (
-                            <Star key={r} className="w-3 h-3 fill-current" />
-                          ))}
-                        </div>
-                      </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        "{fb.comment}"
-                      </p>
-                      <div className="text-[10px] font-mono text-brand-600 dark:text-brand-400 font-semibold">
-                        Purchased: {fb.product}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* ========================================================================= */}
-            {/* TAB: HELP & SUPPORT */}
-            {/* ========================================================================= */}
-            {activeTab === 'HELP' && (
-              <div className="space-y-6 animate-in fade-in max-w-4xl">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 font-heading">
-                    <HelpCircle className="w-5 h-5 text-sky-500" />
-                    <span>Documentation & Developer Support</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Live connection to OpenAPI schema and FastApi endpoints
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-6 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center">
-                      <FileText className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white font-heading">
-                      Interactive OpenAPI Docs
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                      Inspect and test all live backend Swagger endpoints hosted on Render.
-                    </p>
-                    <a
-                      href="https://agentic-connexa-backend.onrender.com/docs"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline pt-2"
-                    >
-                      <span>Open Swagger UI</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-
-                  <div className="p-6 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white font-heading">
-                      Backend Status: Live
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                      All endpoints (`/api/v1/products`, `/orders`, `/payments`, `/ai/agents`) verified with 200 OK responses.
-                    </p>
-                    <button
-                      onClick={loadAllData}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline pt-2"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                      <span>Ping Health Check</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             )}

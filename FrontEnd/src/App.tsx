@@ -3,7 +3,6 @@ import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { HeroBanner } from './components/storefront/HeroBanner';
 import { ProductGrid } from './components/storefront/ProductGrid';
-import { TechShowcaseSections } from './components/storefront/TechShowcaseSections';
 import { CartDrawer } from './components/storefront/CartDrawer';
 import { CheckoutModal } from './components/storefront/CheckoutModal';
 import { AuthModal } from './components/auth/AuthModal';
@@ -93,12 +92,6 @@ export const App: React.FC = () => {
               initialSearchQuery={searchQuery}
               onClearInitialSearch={() => setSearchQuery('')}
               onOpenShoppingAssistant={(prompt) => setAssistantPrompt(prompt)}
-            />
-
-            {/* Curated Tech Ideas, Exclusive Deals Promo & Trust Badges (Reference 2) */}
-            <TechShowcaseSections
-              onSelectIdea={(query) => handleHeroSearch(query)}
-              onExploreDeals={() => handleHeroSearch('sale')}
             />
 
             {/* Persistent AI Shopping Assistant */}

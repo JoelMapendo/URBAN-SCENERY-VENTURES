@@ -43,38 +43,38 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
   const discountAmount = rawSubtotal * discountPercent;
   const finalTotal = Math.max(0, rawSubtotal - discountAmount);
 
-  // Cross-sell items (Reference 3 "You might also like")
+  // Cross-sell items grounded with valid seeded product IDs
   const crossSellProducts = [
     {
-      id: 991,
-      name: 'Anker MagSafe Wireless PowerCore 10K',
-      price: '49.99',
+      id: 5,
+      name: 'Anker 737 Power Bank (PowerCore 24K)',
+      price: '149.99',
       category: 'Accessories',
-      description: 'Ultra-slim magnetic battery pack with 20W PD fast charge.',
-      banner_image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&q=80',
-      quantity: 45,
+      description: '24,000mAh 3-port portable charger with 140W fast output, smart digital display.',
+      banner_image: 'https://images.unsplash.com/photo-1609592424364-c78d53b27670?w=400&q=80',
+      quantity: 50,
       status: 'AVAILABLE',
       created_at: new Date().toISOString(),
     },
     {
-      id: 992,
-      name: 'Sony WH-1000XM5 Hard Travel Case',
-      price: '29.00',
+      id: 2,
+      name: 'Sony WH-1000XM5 Wireless Headphones',
+      price: '399.99',
       category: 'Audio',
-      description: 'Shockproof water-resistant EVA carrying case with cable pouch.',
-      banner_image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=400&q=80',
+      description: 'Industry-leading noise canceling Bluetooth headphones with 30-hour battery life.',
+      banner_image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',
       quantity: 30,
       status: 'AVAILABLE',
       created_at: new Date().toISOString(),
     },
     {
-      id: 993,
-      name: 'Thunderbolt 4 Braided Cable (2m / 40Gbps)',
-      price: '34.50',
+      id: 10,
+      name: 'Keychron Q1 Pro Wireless Custom Mechanical Keyboard',
+      price: '210.00',
       category: 'Accessories',
-      description: 'Certified 240W Power Delivery and dual 4K/8K video transmission.',
-      banner_image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=400&q=80',
-      quantity: 50,
+      description: 'CNC aluminum body, 75% layout, QMK/VIA programmable, Bluetooth 5.1.',
+      banner_image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',
+      quantity: 35,
       status: 'AVAILABLE',
       created_at: new Date().toISOString(),
     },
@@ -343,16 +343,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              {/* Payment Brand Icons Row (Reference 3) */}
-              <div className="flex items-center justify-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
-                <span>We accept:</span>
-                <span className="font-bold text-slate-600 dark:text-slate-300">VISA</span>
+              {/* Payment Rails (Strictly Grounded in Backend Payment Rails: MOBILE MONEY, BANK, CRYPTO) */}
+              <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-mono pt-1">
+                <span>Rails:</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">Mobile Money</span>
                 <span>•</span>
-                <span className="font-bold text-slate-600 dark:text-slate-300">Mastercard</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">Bank Transfer</span>
                 <span>•</span>
-                <span className="font-bold text-slate-600 dark:text-slate-300">Apple Pay</span>
-                <span>•</span>
-                <span className="font-bold text-slate-600 dark:text-slate-300">MoMo / Crypto</span>
+                <span className="font-bold text-slate-700 dark:text-slate-300">Crypto</span>
               </div>
             </div>
           )}
