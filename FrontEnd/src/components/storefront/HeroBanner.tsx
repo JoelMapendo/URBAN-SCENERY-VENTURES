@@ -20,6 +20,7 @@ interface HeroBannerProps {
   onOpenShoppingAssistant: () => void;
   onExploreProducts: () => void;
   onSelectCategory?: (category: string) => void;
+  onOpenAiRecommendations?: () => void;
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({
@@ -27,6 +28,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   onOpenShoppingAssistant,
   onExploreProducts,
   onSelectCategory,
+  onOpenAiRecommendations,
 }) => {
   const [searchInput, setSearchInput] = useState('');
 
@@ -150,16 +152,26 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 <Sparkles className="w-4 h-4 text-accent-500" />
                 <span>AI Assistant Guidance</span>
               </button>
+
+              {onOpenAiRecommendations && (
+                <button
+                  onClick={onOpenAiRecommendations}
+                  className="px-5 py-3 rounded-xl bg-accent-500/10 hover:bg-accent-500/20 text-accent-700 dark:text-accent-300 font-bold text-xs border border-accent-500/30 transition-all flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4 text-accent-500 animate-pulse" />
+                  <span>AI Hardware Match</span>
+                </button>
+              )}
             </div>
 
-            {/* Shipping tags row */}
+            {/* Multi-Rail & Architecture Tag */}
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400 pt-2">
-              <span className="flex items-center gap-1.5">
-                <span className="text-sm">🇺🇸 🇬🇧 🇦🇪</span>
-                <span className="font-semibold">Fast Shipping</span>
+              <span className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>FastAPI Direct Grounded</span>
               </span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
-              <span>100% Genuine Distributor Guarantee</span>
+              <span>Supported Rails: Bank Transfer, Mobile Money, Crypto</span>
             </div>
           </div>
 
@@ -292,8 +304,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
                 <Truck className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Worldwide Shipping</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">Fast delivery to US, UK & UAE</div>
+                <div className="text-xs font-bold text-slate-900 dark:text-white">Global Delivery</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400">Automated order fulfillment</div>
               </div>
             </div>
 

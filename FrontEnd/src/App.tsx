@@ -7,12 +7,14 @@ import { CartDrawer } from './components/storefront/CartDrawer';
 import { CheckoutModal } from './components/storefront/CheckoutModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { AiShoppingAssistant } from './components/storefront/AiShoppingAssistant';
+import { AiRecommendationModal } from './components/storefront/AiRecommendationModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<'store' | 'admin'>('store');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [recommendationModalOpen, setRecommendationModalOpen] = useState(false);
 
   // Search state passed between Hero and Grid
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,6 +75,7 @@ export const App: React.FC = () => {
         onOpenAuth={() => setAuthModalOpen(true)}
         onFocusSearch={handleFocusSearch}
         onSelectCategory={handleCategorySelect}
+        onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -86,6 +89,7 @@ export const App: React.FC = () => {
               }
               onExploreProducts={handleExploreProducts}
               onSelectCategory={handleCategorySelect}
+              onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
             />
 
             <ProductGrid
@@ -110,6 +114,12 @@ export const App: React.FC = () => {
 
       {/* Slide-over Cart Drawer */}
       <CartDrawer onOpenCheckout={() => setCheckoutModalOpen(true)} />
+
+      {/* AI Recommendation Dialog Grounded in /api/v1/ai/recommend */}
+      <AiRecommendationModal
+        isOpen={recommendationModalOpen}
+        onClose={() => setRecommendationModalOpen(false)}
+      />
 
       {/* Checkout & Instant Payment Modal */}
       {checkoutModalOpen && (

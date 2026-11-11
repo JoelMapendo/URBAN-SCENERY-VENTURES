@@ -637,14 +637,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {/* Admin Profile Chip with Chevron (Reference 1) */}
               <div className="flex items-center gap-2.5 pl-2 border-l border-slate-200 dark:border-slate-800 cursor-pointer group">
                 <div className="w-8 h-8 rounded-full ring-2 ring-brand-500/30 overflow-hidden bg-gradient-to-tr from-brand-500 to-accent-500 flex items-center justify-center text-xs font-bold text-white uppercase shadow-sm">
-                  {user?.name ? user.name[0] : 'S'}
+                  {user?.name ? user.name[0] : 'A'}
                 </div>
                 <div className="hidden sm:block text-left">
                   <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight">
-                    {user?.name || 'Bishop Heahmund'}
+                    {user?.name || 'Administrator'}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                    {user?.email || 'bishophea12@gmail.com'}
+                    {user?.email || 'admin@urbanscenery.com'}
                   </div>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" />
@@ -662,14 +662,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {/* Welcome Heading Banner */}
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-heading tracking-tight">
-                    Welcome back , {user?.name || 'Siyam'} !
+                    Welcome back, {user?.name || 'Administrator'}!
                   </h1>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Here's Your Current Sales Overview
+                    Here's Your Current Live Store Sales & Operations Overview
                   </p>
                 </div>
 
-                {/* 3 Main KPI Cards (as seen in screenshot 1: AVG Order Value, Total Orders, Lifetime Value) */}
+                {/* 3 Main KPI Cards (AVG Order Value, Total Orders, Lifetime Revenue) */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                   {/* Card 1: AVG . Order Value (Solid Purple/Brand Card) */}
                   <div className="p-6 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-purple-600 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden flex flex-col justify-between min-h-[145px]">
@@ -683,10 +683,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </div>
                     <div>
                       <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight mb-1">
-                        {stats.avgOrderValue > 0 ? formatCurrency(stats.avgOrderValue) : '77.21 tk'}
+                        {formatCurrency(stats.avgOrderValue)}
                       </div>
                       <div className="text-[11px] text-white/80 font-medium">
-                        + 4.00% From last month
+                        {stats.orders > 0 ? `Avg per fulfilled order` : 'Grounded in live database orders'}
                       </div>
                     </div>
                   </div>
@@ -703,19 +703,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </div>
                     <div>
                       <div className="text-2xl sm:text-3xl font-bold font-mono text-slate-900 dark:text-white tracking-tight mb-1">
-                        {stats.orders > 0 ? `${stats.orders} tk` : '2,107 tk'}
+                        {stats.orders}
                       </div>
-                      <div className="text-[11px] text-rose-500 font-medium">
-                        - 1.18% From last month
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                        {stats.orders > 0 ? `${stats.orders} total orders recorded` : 'Awaiting first storefront order'}
                       </div>
                     </div>
                   </div>
 
-                  {/* Card 3: Lifetime Value (Clean Surface Card) */}
+                  {/* Card 3: Settled Revenue (Clean Surface Card) */}
                   <div className="p-6 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between min-h-[145px]">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                        Lifetime Value
+                        Settled Revenue
                       </span>
                       <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
                         <Sparkles className="w-4 h-4" />
@@ -723,10 +723,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </div>
                     <div>
                       <div className="text-2xl sm:text-3xl font-bold font-mono text-slate-900 dark:text-white tracking-tight mb-1">
-                        {stats.revenue > 0 ? formatCurrency(stats.revenue) : '653 tk'}
+                        {formatCurrency(stats.revenue)}
                       </div>
                       <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                        + 2.34% From last month
+                        {stats.revenue > 0 ? 'Live gross settled volume' : 'Zero orders placed yet'}
                       </div>
                     </div>
                   </div>
@@ -854,80 +854,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </button>
                     </div>
 
-                    {/* Top Products List (Live API + Reference 1 Format) */}
+                    {/* Top Products List (Live API Grounded) */}
                     <div className="space-y-4">
-                      {(topProducts.length > 0
-                        ? topProducts.slice(0, 3).map((p, idx) => ({
-                            id: p.id,
-                            name: p.name,
-                            sales: `${(1240 - idx * 310 + p.id * 17).toLocaleString()} Sales`,
-                            available: p.status === 'AVAILABLE' && (p.quantity ?? 0) > 0,
-                            stock:
-                              p.quantity > 0
-                                ? `${p.quantity} Stocks Remaining`
-                                : 'Stocks will be available soon',
-                            img:
-                              p.banner_image ||
-                              'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80',
-                          }))
-                        : [
-                            {
-                              id: 1,
-                              name: 'Sony WH-1000XM5 Wireless ANC',
-                              sales: '12,429 Sales',
-                              available: true,
-                              stock: '120 Stocks Remaining',
-                              img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80',
-                            },
-                            {
-                              id: 2,
-                              name: 'Fastrack FS1 Pro Smartwatch',
-                              sales: '1,842 Sales',
-                              available: true,
-                              stock: '78 Stocks Remaining',
-                              img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80',
-                            },
-                            {
-                              id: 3,
-                              name: 'MacBook Pro 16 M3 Max Workstation',
-                              sales: '7,222 Sales',
-                              available: false,
-                              stock: 'Stocks will be available soon',
-                              img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&q=80',
-                            },
-                          ]
-                      ).map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between gap-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 flex-shrink-0 border border-slate-200 dark:border-slate-800">
-                              <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="min-w-0">
-                              <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                                {item.name}
-                              </h4>
-                              <p className="text-[10px] text-slate-400 font-mono">
-                                {item.sales}
-                              </p>
-                            </div>
-                          </div>
+                      {topProducts.length > 0 ? (
+                        topProducts.slice(0, 3).map((p) => {
+                          const isAvailable = p.status === 'AVAILABLE' && (p.quantity ?? 0) > 0;
+                          return (
+                            <div key={p.id} className="flex items-center justify-between gap-3">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-900 flex-shrink-0 border border-slate-200 dark:border-slate-800">
+                                  <img
+                                    src={p.banner_image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80'}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                                    {p.name}
+                                  </h4>
+                                  <p className="text-[10px] text-brand-600 dark:text-brand-400 font-mono font-bold">
+                                    {formatCurrency(p.price)}
+                                  </p>
+                                </div>
+                              </div>
 
-                          <div className="text-right flex-shrink-0">
-                            {item.available ? (
-                              <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                                • Available
+                              <div className="text-right flex-shrink-0">
+                                {isAvailable ? (
+                                  <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                                    • Available
+                                  </div>
+                                ) : (
+                                  <div className="text-[10px] text-rose-500 font-medium">
+                                    • Out of Stock
+                                  </div>
+                                )}
+                                <div className="text-[9px] text-slate-400 font-mono">
+                                  {p.quantity > 0 ? `${p.quantity} Units In Stock` : 'Restock pending'}
+                                </div>
                               </div>
-                            ) : (
-                              <div className="text-[10px] text-rose-500 font-medium">
-                                • Not Available
-                              </div>
-                            )}
-                            <div className="text-[9px] text-slate-400">
-                              {item.stock}
                             </div>
-                          </div>
+                          );
+                        })
+                      ) : (
+                        <div className="py-8 px-4 text-center rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800">
+                          <Package className="w-7 h-7 mx-auto text-slate-400 mb-2" />
+                          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">No products registered yet</p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">
+                            Add products to populate live inventory and top rankings.
+                          </p>
                         </div>
-                      ))}
+                      )}
                     </div>
 
                     <button
@@ -1008,127 +985,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
-                        {orders.length > 0
-                          ? orders.slice(0, 5).map((ord) => {
-                              const statusBadge = getStatusBadge(ord.order_status);
-                              return (
-                                <tr
-                                  key={ord.id}
-                                  className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
-                                >
-                                  <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
-                                    #{ord.id}JL
-                                  </td>
-                                  <td className="py-3.5 px-4 font-medium text-slate-900 dark:text-white">
-                                    {ord.product?.name || `Hardware Item #${ord.product_id}`}
-                                  </td>
-                                  <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
-                                    {formatDate(ord.ordered_at)}
-                                  </td>
-                                  <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
-                                    {formatCurrency(ord.total_price)}
-                                  </td>
-                                  <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 text-[11px]">
-                                    {ord.payment_method}
-                                  </td>
-                                  <td className="py-3.5 px-4">
-                                    <span
-                                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase ${statusBadge.bg} ${statusBadge.text}`}
-                                    >
-                                      {ord.order_status}
-                                    </span>
-                                  </td>
-                                  <td className="py-3.5 px-4 text-right">
-                                    <div className="flex items-center justify-end gap-1">
-                                      {['PROCESSING', 'DELIVERED'].map((st) => (
-                                        <button
-                                          key={st}
-                                          onClick={() => handleUpdateOrderStatus(ord.id, st)}
-                                          disabled={
-                                            updatingOrderId === ord.id || ord.order_status === st
-                                          }
-                                          className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${
-                                            ord.order_status === st
-                                              ? 'bg-brand-500 text-white'
-                                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                                          }`}
-                                        >
-                                          {st === 'PROCESSING' ? 'Process' : 'Deliver'}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })
-                          : [
-                              {
-                                id: '#2456JL',
-                                product: 'Sony WH-1000XM5 Wireless ANC',
-                                date: 'Jan 12 , 12:23 pm',
-                                price: '$349.00',
-                                payment: 'Transfer',
-                                status: 'Processing',
-                                statusColor:
-                                  'text-purple-600 bg-purple-50 dark:bg-purple-500/10 dark:text-purple-300',
-                              },
-                              {
-                                id: '#5435DF',
-                                product: 'MacBook Pro 16 M3 Max',
-                                date: 'May 01 , 01:13 pm',
-                                price: '$2,499.00',
-                                payment: 'Credit Card',
-                                status: 'Completed',
-                                statusColor:
-                                  'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-300',
-                              },
-                              {
-                                id: '#9876XC',
-                                product: 'Samsung S24 Ultra 5G',
-                                date: 'Sep 20 , 09:08 am',
-                                price: '$1,199.00',
-                                payment: 'Mobile Money',
-                                status: 'Completed',
-                                statusColor:
-                                  'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 dark:text-emerald-300',
-                              },
-                            ].map((row, i) => (
+                        {orders.length > 0 ? (
+                          orders.slice(0, 5).map((ord) => {
+                            const statusBadge = getStatusBadge(ord.order_status);
+                            return (
                               <tr
-                                key={i}
+                                key={ord.id}
                                 className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                               >
                                 <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
-                                  {row.id}
+                                  #{ord.id}
                                 </td>
                                 <td className="py-3.5 px-4 font-medium text-slate-900 dark:text-white">
-                                  {row.product}
+                                  {ord.product?.name || `Product ID #${ord.product_id}`}
                                 </td>
                                 <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-mono text-[11px]">
-                                  {row.date}
+                                  {formatDate(ord.ordered_at)}
                                 </td>
                                 <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
-                                  {row.price}
+                                  {formatCurrency(ord.total_price)}
                                 </td>
                                 <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400 text-[11px]">
-                                  {row.payment}
+                                  {ord.payment_method}
                                 </td>
                                 <td className="py-3.5 px-4">
                                   <span
-                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${row.statusColor}`}
+                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase ${statusBadge.bg} ${statusBadge.text}`}
                                   >
-                                    {row.status}
+                                    {ord.order_status}
                                   </span>
                                 </td>
                                 <td className="py-3.5 px-4 text-right">
-                                  <button
-                                    onClick={() => showStatus(`Action menu for ${row.id}`)}
-                                    className="p-1 rounded text-slate-400 hover:text-slate-700 dark:hover:text-white"
-                                  >
-                                    <MoreVertical className="w-4 h-4" />
-                                  </button>
+                                  <div className="flex items-center justify-end gap-1">
+                                    {['PROCESSING', 'DELIVERED'].map((st) => (
+                                      <button
+                                        key={st}
+                                        onClick={() => handleUpdateOrderStatus(ord.id, st)}
+                                        disabled={
+                                          updatingOrderId === ord.id || ord.order_status === st
+                                        }
+                                        className={`px-2 py-0.5 rounded text-[10px] font-bold transition-colors ${
+                                          ord.order_status === st
+                                            ? 'bg-brand-500 text-white'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                        }`}
+                                      >
+                                        {st === 'PROCESSING' ? 'Process' : 'Deliver'}
+                                      </button>
+                                    ))}
+                                  </div>
                                 </td>
                               </tr>
-                            ))}
+                            );
+                          })
+                        ) : (
+                          <tr>
+                            <td colSpan={7} className="py-10 text-center text-slate-400">
+                              <div className="flex flex-col items-center justify-center">
+                                <FileText className="w-8 h-8 text-slate-300 dark:text-slate-700 mb-2" />
+                                <div className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                                  No orders recorded yet
+                                </div>
+                                <div className="text-[11px] text-slate-500 mt-0.5">
+                                  Customer orders placed on the storefront will appear here live.
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>

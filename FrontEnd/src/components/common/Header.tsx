@@ -30,6 +30,7 @@ interface HeaderProps {
   onOpenAuth: () => void;
   onFocusSearch: () => void;
   onSelectCategory?: (category: string) => void;
+  onOpenAiRecommendations?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -38,6 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onFocusSearch,
   onSelectCategory,
+  onOpenAiRecommendations,
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const { getTotalItems, setIsOpen: setCartOpen } = useCartStore();
@@ -45,19 +47,19 @@ export const Header: React.FC<HeaderProps> = ({
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(3);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [activeCategory, setActiveCategory] = useState('All');
 
   const totalCartItems = getTotalItems();
   const isDark = theme === 'dark';
 
   const subCategories = [
-    { id: 'All', label: 'Gadgets', icon: Laptop },
-    { id: 'Smart Home', label: 'Smart Home', icon: HomeIcon },
+    { id: 'All', label: 'All Products', icon: Laptop },
     { id: 'Audio', label: 'Audio', icon: Headphones },
     { id: 'Wearables', label: 'Wearables', icon: Watch },
+    { id: 'Smart Home', label: 'Smart Tech', icon: HomeIcon },
     { id: 'Accessories', label: 'Accessories', icon: Sliders },
-    { id: 'Sale', label: 'Sale', icon: Tag, highlight: true },
+    { id: 'Sale', label: 'In Stock', icon: Tag, highlight: true },
   ];
 
   const handleCategoryClick = (catId: string) => {
@@ -322,16 +324,28 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               );
             })}
+
+            {onOpenAiRecommendations && (
+              <button
+                onClick={onOpenAiRecommendations}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-accent-700 dark:text-accent-400 bg-accent-500/10 hover:bg-accent-500/20 border border-accent-500/30 transition-all whitespace-nowrap shadow-sm ml-1"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-500 animate-pulse" />
+                <span>AI Recommend</span>
+              </button>
+            )}
           </div>
 
-          {/* Region Switcher & Tagline (Reference 2) */}
+          {/* Live Backend & Multi-Rail Gateway Status Indicator */}
           <div className="hidden md:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-mono">
-            <div className="flex items-center gap-1">
-              <Globe className="w-3.5 h-3.5 text-accent-500" />
-              <span>US | UK | UAE</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">FastAPI Connected</span>
             </div>
             <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Fast Air Express</span>
+            <span className="text-[11px] text-brand-600 dark:text-brand-400 font-bold">
+              Rails: Bank • MoMo • Crypto
+            </span>
           </div>
         </div>
       </div>
@@ -362,6 +376,18 @@ export const Header: React.FC<HeaderProps> = ({
             <Search className="w-4 h-4 text-brand-500" />
             <span>AI Smart Search</span>
           </button>
+          {onOpenAiRecommendations && (
+            <button
+              onClick={() => {
+                onOpenAiRecommendations();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-500/10 flex items-center gap-2"
+            >
+              <Sparkles className="w-4 h-4 text-accent-500" />
+              <span>AI Recommendation Engine</span>
+            </button>
+          )}
           <button
             onClick={() => {
               onNavigate('admin');

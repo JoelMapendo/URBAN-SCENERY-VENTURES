@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Trash2,
@@ -6,14 +6,15 @@ import {
   ArrowRight,
   Plus,
   Minus,
-  Cpu,
-  Tag,
-  CheckCircle2,
+  Sparkles,
   ShieldCheck,
-  CreditCard,
+  CheckCircle2,
+  Cpu,
 } from 'lucide-react';
 import { useCartStore } from '../../store/useCartStore';
 import { formatCurrency } from '../../utils/formatters';
+import { api } from '../../services/api';
+import { ProductOut } from '../../types';
 
 interface CartDrawerProps {
   onOpenCheckout: () => void;
@@ -31,71 +32,32 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
     addItem,
   } = useCartStore();
 
-  const [promoCode, setPromoCode] = useState('');
-  const [discountPercent, setDiscountPercent] = useState(0);
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [promoError, setPromoError] = useState('');
+  const [recommendedProducts, setRecommendedProducts] = useState<ProductOut[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let isMounted = true;
+    api
+      .listProducts({ limit: 6, status: 'AVAILABLE' })
+      .then((data) => {
+        if (!isMounted) return;
+        const currentCartIds = new Set(items.map((i) => i.product.id));
+        const filtered = (data || []).filter((p) => !currentCartIds.has(p.id)).slice(0, 3);
+        setRecommendedProducts(filtered);
+      })
+      .catch((err) => {
+        console.warn('Failed to fetch cross-sell suggestions:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, items]);
 
   if (!isOpen) return null;
 
   const totalItemCount = getTotalItems();
   const rawSubtotal = getTotalPrice();
-  const discountAmount = rawSubtotal * discountPercent;
-  const finalTotal = Math.max(0, rawSubtotal - discountAmount);
-
-  // Cross-sell items grounded with valid seeded product IDs
-  const crossSellProducts = [
-    {
-      id: 5,
-      name: 'Anker 737 Power Bank (PowerCore 24K)',
-      price: '149.99',
-      category: 'Accessories',
-      description: '24,000mAh 3-port portable charger with 140W fast output, smart digital display.',
-      banner_image: 'https://images.unsplash.com/photo-1609592424364-c78d53b27670?w=400&q=80',
-      quantity: 50,
-      status: 'AVAILABLE',
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: 2,
-      name: 'Sony WH-1000XM5 Wireless Headphones',
-      price: '399.99',
-      category: 'Audio',
-      description: 'Industry-leading noise canceling Bluetooth headphones with 30-hour battery life.',
-      banner_image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',
-      quantity: 30,
-      status: 'AVAILABLE',
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: 10,
-      name: 'Keychron Q1 Pro Wireless Custom Mechanical Keyboard',
-      price: '210.00',
-      category: 'Accessories',
-      description: 'CNC aluminum body, 75% layout, QMK/VIA programmable, Bluetooth 5.1.',
-      banner_image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80',
-      quantity: 35,
-      status: 'AVAILABLE',
-      created_at: new Date().toISOString(),
-    },
-  ];
-
-  const handleApplyPromo = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPromoError('');
-    const code = promoCode.trim().toUpperCase();
-    if (code === 'URBAN20' || code === 'SAVE20') {
-      setDiscountPercent(0.20);
-      setPromoApplied(true);
-    } else if (code === 'AI10') {
-      setDiscountPercent(0.10);
-      setPromoApplied(true);
-    } else if (code === '') {
-      setPromoError('Please enter a coupon code.');
-    } else {
-      setPromoError('Invalid coupon code. Try URBAN20 for 20% off.');
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
@@ -223,75 +185,61 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
                   ))}
                 </div>
 
-                {/* Promo Code Box (Reference 3) */}
-                <div className="pt-2">
-                  <form onSubmit={handleApplyPromo} className="space-y-1.5">
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Tag className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value)}
-                          placeholder="Promo Code (try URBAN20)"
-                          className="w-full pl-8 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs uppercase text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                        />
-                      </div>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl shadow-sm transition-all"
-                      >
-                        Apply
-                      </button>
+                {/* Verified Order Assurance Badge */}
+                <div className="p-3 rounded-xl bg-brand-500/5 dark:bg-brand-500/10 border border-brand-500/20 text-xs flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-brand-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-bold text-slate-900 dark:text-white text-[11px]">
+                      Live Inventory Lock Active
                     </div>
-
-                    {promoApplied && (
-                      <div className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-semibold">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>{(discountPercent * 100)}% discount coupon applied!</span>
-                      </div>
-                    )}
-                    {promoError && (
-                      <div className="text-[11px] text-rose-500 font-medium">
-                        {promoError}
-                      </div>
-                    )}
-                  </form>
-                </div>
-
-                {/* "You Might Also Like" Cross-Sell Row (Reference 3) */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-                  <h4 className="text-xs font-extrabold text-slate-900 dark:text-white mb-3 font-heading">
-                    You Might Also Like
-                  </h4>
-                  <div className="space-y-2.5">
-                    {crossSellProducts.map((p) => (
-                      <div
-                        key={p.id}
-                        className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800"
-                      >
-                        <div className="w-10 h-10 rounded-lg overflow-hidden bg-white dark:bg-slate-950 flex-shrink-0 border border-slate-200 dark:border-slate-800">
-                          <img src={p.banner_image} alt={p.name} className="w-full h-full object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h5 className="text-[11px] font-bold text-slate-900 dark:text-white truncate">
-                            {p.name}
-                          </h5>
-                          <span className="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400">
-                            {formatCurrency(p.price)}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => addItem(p as any, 1)}
-                          className="w-7 h-7 rounded-lg bg-brand-500/10 hover:bg-brand-500 text-brand-600 dark:text-brand-400 hover:text-white flex items-center justify-center transition-all shadow-sm"
-                          title="Add to cart"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                      Prices and items are verified directly against our live catalog database.
+                    </div>
                   </div>
                 </div>
+
+                {/* "You Might Also Like" Cross-Sell Row Grounded in Live Products */}
+                {recommendedProducts.length > 0 && (
+                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center gap-1.5 mb-3">
+                      <Sparkles className="w-3.5 h-3.5 text-accent-500" />
+                      <h4 className="text-xs font-extrabold text-slate-900 dark:text-white font-heading">
+                        You Might Also Like
+                      </h4>
+                    </div>
+                    <div className="space-y-2.5">
+                      {recommendedProducts.map((p) => (
+                        <div
+                          key={p.id}
+                          className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800"
+                        >
+                          <div className="w-10 h-10 rounded-lg overflow-hidden bg-white dark:bg-slate-950 flex-shrink-0 border border-slate-200 dark:border-slate-800">
+                            <img
+                              src={p.banner_image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80'}
+                              alt={p.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h5 className="text-[11px] font-bold text-slate-900 dark:text-white truncate">
+                              {p.name}
+                            </h5>
+                            <span className="text-[10px] font-mono font-bold text-brand-600 dark:text-brand-400">
+                              {formatCurrency(p.price)}
+                            </span>
+                          </div>
+                          <button
+                            onClick={() => addItem(p, 1)}
+                            className="w-7 h-7 rounded-lg bg-brand-500/10 hover:bg-brand-500 text-brand-600 dark:text-brand-400 hover:text-white flex items-center justify-center transition-all shadow-sm"
+                            title="Add to cart"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -307,26 +255,17 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ onOpenCheckout }) => {
                   </span>
                 </div>
 
-                {discountPercent > 0 && (
-                  <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
-                    <span>Discount ({(discountPercent * 100)}%)</span>
-                    <span className="font-mono font-bold">
-                      -{formatCurrency(discountAmount)}
-                    </span>
-                  </div>
-                )}
-
                 <div className="flex items-center justify-between">
                   <span>Shipping</span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-mono font-bold">
-                    Free
+                    Free Standard Delivery
                   </span>
                 </div>
 
                 <div className="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
                   <span className="text-sm font-bold text-slate-900 dark:text-white">Total</span>
                   <span className="text-lg font-black text-brand-600 dark:text-brand-400 font-mono">
-                    {formatCurrency(finalTotal)}
+                    {formatCurrency(rawSubtotal)}
                   </span>
                 </div>
               </div>
