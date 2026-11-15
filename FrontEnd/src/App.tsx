@@ -23,7 +23,7 @@ export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [uiShowcaseOpen, setUiShowcaseOpen] = useState(false);
-  const [dashboardTab, setDashboardTab] = useState<'dashboard' | 'favorite' | 'payment' | 'notifications' | 'settings'>('dashboard');
+  const [dashboardTab, setDashboardTab] = useState<'dashboard' | 'favorite' | 'payment' | 'notifications' | 'settings' | 'upload_products' | 'buyer_orders'>('dashboard');
 
   // Active product for detail page
   const [selectedProduct, setSelectedProduct] = useState<ProductOut>(DEFAULT_PRODUCTS[0]);
@@ -37,10 +37,10 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleNavigate = (view: ViewMode, subSection?: string) => {
-    if (view === 'dashboard' && subSection && ['dashboard', 'favorite', 'payment', 'notifications', 'settings'].includes(subSection)) {
+    if (view === 'dashboard' && subSection && ['dashboard', 'favorite', 'payment', 'notifications', 'settings', 'upload_products', 'buyer_orders'].includes(subSection)) {
       setDashboardTab(subSection as any);
     } else if (view === 'dashboard' && !subSection) {
-      setDashboardTab('dashboard');
+      setDashboardTab(isAdmin ? 'dashboard' : 'buyer_orders');
     }
 
     if (view === 'shop' && subSection) {

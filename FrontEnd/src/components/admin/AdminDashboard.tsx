@@ -81,7 +81,6 @@ type AdminTab =
   | 'CUSTOMERS'
   | 'ORDERS'
   | 'PAYMENTS'
-  | 'AI_STUDIO'
   | 'PLATFORM_PARTNER';
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -506,7 +505,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 { id: 'CUSTOMERS', label: 'Customer', icon: Users, badge: users.length },
                 { id: 'ORDERS', label: 'Orders', icon: ShoppingCart, badge: orders.length },
                 { id: 'PAYMENTS', label: 'Payments', icon: CreditCard, badge: payments.length },
-                { id: 'AI_STUDIO', label: 'AI Enterprise Studio', icon: Sparkles },
                 { id: 'PLATFORM_PARTNER', label: 'Platform & Social Hub', icon: Share2 },
               ].map((item) => {
                 const Icon = item.icon;
@@ -544,20 +542,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           {/* Bottom Card: "Upgrade Pro" (Matching Reference Image 1) */}
           <div className="mt-8 pt-4 border-t border-slate-200 dark:border-slate-800/80">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-brand-600 via-brand-500 to-purple-600 text-white shadow-xl shadow-brand-500/20 relative overflow-hidden">
-              <div className="absolute -right-3 -bottom-3 w-16 h-16 bg-white/10 rounded-full blur-xl pointer-events-none" />
+            <div className="p-4 rounded-2xl bg-black text-white shadow-xl relative overflow-hidden">
               <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-3">
-                <Sparkles className="w-4 h-4 text-accent-200" />
+                <Package className="w-4 h-4 text-brand-400" />
               </div>
-              <h4 className="text-xs font-bold font-heading mb-1">Upgrade Pro</h4>
-              <p className="text-[11px] text-brand-100 leading-relaxed mb-3">
-                Discover new features to detailed report and analysis.
+              <h4 className="text-xs font-bold font-heading mb-1">Seller Hub</h4>
+              <p className="text-[11px] text-slate-300 leading-relaxed mb-3">
+                Upload electronics and manage your verified inventory.
               </p>
               <button
-                onClick={() => setActiveTab('AI_STUDIO')}
-                className="w-full py-2 rounded-xl bg-white hover:bg-slate-100 text-brand-600 text-xs font-extrabold shadow-sm transition-all text-center"
+                onClick={() => setActiveTab('PRODUCTS')}
+                className="w-full py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-extrabold shadow-sm transition-all text-center"
               >
-                Upgrade Now
+                Upload Products
               </button>
             </div>
 
@@ -1385,145 +1382,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             )}
 
-            {/* ========================================================================= */}
-            {/* TAB: AI ENTERPRISE STUDIO */}
-            {/* ========================================================================= */}
-            {activeTab === 'AI_STUDIO' && (
-              <div className="space-y-6 animate-in fade-in">
-                <div>
-                  <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 font-heading">
-                    <Sparkles className="w-5 h-5 text-accent-500" />
-                    <span>AI Enterprise Decision & Marketing Studio</span>
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Query business intelligence, growth optimization, promotional copy, and render base64 imagery.
-                  </p>
-                </div>
 
-                {/* Sub-Agent Selector */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { id: 'BI', title: 'Business Intelligence', desc: 'Margins & revenue metrics', icon: TrendingUp },
-                    { id: 'GROWTH', title: 'Growth Optimization', desc: 'Restocking & inventory scaling', icon: DollarSign },
-                    { id: 'MARKETING', title: 'Marketing Content', desc: 'Ad copy & campaign drafts', icon: MessageSquare },
-                    { id: 'IMAGE_STUDIO', title: 'Image Studio', desc: 'Visual prompt & base64 render', icon: ImageIcon },
-                  ].map((agent) => {
-                    const Icon = agent.icon;
-                    return (
-                      <button
-                        key={agent.id}
-                        onClick={() => {
-                          setAiAgentType(agent.id as any);
-                          setAiResponse(null);
-                          setRenderedImageBase64(null);
-                        }}
-                        className={`p-4 rounded-2xl border text-left transition-all ${
-                          aiAgentType === agent.id
-                            ? 'bg-gradient-to-tr from-brand-500/10 to-accent-500/10 border-brand-500 text-slate-900 dark:text-white shadow-md'
-                            : 'bg-white dark:bg-urban-dark border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                        }`}
-                      >
-                        <Icon className="w-5 h-5 text-brand-500 mb-2" />
-                        <div className="font-bold text-xs text-slate-900 dark:text-white font-heading">{agent.title}</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{agent.desc}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Agent Form */}
-                <form onSubmit={handleRunAiAgent} className="p-5 rounded-2xl bg-white dark:bg-urban-dark border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
-                  <div>
-                    <label className="text-xs font-bold text-slate-900 dark:text-white block mb-1">
-                      Prompt for {aiAgentType} Agent:
-                    </label>
-                    <textarea
-                      rows={3}
-                      required
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder={
-                        aiAgentType === 'BI'
-                          ? 'What are our top revenue generators and category margins this month?'
-                          : aiAgentType === 'GROWTH'
-                          ? 'Which electronics should we restock first based on customer order volume?'
-                          : aiAgentType === 'MARKETING'
-                          ? 'Write a high-converting promotional post for our flagship noise-cancelling headphones.'
-                          : 'Generate a futuristic metropolitan hero render prompt for our flagship smartphone lineup.'
-                      }
-                      className="w-full p-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500"
-                    />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={aiLoading || !aiPrompt.trim()}
-                      className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-accent-500 hover:from-brand-600 hover:to-accent-600 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-brand-500/25 disabled:opacity-40"
-                    >
-                      {aiLoading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Executing Agent...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Bot className="w-4 h-4" />
-                          <span>Run {aiAgentType} Agent</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
-
-                {/* Results Output */}
-                {aiResponse && (
-                  <div className="p-6 rounded-2xl bg-white dark:bg-urban-dark border border-brand-200 dark:border-brand-500/30 space-y-4 animate-in fade-in shadow-md">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-                      <div className="flex items-center gap-2">
-                        <Bot className="w-5 h-5 text-brand-500" />
-                        <span className="font-bold text-sm text-slate-900 dark:text-white font-heading">
-                          Agent Output: {aiResponse.agent}
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold">
-                        Model: {aiResponse.model}
-                      </span>
-                    </div>
-
-                    <div className="text-xs text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
-                      {aiResponse.answer}
-                    </div>
-
-                    {aiResponse.data_summary && Object.keys(aiResponse.data_summary).length > 0 && (
-                      <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px] font-mono">
-                        <span className="text-slate-500 dark:text-slate-400 block mb-1 uppercase font-bold">
-                          Database Grounding Telemetry:
-                        </span>
-                        <pre className="text-brand-600 dark:text-accent-400 overflow-x-auto whitespace-pre-wrap">
-                          {JSON.stringify(aiResponse.data_summary, null, 2)}
-                        </pre>
-                      </div>
-                    )}
-
-                    {renderedImageBase64 && (
-                      <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-                        <span className="text-xs font-bold text-slate-900 dark:text-white block mb-2 font-heading">
-                          Studio Rendered Product Image Preview:
-                        </span>
-                        <div className="rounded-xl overflow-hidden max-w-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 shadow-sm">
-                          <img
-                            src={`data:image/png;base64,${renderedImageBase64}`}
-                            alt="Rendered product"
-                            className="w-full h-auto"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* ========================================================================= */}
             {/* TAB: SOCIAL MULTICHANNEL HUB & PLATFORM PARTNER */}

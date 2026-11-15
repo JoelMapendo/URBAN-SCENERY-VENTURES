@@ -20,6 +20,7 @@ import {
   Smartphone,
   Sliders,
   Tag,
+  Store,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
@@ -178,43 +179,85 @@ export const Header: React.FC<HeaderProps> = ({
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl py-2 z-50 text-xs animate-in fade-in">
                     <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
-                      <p className="font-bold text-slate-900 dark:text-white truncate">{user?.name}</p>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-slate-900 dark:text-white truncate">{user?.name}</p>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-brand-500/10 text-brand-500 uppercase">
+                          {isAdmin ? 'Seller' : 'Buyer'}
+                        </span>
+                      </div>
                       <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                     </div>
 
-                    <button
-                      onClick={() => {
-                        onNavigate('dashboard');
-                        setUserDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
-                    >
-                      <User className="w-4 h-4 text-brand-500" />
-                      <span>My Account & Orders</span>
-                    </button>
+                    {isAdmin ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard', 'dashboard');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-brand-500" />
+                          <span>Sales Diagrams & Orders</span>
+                        </button>
 
-                    <button
-                      onClick={() => {
-                        onNavigate('order-status');
-                        setUserDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
-                    >
-                      <MapPin className="w-4 h-4 text-emerald-500" />
-                      <span>Track Live Delivery</span>
-                    </button>
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard', 'upload_products');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <Layers className="w-4 h-4 text-emerald-500" />
+                          <span>Upload Electronics</span>
+                        </button>
 
-                    {isAdmin && (
-                      <button
-                        onClick={() => {
-                          onNavigate('admin');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200"
-                      >
-                        <LayoutDashboard className="w-4 h-4 text-brand-500" />
-                        <span>Merchant Dashboard</span>
-                      </button>
+                        <button
+                          onClick={() => {
+                            onNavigate('admin');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <Store className="w-4 h-4 text-brand-500" />
+                          <span>Merchant Studio</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard', 'buyer_orders');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <User className="w-4 h-4 text-brand-500" />
+                          <span>My Purchases (Short)</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard', 'favorite');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <Heart className="w-4 h-4 text-brand-500" />
+                          <span>My Wishlist (4)</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onNavigate('order-status');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <MapPin className="w-4 h-4 text-emerald-500" />
+                          <span>Track Live Delivery</span>
+                        </button>
+                      </>
                     )}
 
                     <button

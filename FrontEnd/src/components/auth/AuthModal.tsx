@@ -70,13 +70,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
   const handleDemoFill = (type: 'customer' | 'admin') => {
     setError(null);
     if (type === 'admin') {
-      setEmail('admin@urbanventures.com');
-      setPassword('admin123');
-      setInfoNotice('Admin credentials loaded. Click "Sign In" to access the merchant console.');
+      setAuth('demo-admin-token', {
+        public_id: 'usr_admin_001',
+        name: 'Urban Scenery Admin',
+        email: 'admin@urbanventures.com',
+        role: 'admin',
+        created_at: new Date().toISOString(),
+      });
+      onClose();
     } else {
-      setEmail('customer@example.com');
-      setPassword('customer123');
-      setInfoNotice('Customer credentials loaded. Click "Sign In" to test shopping & orders.');
+      setAuth('demo-buyer-token', {
+        public_id: 'usr_buyer_001',
+        name: 'Courtney Henry',
+        email: 'courtney.henry@example.com',
+        role: 'buyer',
+        created_at: new Date().toISOString(),
+      });
+      onClose();
     }
   };
 
@@ -310,16 +320,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             <button
               type="button"
               onClick={() => handleDemoFill('customer')}
-              className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5"
+              className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5"
             >
-              <span>🛒 Customer Demo</span>
+              <span>🛍️ Buyer Demo</span>
             </button>
             <button
               type="button"
               onClick={() => handleDemoFill('admin')}
-              className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5"
+              className="py-2.5 px-3 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
             >
-              <span>⚡ Admin Demo</span>
+              <span>⚡ Seller / Admin</span>
             </button>
           </div>
         </div>

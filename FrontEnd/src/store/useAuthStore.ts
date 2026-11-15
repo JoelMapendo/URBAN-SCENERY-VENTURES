@@ -8,6 +8,7 @@ interface AuthState {
   isAdmin: boolean;
   setAuth: (token: string, user: UserOut) => void;
   updateUser: (updatedUser: Partial<UserOut>) => void;
+  setRole: (role: 'admin' | 'buyer') => void;
   logout: () => void;
 }
 
@@ -72,6 +73,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 
+  setRole: (role: 'admin' | 'buyer') => {
+    const currentUser = get().user;
+    const isAdmin = role === 'admin';
+    const updatedUser: UserOut = currentUser
+      ? { ...currentUser, role, name: isAdmin ? (currentUser.role === 'admin' ? currentUser.name : 'Urban Scenery Admin') : (currentUser.role === 'admin' ? 'Courtney Henry' : currentUser.name), email: isAdmin ? (currentUser.role === 'admin' ? currentUser.email : 'admin@urbanventures.com') : (currentUser.role === 'admin' ? 'courtney.henry@example.com' : currentUser.email) }
+      : {
+          public_id: isAdmin ? 'usr_admin_001' : 'usr_buyer_001',
+          name: isAdmin ? 'Urban Scenery Admin' : 'Courtney Henry',
+          email: isAdmin ? 'admin@urbanventures.com' : 'courtney.henry@example.com',
+          role,
+          created_at: new Date().toISOString(),
+        };
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ token: get().token || 'demo-token', user: updatedUser })
+    );
+    set({
+      token: get().token || 'demo-token',
+      user: updatedUser,
+      isAuthenticated: true,
+      isAdmin,
+    });
+  },
+
   logout: () => {
     localStorage.removeItem(STORAGE_KEY);
     set({
@@ -82,4 +108,3 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 }));
-
