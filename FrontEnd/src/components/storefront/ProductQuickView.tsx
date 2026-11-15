@@ -7,13 +7,13 @@ import { useCartStore } from '../../store/useCartStore';
 interface ProductQuickViewProps {
   product: ProductOut;
   onClose: () => void;
-  onAskAi: (product: ProductOut) => void;
+  onViewDetails?: (product: ProductOut) => void;
 }
 
 export const ProductQuickView: React.FC<ProductQuickViewProps> = ({
   product,
   onClose,
-  onAskAi,
+  onViewDetails,
 }) => {
   const { addItem } = useCartStore();
   const [qty, setQty] = useState(1);
@@ -171,14 +171,17 @@ export const ProductQuickView: React.FC<ProductQuickViewProps> = ({
                   )}
                 </button>
 
-                <button
-                  onClick={() => onAskAi(product)}
-                  className="px-4 py-3 rounded-xl bg-accent-50 dark:bg-accent-500/10 hover:bg-accent-100 dark:hover:bg-accent-500/20 text-accent-800 dark:text-accent-400 border border-accent-300 dark:border-accent-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
-                  title="Ask AI Shopping Assistant about this item"
-                >
-                  <Sparkles className="w-4 h-4 text-accent-500" />
-                  <span className="hidden sm:inline">Ask AI</span>
-                </button>
+                {onViewDetails && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onViewDetails(product);
+                    }}
+                    className="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-all"
+                  >
+                    <span>Full Details</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

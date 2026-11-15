@@ -12,6 +12,7 @@ import {
   RotateCcw,
   ShieldCheck,
   ChevronDown,
+  ArrowRight,
 } from 'lucide-react';
 import { ProductOut } from '../../types';
 import { api } from '../../services/api';
@@ -19,6 +20,7 @@ import { ProductCard } from './ProductCard';
 import { ProductQuickView } from './ProductQuickView';
 import { useCartStore } from '../../store/useCartStore';
 import { DEFAULT_PRODUCTS } from '../../data/defaultProducts';
+import { formatCurrency } from '../../utils/formatters';
 
 interface ProductGridProps {
   initialSearchQuery?: string;
@@ -669,6 +671,69 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             )}
           </main>
         </div>
+
+        {/* Related Products Section (Matching Reference Image 5) */}
+        <section className="mt-16 pt-12 border-t border-slate-200/90 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-xl font-black text-slate-950 dark:text-white tracking-tight font-heading">
+                Related Products
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Recommendations For Your Lifestyle.</p>
+            </div>
+            <button
+              onClick={() => {
+                setActiveCategory('All Products');
+                setSelectedBrands([]);
+                setSelectedColor(null);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-brand-500 flex items-center gap-1 transition-colors"
+            >
+              <span>View All Product</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.slice(0, 4).map((item) => (
+              <div
+                key={item.id}
+                onClick={() => onOpenProductDetail && onOpenProductDetail(item)}
+                className="group p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-950/60 p-4 flex items-center justify-center overflow-hidden mb-4">
+                  <img
+                    src={item.banner_image}
+                    alt={item.name}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+                  />
+                </div>
+
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-brand-500 transition-colors line-clamp-1 mb-2">
+                    {item.name}
+                  </h4>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <span className="text-xs font-mono font-bold text-slate-950 dark:text-white">
+                      {formatCurrency(item.price)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addItem(item, 1);
+                      }}
+                      className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-brand-500 hover:text-white text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors"
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
 
       {/* Quick View Modal */}
@@ -676,14 +741,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <ProductQuickView
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onAskAi={(p) => {
-            setSelectedProduct(null);
-            if (onOpenShoppingAssistant) {
-              onOpenShoppingAssistant(`Tell me more about ${p.name} and how it compares with other electronics.`);
-            } else if (onOpenProductDetail) {
-              onOpenProductDetail(p);
-            }
-          }}
+          onViewDetails={onOpenProductDetail}
         />
       )}
     </div>
