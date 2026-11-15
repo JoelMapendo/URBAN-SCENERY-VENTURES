@@ -27,11 +27,10 @@ import { useThemeStore } from '../../store/useThemeStore';
 
 interface HeaderProps {
   currentView: 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin';
-  onNavigate: (view: 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin') => void;
+  onNavigate: (view: 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin', subSection?: string) => void;
   onOpenAuth: () => void;
   onFocusSearch: () => void;
   onSelectCategory?: (category: string) => void;
-  onOpenAiRecommendations?: () => void;
   onOpenUiShowcase?: () => void;
 }
 
@@ -41,7 +40,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onFocusSearch,
   onSelectCategory,
-  onOpenAiRecommendations,
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const { getTotalItems, setIsOpen: setCartOpen } = useCartStore();
@@ -108,26 +106,20 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* 2. Main Header Bar (Matching Reference Image: Logo + Centered Search + Action Icons) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-6">
-        {/* Brand Logo (Bold Black with Pink Accent) */}
+        {/* Brand Logo (Clearly visible wide logo + typography) */}
         <div
           onClick={() => onNavigate('home')}
-          className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
+          className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
         >
-          <div className="w-9 h-9 rounded-xl overflow-hidden bg-black p-0.5 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
-            <img
-              src="/urban-scenery-logo.png"
-              alt="Urban Scenery"
-              className="w-full h-full object-cover rounded-[9px] bg-white"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }}
-            />
-          </div>
-          <div>
-            <div className="font-black text-lg text-slate-950 dark:text-white tracking-tight flex items-center gap-1 font-heading">
+          <img
+            src="/urban-scenery-logo.png"
+            alt="Urban Scenery"
+            className="h-10 sm:h-12 w-auto max-w-[170px] sm:max-w-[200px] object-contain transition-transform group-hover:scale-105"
+          />
+          <div className="hidden sm:block">
+            <div className="font-black text-base sm:text-lg text-slate-950 dark:text-white tracking-tight flex items-center gap-1 font-heading">
               <span>URBAN</span>
-              <span>SCENERY</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+              <span className="text-brand-500">SCENERY</span>
             </div>
             <p className="text-[9px] text-slate-400 font-mono tracking-wider uppercase -mt-0.5">
               Electronics Store
@@ -159,16 +151,15 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Action Icons (Wishlist, Account, Cart with Pink Badge) */}
         <div className="flex items-center gap-3">
-          {/* AI Recommend Pill */}
-          {onOpenAiRecommendations && (
-            <button
-              onClick={onOpenAiRecommendations}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-200 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-              <span>AI Advisor</span>
-            </button>
-          )}
+          {/* Wishlist Button (Matching Electro Mart Header) */}
+          <button
+            onClick={() => onNavigate('dashboard', 'favorite')}
+            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition-colors"
+            title="Wishlist"
+            aria-label="Wishlist"
+          >
+            <Heart className="w-5 h-5 text-slate-700 dark:text-slate-200 hover:text-brand-500 transition-colors" />
+          </button>
 
           {/* User Account Button & Dropdown */}
           <div className="relative">

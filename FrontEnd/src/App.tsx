@@ -9,8 +9,6 @@ import { OrderStatusView } from './components/storefront/OrderStatusView';
 import { CustomerDashboardView } from './components/storefront/CustomerDashboardView';
 import { CartDrawer } from './components/storefront/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
-import { AiShoppingAssistant } from './components/storefront/AiShoppingAssistant';
-import { AiRecommendationModal } from './components/storefront/AiRecommendationModal';
 import { UiShowcaseModal, UiInterfaceItem } from './components/common/UiShowcaseModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { DEFAULT_PRODUCTS } from './data/defaultProducts';
@@ -24,8 +22,8 @@ type ViewMode = 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status'
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [recommendationModalOpen, setRecommendationModalOpen] = useState(false);
   const [uiShowcaseOpen, setUiShowcaseOpen] = useState(false);
+  const [dashboardTab, setDashboardTab] = useState<'dashboard' | 'favorite' | 'payment' | 'notifications' | 'settings'>('dashboard');
 
   // Active product for detail page
   const [selectedProduct, setSelectedProduct] = useState<ProductOut>(DEFAULT_PRODUCTS[0]);
@@ -37,9 +35,18 @@ export const App: React.FC = () => {
 
   // Search state passed between header & shop
   const [searchQuery, setSearchQuery] = useState('');
-  const [assistantPrompt, setAssistantPrompt] = useState<string | undefined>(undefined);
 
-  const handleNavigate = (view: ViewMode) => {
+  const handleNavigate = (view: ViewMode, subSection?: string) => {
+    if (view === 'dashboard' && subSection && ['dashboard', 'favorite', 'payment', 'notifications', 'settings'].includes(subSection)) {
+      setDashboardTab(subSection as any);
+    } else if (view === 'dashboard' && !subSection) {
+      setDashboardTab('dashboard');
+    }
+
+    if (view === 'shop' && subSection) {
+      setSearchQuery(subSection);
+    }
+
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -81,9 +88,6 @@ export const App: React.FC = () => {
       case 'scroll_catalog':
         handleNavigate('shop');
         break;
-      case 'open_ai_recommend':
-        setRecommendationModalOpen(true);
-        break;
       case 'open_cart':
         setCartOpen(true);
         break;
@@ -92,9 +96,6 @@ export const App: React.FC = () => {
         break;
       case 'open_auth':
         setAuthModalOpen(true);
-        break;
-      case 'open_ai_assistant':
-        setAssistantPrompt('What flagship hardware do you recommend under $500?');
         break;
       case 'admin_gate':
         logout();
@@ -125,20 +126,19 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-urban-darker text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      {/* Global Navigation Header */}
+      {/* Global Navigation Header (Logo clearly seen, AI Advisor removed, Wishlist icon active) */}
       <Header
         currentView={currentView}
         onNavigate={handleNavigate}
         onOpenAuth={() => setAuthModalOpen(true)}
         onFocusSearch={handleFocusSearch}
         onSelectCategory={handleNavigateToShop}
-        onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
         onOpenUiShowcase={() => setUiShowcaseOpen(true)}
       />
 
       {/* Main Dynamic View Router */}
       <main className="flex-1">
-        {/* 1. HOME VIEW (Matching Image 1: Audio Card + Scooters + Entertainment + Category Circles + Popular) */}
+        {/* 1. HOME VIEW (Audio Card + Scooters + Entertainment + Category Circles + Popular) */}
         {currentView === 'home' && (
           <HomeView
             products={DEFAULT_PRODUCTS}
@@ -147,17 +147,16 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* 2. SHOP / COLLECTION VIEW (Matching Image 3: Left Sidebar Filters + 4-Col Grid + Pagination) */}
+        {/* 2. SHOP / COLLECTION VIEW (Left Sidebar Filters + 4-Col Grid + Pagination) */}
         {currentView === 'shop' && (
           <ProductGrid
             initialSearchQuery={searchQuery}
             onClearInitialSearch={() => setSearchQuery('')}
-            onOpenShoppingAssistant={(prompt) => setAssistantPrompt(prompt)}
             onOpenProductDetail={handleOpenProductDetail}
           />
         )}
 
-        {/* 3. PRODUCT DETAIL VIEW (Matching Image 6: Gallery, Tabs, Specs, Buy Now) */}
+        {/* 3. PRODUCT DETAIL VIEW (Gallery, Tabs, Specs, Buy Now) */}
         {currentView === 'product-detail' && (
           <ProductDetailView
             product={selectedProduct}
@@ -166,7 +165,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* 4. CART & CHECKOUT FLOW (Matching Image 2 & 4: Stepper, Billing, Confirmation) */}
+        {/* 4. CART & CHECKOUT FLOW (Stepper, Billing, Confirmation) */}
         {currentView === 'checkout' && (
           <CheckoutView
             products={DEFAULT_PRODUCTS}
@@ -176,7 +175,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* 5. ORDER TRACKING & STATUS (Matching Image 7: Stepper + Shipping Info + Interactive Map) */}
+        {/* 5. ORDER TRACKING & STATUS (Stepper + Shipping Info + Interactive Map) */}
         {currentView === 'order-status' && (
           <OrderStatusView
             orderId={trackingOrderId}
@@ -184,11 +183,14 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* 6. CUSTOMER DASHBOARD & SETTINGS (Matching Image 5 & 8: Metrics, Orders, Wishlist, Profile) */}
+        {/* 6. CUSTOMER DASHBOARD & SETTINGS (Orders Metrics, Table with Checkboxes, Favorite (4) Grid) */}
         {currentView === 'dashboard' && (
           <CustomerDashboardView
+            key={dashboardTab}
+            initialTab={dashboardTab}
             onViewOrderDetails={handleTrackOrder}
             onNavigateToShop={() => handleNavigate('shop')}
+            onOpenProductDetail={handleOpenProductDetail}
           />
         )}
 
@@ -204,18 +206,6 @@ export const App: React.FC = () => {
       {/* Persistent Slide-Over Cart Drawer */}
       <CartDrawer onOpenCheckout={() => handleNavigate('checkout')} />
 
-      {/* Persistent AI Shopping Assistant Agent */}
-      <AiShoppingAssistant
-        initialPrompt={assistantPrompt}
-        onClearInitialPrompt={() => setAssistantPrompt(undefined)}
-      />
-
-      {/* AI Recommendation Modal */}
-      <AiRecommendationModal
-        isOpen={recommendationModalOpen}
-        onClose={() => setRecommendationModalOpen(false)}
-      />
-
       {/* Auth Modal (Sign In / Register) */}
       {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}
 
@@ -226,8 +216,13 @@ export const App: React.FC = () => {
         onTriggerAction={handleTriggerUiAction}
       />
 
-      {/* Solid Black Footer (Matching Electro Mart Reference) */}
-      <Footer onOpenUiShowcase={() => setUiShowcaseOpen(true)} />
+      {/* Solid Black Footer (Matching Electro Mart Reference, Logo Clearly Seen, All Lines Clickable & Linked) */}
+      <Footer
+        onNavigate={handleNavigate}
+        onOpenCart={() => setCartOpen(true)}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        onOpenUiShowcase={() => setUiShowcaseOpen(true)}
+      />
     </div>
   );
 };

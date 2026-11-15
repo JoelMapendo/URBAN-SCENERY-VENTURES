@@ -23,7 +23,7 @@ import { DEFAULT_PRODUCTS } from '../../data/defaultProducts';
 interface ProductGridProps {
   initialSearchQuery?: string;
   onClearInitialSearch?: () => void;
-  onOpenShoppingAssistant: (topic?: string) => void;
+  onOpenShoppingAssistant?: (topic?: string) => void;
   onOpenProductDetail?: (product: ProductOut) => void;
 }
 
@@ -678,7 +678,11 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           onClose={() => setSelectedProduct(null)}
           onAskAi={(p) => {
             setSelectedProduct(null);
-            onOpenShoppingAssistant(`Tell me more about ${p.name} and how it compares with other electronics.`);
+            if (onOpenShoppingAssistant) {
+              onOpenShoppingAssistant(`Tell me more about ${p.name} and how it compares with other electronics.`);
+            } else if (onOpenProductDetail) {
+              onOpenProductDetail(p);
+            }
           }}
         />
       )}

@@ -97,8 +97,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-500/25 mb-3">
-            <Sparkles className="w-6 h-6" />
+          <div className="flex justify-center mb-3">
+            <img
+              src="/urban-scenery-logo.png"
+              alt="Urban Scenery"
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
           </div>
           <h3 className="text-2xl font-black text-slate-900 dark:text-white font-heading tracking-tight">
             {mode === 'LOGIN' ? 'Welcome Back' : 'Create Account'}
