@@ -67,29 +67,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleDemoFill = (type: 'customer' | 'admin') => {
-    setError(null);
-    if (type === 'admin') {
-      setAuth('demo-admin-token', {
-        public_id: 'usr_admin_001',
-        name: 'Urban Scenery Admin',
-        email: 'admin@urbanventures.com',
-        role: 'admin',
-        created_at: new Date().toISOString(),
-      });
-      onClose();
-    } else {
-      setAuth('demo-buyer-token', {
-        public_id: 'usr_buyer_001',
-        name: 'Courtney Henry',
-        email: 'courtney.henry@example.com',
-        role: 'buyer',
-        created_at: new Date().toISOString(),
-      });
-      onClose();
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
       <div
@@ -295,7 +272,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-brand-500 to-accent-500 hover:from-brand-600 hover:to-accent-600 text-white font-bold text-xs shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+            className="w-full mt-2 py-3 px-4 rounded-xl bg-black hover:bg-brand-500 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
           >
             {loading ? (
               <>
@@ -307,32 +284,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
             )}
           </button>
         </form>
-
-        {/* Quick Demo Sign-In Buttons */}
-        <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-              Instant Demo Access:
-            </span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500">1-click autofill</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoFill('customer')}
-              className="py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5"
-            >
-              <span>🛍️ Buyer Demo</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoFill('admin')}
-              className="py-2.5 px-3 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
-            >
-              <span>⚡ Seller / Admin</span>
-            </button>
-          </div>
-        </div>
 
         {/* Trust & Security Footer */}
         <div className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
