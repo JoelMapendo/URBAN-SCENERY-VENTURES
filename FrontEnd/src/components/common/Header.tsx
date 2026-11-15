@@ -26,8 +26,8 @@ import { useCartStore } from '../../store/useCartStore';
 import { useThemeStore } from '../../store/useThemeStore';
 
 interface HeaderProps {
-  currentView: 'store' | 'admin';
-  onNavigate: (view: 'store' | 'admin') => void;
+  currentView: 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin';
+  onNavigate: (view: 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin') => void;
   onOpenAuth: () => void;
   onFocusSearch: () => void;
   onSelectCategory?: (category: string) => void;
@@ -70,9 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
       onSelectCategory(catName);
     }
     setCategoryDropdownOpen(false);
-    if (currentView !== 'store') {
-      onNavigate('store');
-    }
+    onNavigate('shop');
   };
 
   return (
@@ -112,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-6">
         {/* Brand Logo (Bold Black with Pink Accent) */}
         <div
-          onClick={() => onNavigate('store')}
+          onClick={() => onNavigate('home')}
           className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
         >
           <div className="w-9 h-9 rounded-xl overflow-hidden bg-black p-0.5 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
@@ -192,6 +190,28 @@ export const Header: React.FC<HeaderProps> = ({
                       <p className="font-bold text-slate-900 dark:text-white truncate">{user?.name}</p>
                       <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                     </div>
+
+                    <button
+                      onClick={() => {
+                        onNavigate('dashboard');
+                        setUserDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                    >
+                      <User className="w-4 h-4 text-brand-500" />
+                      <span>My Account & Orders</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        onNavigate('order-status');
+                        setUserDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                    >
+                      <MapPin className="w-4 h-4 text-emerald-500" />
+                      <span>Track Live Delivery</span>
+                    </button>
 
                     {isAdmin && (
                       <button
@@ -289,29 +309,62 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Horizontal Navigation Links */}
             <nav className="hidden lg:flex items-center gap-5 text-xs font-medium text-slate-600 dark:text-slate-400">
-              {['Home', 'Shop', 'Laptops', 'Smartphones', 'Audio', 'Accessories', 'Deals'].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => {
-                    if (item === 'Home' || item === 'Shop') {
-                      handleCategoryClick('All Products');
-                    } else if (item === 'Laptops') {
-                      handleCategoryClick('Laptops & Tablets');
-                    } else if (item === 'Smartphones') {
-                      handleCategoryClick('Smart Phones');
-                    } else if (item === 'Audio') {
-                      handleCategoryClick('Audio & Video');
-                    } else {
-                      handleCategoryClick(item);
-                    }
-                  }}
-                  className={`hover:text-slate-950 dark:hover:text-white transition-colors ${
-                    item === 'Deals' ? 'text-brand-600 dark:text-brand-400 font-bold' : ''
-                  }`}
-                >
-                  {item}
-                </button>
-              ))}
+              <button
+                onClick={() => onNavigate('home')}
+                className={`hover:text-slate-950 dark:hover:text-white transition-colors ${
+                  currentView === 'home' ? 'font-bold text-slate-950 dark:text-white' : ''
+                }`}
+              >
+                Home
+              </button>
+              <button
+                onClick={() => onNavigate('shop')}
+                className={`hover:text-slate-950 dark:hover:text-white transition-colors ${
+                  currentView === 'shop' ? 'font-bold text-slate-950 dark:text-white' : ''
+                }`}
+              >
+                Shop
+              </button>
+              <button
+                onClick={() => handleCategoryClick('Laptops & Tablets')}
+                className="hover:text-slate-950 dark:hover:text-white transition-colors"
+              >
+                Laptops
+              </button>
+              <button
+                onClick={() => handleCategoryClick('Smart Phones')}
+                className="hover:text-slate-950 dark:hover:text-white transition-colors"
+              >
+                Smartphones
+              </button>
+              <button
+                onClick={() => handleCategoryClick('Audio & Video')}
+                className="hover:text-slate-950 dark:hover:text-white transition-colors"
+              >
+                Audio
+              </button>
+              <button
+                onClick={() => onNavigate('order-status')}
+                className={`hover:text-slate-950 dark:hover:text-white transition-colors ${
+                  currentView === 'order-status' ? 'font-bold text-slate-950 dark:text-white' : ''
+                }`}
+              >
+                Track Order
+              </button>
+              <button
+                onClick={() => onNavigate('dashboard')}
+                className={`hover:text-slate-950 dark:hover:text-white transition-colors ${
+                  currentView === 'dashboard' ? 'font-bold text-slate-950 dark:text-white' : ''
+                }`}
+              >
+                My Account
+              </button>
+              <button
+                onClick={() => handleCategoryClick('Special Deals')}
+                className="text-brand-600 dark:text-brand-400 font-bold hover:underline"
+              >
+                Deals
+              </button>
             </nav>
           </div>
 
@@ -329,12 +382,39 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-4 space-y-2 animate-in fade-in">
           <button
             onClick={() => {
-              onNavigate('store');
+              onNavigate('home');
               setMobileMenuOpen(false);
             }}
             className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white"
           >
-            Storefront
+            Home
+          </button>
+          <button
+            onClick={() => {
+              onNavigate('shop');
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+          >
+            Shop Catalog
+          </button>
+          <button
+            onClick={() => {
+              onNavigate('order-status');
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+          >
+            Track Order
+          </button>
+          <button
+            onClick={() => {
+              onNavigate('dashboard');
+              setMobileMenuOpen(false);
+            }}
+            className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+          >
+            My Account & Orders
           </button>
           <button
             onClick={() => {

@@ -1,78 +1,73 @@
 import React, { useState } from 'react';
 import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
-import { HeroBanner } from './components/storefront/HeroBanner';
+import { HomeView } from './components/storefront/HomeView';
 import { ProductGrid } from './components/storefront/ProductGrid';
+import { ProductDetailView } from './components/storefront/ProductDetailView';
+import { CheckoutView } from './components/storefront/CheckoutView';
+import { OrderStatusView } from './components/storefront/OrderStatusView';
+import { CustomerDashboardView } from './components/storefront/CustomerDashboardView';
 import { CartDrawer } from './components/storefront/CartDrawer';
-import { CheckoutModal } from './components/storefront/CheckoutModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { AiShoppingAssistant } from './components/storefront/AiShoppingAssistant';
 import { AiRecommendationModal } from './components/storefront/AiRecommendationModal';
 import { UiShowcaseModal, UiInterfaceItem } from './components/common/UiShowcaseModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { DEFAULT_PRODUCTS } from './data/defaultProducts';
 import { useCartStore } from './store/useCartStore';
 import { useThemeStore } from './store/useThemeStore';
 import { useAuthStore } from './store/useAuthStore';
+import { ProductOut } from './types';
+
+type ViewMode = 'home' | 'shop' | 'product-detail' | 'checkout' | 'order-status' | 'dashboard' | 'admin';
 
 export const App: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'store' | 'admin'>('store');
+  const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [recommendationModalOpen, setRecommendationModalOpen] = useState(false);
   const [uiShowcaseOpen, setUiShowcaseOpen] = useState(false);
+
+  // Active product for detail page
+  const [selectedProduct, setSelectedProduct] = useState<ProductOut>(DEFAULT_PRODUCTS[0]);
+  const [trackingOrderId, setTrackingOrderId] = useState<number>(44322);
 
   const { setIsOpen: setCartOpen, addItem } = useCartStore();
   const { setTheme } = useThemeStore();
   const { setAuth, logout, isAuthenticated } = useAuthStore();
 
-  // Search state passed between Hero and Grid
+  // Search state passed between header & shop
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Initial prompt for AI Assistant when triggered from outside
   const [assistantPrompt, setAssistantPrompt] = useState<string | undefined>(undefined);
 
-  const handleHeroSearch = (query: string) => {
-    setSearchQuery(query);
-    const gridElem = document.getElementById('catalogue-section');
-    if (gridElem) {
-      gridElem.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleNavigate = (view: ViewMode) => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCategorySelect = (category: string) => {
-    const queryMap: Record<string, string> = {
-      All: '',
-      'Smart Home': 'smart',
-      Audio: 'audio',
-      Wearables: 'watch',
-      Accessories: 'accessories',
-      Sale: 'deal',
-    };
-    const targetQuery = queryMap[category] !== undefined ? queryMap[category] : category.toLowerCase();
-    handleHeroSearch(targetQuery);
+  const handleOpenProductDetail = (product: ProductOut) => {
+    setSelectedProduct(product);
+    handleNavigate('product-detail');
+  };
+
+  const handleDirectBuyNow = (product: ProductOut) => {
+    addItem(product, 1);
+    handleNavigate('checkout');
+  };
+
+  const handleNavigateToShop = (category?: string) => {
+    if (category) {
+      setSearchQuery(category);
+    }
+    handleNavigate('shop');
+  };
+
+  const handleTrackOrder = (orderId: number) => {
+    setTrackingOrderId(orderId);
+    handleNavigate('order-status');
   };
 
   const handleFocusSearch = () => {
-    if (currentView !== 'store') {
-      setCurrentView('store');
-      setTimeout(() => {
-        const input = document.getElementById('main-search-input');
-        if (input) input.focus();
-      }, 100);
-    } else {
-      const input = document.getElementById('main-search-input');
-      if (input) {
-        input.focus();
-        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  };
-
-  const handleExploreProducts = () => {
-    const gridElem = document.getElementById('catalogue-section');
-    if (gridElem) {
-      gridElem.scrollIntoView({ behavior: 'smooth' });
-    }
+    handleNavigate('shop');
   };
 
   const handleTriggerUiAction = (actionType: UiInterfaceItem['actionType']) => {
@@ -84,8 +79,7 @@ export const App: React.FC = () => {
         setTheme('light');
         break;
       case 'scroll_catalog':
-        if (currentView !== 'store') setCurrentView('store');
-        setTimeout(handleExploreProducts, 100);
+        handleNavigate('shop');
         break;
       case 'open_ai_recommend':
         setRecommendationModalOpen(true);
@@ -94,21 +88,7 @@ export const App: React.FC = () => {
         setCartOpen(true);
         break;
       case 'open_checkout':
-        // Ensure cart has at least 1 item to preview checkout
-        addItem(
-          {
-            id: 1,
-            name: 'Sony WH-1000XM5 Wireless Headphones',
-            price: '399.99',
-            description: 'Industry-leading noise canceling Bluetooth headphones with 30-hour battery life.',
-            banner_image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
-            quantity: 30,
-            status: 'AVAILABLE',
-            created_at: new Date().toISOString(),
-          },
-          1
-        );
-        setCheckoutModalOpen(true);
+        handleNavigate('checkout');
         break;
       case 'open_auth':
         setAuthModalOpen(true);
@@ -118,7 +98,7 @@ export const App: React.FC = () => {
         break;
       case 'admin_gate':
         logout();
-        setCurrentView('admin');
+        handleNavigate('admin');
         break;
       case 'admin_overview':
       case 'admin_products':
@@ -128,7 +108,6 @@ export const App: React.FC = () => {
       case 'admin_ai_studio':
       case 'admin_platforms':
         if (!isAuthenticated) {
-          // Provide instant admin access for live review
           setAuth('demo-admin-token', {
             public_id: 'usr_admin_001',
             name: 'Admin Reviewer',
@@ -137,7 +116,7 @@ export const App: React.FC = () => {
             created_at: new Date().toISOString(),
           });
         }
-        setCurrentView('admin');
+        handleNavigate('admin');
         break;
       default:
         break;
@@ -145,60 +124,99 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-urban-darker text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      {/* Global Header */}
+    <div className="min-h-screen flex flex-col bg-white dark:bg-urban-darker text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      {/* Global Navigation Header */}
       <Header
         currentView={currentView}
-        onNavigate={(v) => setCurrentView(v)}
+        onNavigate={handleNavigate}
         onOpenAuth={() => setAuthModalOpen(true)}
         onFocusSearch={handleFocusSearch}
-        onSelectCategory={handleCategorySelect}
+        onSelectCategory={handleNavigateToShop}
         onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
         onOpenUiShowcase={() => setUiShowcaseOpen(true)}
       />
 
-      {/* Main Content Area */}
+      {/* Main Dynamic View Router */}
       <main className="flex-1">
-        {currentView === 'store' ? (
-          <>
-            <ProductGrid
-              initialSearchQuery={searchQuery}
-              onClearInitialSearch={() => setSearchQuery('')}
-              onOpenShoppingAssistant={(prompt) => setAssistantPrompt(prompt)}
-            />
+        {/* 1. HOME VIEW (Matching Image 1: Audio Card + Scooters + Entertainment + Category Circles + Popular) */}
+        {currentView === 'home' && (
+          <HomeView
+            products={DEFAULT_PRODUCTS}
+            onNavigateToShop={handleNavigateToShop}
+            onOpenProductDetail={handleOpenProductDetail}
+          />
+        )}
 
-            {/* Persistent AI Shopping Assistant */}
-            <AiShoppingAssistant
-              initialPrompt={assistantPrompt}
-              onClearInitialPrompt={() => setAssistantPrompt(undefined)}
-            />
-          </>
-        ) : (
+        {/* 2. SHOP / COLLECTION VIEW (Matching Image 3: Left Sidebar Filters + 4-Col Grid + Pagination) */}
+        {currentView === 'shop' && (
+          <ProductGrid
+            initialSearchQuery={searchQuery}
+            onClearInitialSearch={() => setSearchQuery('')}
+            onOpenShoppingAssistant={(prompt) => setAssistantPrompt(prompt)}
+            onOpenProductDetail={handleOpenProductDetail}
+          />
+        )}
+
+        {/* 3. PRODUCT DETAIL VIEW (Matching Image 6: Gallery, Tabs, Specs, Buy Now) */}
+        {currentView === 'product-detail' && (
+          <ProductDetailView
+            product={selectedProduct}
+            onBack={() => handleNavigate('shop')}
+            onDirectBuyNow={handleDirectBuyNow}
+          />
+        )}
+
+        {/* 4. CART & CHECKOUT FLOW (Matching Image 2 & 4: Stepper, Billing, Confirmation) */}
+        {currentView === 'checkout' && (
+          <CheckoutView
+            products={DEFAULT_PRODUCTS}
+            onOpenProductDetail={handleOpenProductDetail}
+            onNavigateToOrderTracking={handleTrackOrder}
+            onNavigateToShop={() => handleNavigate('shop')}
+          />
+        )}
+
+        {/* 5. ORDER TRACKING & STATUS (Matching Image 7: Stepper + Shipping Info + Interactive Map) */}
+        {currentView === 'order-status' && (
+          <OrderStatusView
+            orderId={trackingOrderId}
+            onBackToShop={() => handleNavigate('shop')}
+          />
+        )}
+
+        {/* 6. CUSTOMER DASHBOARD & SETTINGS (Matching Image 5 & 8: Metrics, Orders, Wishlist, Profile) */}
+        {currentView === 'dashboard' && (
+          <CustomerDashboardView
+            onViewOrderDetails={handleTrackOrder}
+            onNavigateToShop={() => handleNavigate('shop')}
+          />
+        )}
+
+        {/* 7. ADMIN & MERCHANT DASHBOARD */}
+        {currentView === 'admin' && (
           <AdminDashboard
-            onBackToStore={() => setCurrentView('store')}
+            onBackToStore={() => handleNavigate('home')}
             onOpenAuth={() => setAuthModalOpen(true)}
           />
         )}
       </main>
 
-      {/* Slide-over Cart Drawer */}
-      <CartDrawer onOpenCheckout={() => setCheckoutModalOpen(true)} />
+      {/* Persistent Slide-Over Cart Drawer */}
+      <CartDrawer onOpenCheckout={() => handleNavigate('checkout')} />
 
-      {/* AI Recommendation Dialog Grounded in /api/v1/ai/recommend */}
+      {/* Persistent AI Shopping Assistant Agent */}
+      <AiShoppingAssistant
+        initialPrompt={assistantPrompt}
+        onClearInitialPrompt={() => setAssistantPrompt(undefined)}
+      />
+
+      {/* AI Recommendation Modal */}
       <AiRecommendationModal
         isOpen={recommendationModalOpen}
         onClose={() => setRecommendationModalOpen(false)}
       />
 
-      {/* Checkout & Instant Payment Modal */}
-      {checkoutModalOpen && (
-        <CheckoutModal
-          onClose={() => setCheckoutModalOpen(false)}
-          onOpenAuth={() => setAuthModalOpen(true)}
-        />
-      )}
-
-      {/* Authentication Modal */}
+      {/* Auth Modal (Sign In / Register) */}
       {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}
 
       {/* 16 Interfaces Interactive UI Showcase Modal */}
@@ -208,11 +226,10 @@ export const App: React.FC = () => {
         onTriggerAction={handleTriggerUiAction}
       />
 
-      {/* Footer */}
+      {/* Solid Black Footer (Matching Electro Mart Reference) */}
       <Footer onOpenUiShowcase={() => setUiShowcaseOpen(true)} />
     </div>
   );
 };
 
 export default App;
-

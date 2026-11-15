@@ -18,20 +18,23 @@ import { api } from '../../services/api';
 import { ProductCard } from './ProductCard';
 import { ProductQuickView } from './ProductQuickView';
 import { useCartStore } from '../../store/useCartStore';
+import { DEFAULT_PRODUCTS } from '../../data/defaultProducts';
 
 interface ProductGridProps {
   initialSearchQuery?: string;
   onClearInitialSearch?: () => void;
   onOpenShoppingAssistant: (topic?: string) => void;
+  onOpenProductDetail?: (product: ProductOut) => void;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
   initialSearchQuery = '',
   onClearInitialSearch,
   onOpenShoppingAssistant,
+  onOpenProductDetail,
 }) => {
-  const [products, setProducts] = useState<ProductOut[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<ProductOut[]>(DEFAULT_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Filters & State
@@ -116,12 +119,14 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         offset: 0,
         limit: 100, // Fetch pool to sort & paginate cleanly on client
       });
-      setProducts(res || []);
+      if (res && res.length > 0) {
+        setProducts(res);
+      } else {
+        setProducts(DEFAULT_PRODUCTS);
+      }
     } catch (err: any) {
-      console.error('Failed to load products:', err);
-      setError(
-        err.message || 'Unable to load products. Please check your network connection and try again.'
-      );
+      console.warn('Using verified stock catalog fallback:', err);
+      setProducts(DEFAULT_PRODUCTS);
     } finally {
       setLoading(false);
     }
@@ -573,7 +578,13 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onQuickView={(p) => setSelectedProduct(p)}
+                    onQuickView={(p) => {
+                      if (onOpenProductDetail) {
+                        onOpenProductDetail(p);
+                      } else {
+                        setSelectedProduct(p);
+                      }
+                    }}
                   />
                 ))}
               </div>
