@@ -15,6 +15,7 @@ from routers import (
     lookups_router,
     ai_interactions_router,
 )
+from routers.ai import platforms_router
 
 
 @asynccontextmanager
@@ -59,6 +60,7 @@ app.include_router(payments_router, prefix=settings.API_V1_STR)
 app.include_router(ai_router, prefix=settings.API_V1_STR)
 app.include_router(lookups_router, prefix=settings.API_V1_STR)
 app.include_router(ai_interactions_router, prefix=settings.API_V1_STR)
+app.include_router(platforms_router, prefix=settings.API_V1_STR)
 
 
 @app.get("/", tags=["Health & Info"])

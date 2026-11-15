@@ -262,3 +262,4 @@ export const AiRecommendationModal: React.FC<AiRecommendationModalProps> = ({
     </div>
   );
 };
+

@@ -11,7 +11,7 @@ class OrderCreate(BaseModel):
     product_id: int = Field(..., description="ID of the electronics product to buy")
     quantity: int = Field(default=1, ge=1, description="Number of items to purchase")
     address: str = Field(..., min_length=5, max_length=128, description="Delivery / Shipping address")
-    contact: str = Field(..., min_length=5, max_length=16, description="Contact phone number")
+    contact: str = Field(..., min_length=5, max_length=64, description="Contact phone number")
     payment_method: Optional[Literal["MOBILE MONEY", "BANK", "CRYPTO"]] = Field(
         default="BANK",
         description="Preferred payment method (MOBILE MONEY, BANK, CRYPTO)",
@@ -20,7 +20,7 @@ class OrderCreate(BaseModel):
 
 class OrderStatusUpdate(BaseModel):
     order_status: Optional[
-        Literal["PENDING", "APPROVED", "SHIPPED", "DELIVERED", "CANCELLED"]
+        Literal["PENDING", "PROCESSING", "APPROVED", "SHIPPED", "DELIVERED", "CANCELLED"]
     ] = None
     payment_status: Optional[Literal["PAID", "NOT YET PAID", "FAILED"]] = None
 

@@ -9,6 +9,20 @@ from services.lookup_service import get_lookup
 
 _UPDATABLE_FIELDS = {"name", "price", "description", "banner_image", "quantity", "status"}
 
+_SEARCH_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "laptop": ("laptop", "macbook", "notebook", "display", "m3", "ssd"),
+    "phone": ("phone", "smartphone", "galaxy", "mobile", "5g", "camera"),
+    "smart": ("smart", "galaxy", "watch", "quest", "vr", "drone", "ecoflow"),
+    "audio": ("audio", "headphone", "earphone", "earbud", "speaker", "bluetooth", "noise", "wh-1000xm5"),
+    "watch": ("watch", "wearable", "gps", "ultra", "quest", "vr"),
+    "monitor": ("monitor", "display", "ultrasharp", "4k", "retina"),
+    "accessories": ("anker", "power", "charger", "keyboard", "keychron", "usb-c", "hub", "station"),
+    "accessory": ("anker", "power", "charger", "keyboard", "keychron", "usb-c", "hub", "station"),
+    "usb": ("usb", "anker", "power", "charger", "keyboard", "keychron", "ecoflow"),
+    "gaming": ("playstation", "gaming", "console", "quest", "vr", "4k", "keyboard"),
+    "setup": ("macbook", "monitor", "ultrasharp", "keyboard", "keychron", "anker"),
+}
+
 
 def create_product(
     product: Product,
@@ -36,13 +50,25 @@ def get_all_products(
     statement = select(Product)
 
     if search:
-        search_filter = f"%{search.strip()}%"
-        statement = statement.where(
-            or_(
-                Product.name.ilike(search_filter),
-                Product.description.ilike(search_filter),
-            )
-        )
+        cleaned = search.strip().lower()
+        if cleaned not in {"sale", "deal", "deals", "all"}:
+            terms: set[str] = {cleaned}
+            for token in cleaned.split():
+                if len(token) >= 2:
+                    terms.add(token)
+                    if token in _SEARCH_SYNONYMS:
+                        terms.update(_SEARCH_SYNONYMS[token])
+            if cleaned in _SEARCH_SYNONYMS:
+                terms.update(_SEARCH_SYNONYMS[cleaned])
+
+            clauses = []
+            for term in terms:
+                pattern = f"%{term}%"
+                clauses.append(Product.name.ilike(pattern))
+                clauses.append(Product.description.ilike(pattern))
+
+            if clauses:
+                statement = statement.where(or_(*clauses))
 
     if min_price is not None:
         statement = statement.where(Product.price >= min_price)

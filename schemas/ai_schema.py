@@ -1,6 +1,6 @@
 from __future__ import annotations
 from decimal import Decimal
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 from schemas.product_schema import ProductOut
 
@@ -21,3 +21,16 @@ class AISmartSearchResponse(BaseModel):
     query: str
     total_matches: int
     matches: List[ProductOut]
+
+
+class AgentRequest(BaseModel):
+    question: str = Field(..., min_length=1, description="Prompt or question for the AI agent")
+
+
+class AgentResponse(BaseModel):
+    agent: str
+    answer: str
+    model: str = "urban-scenery-grounded-v1"
+    warning: Optional[str] = None
+    data_summary: Dict[str, Any] = Field(default_factory=dict)
+

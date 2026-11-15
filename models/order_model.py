@@ -21,7 +21,7 @@ class Order(Model):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     address: Mapped[str] = mapped_column(String(128), nullable=False)
-    contacs: Mapped[str] = mapped_column(String(16), nullable=False)
+    contacs: Mapped[str] = mapped_column(String(64), nullable=False)
     initial_price: Mapped[float] = mapped_column(DECIMAL, nullable=False)
     total_price: Mapped[float] = mapped_column(DECIMAL, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)

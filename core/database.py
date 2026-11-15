@@ -82,6 +82,7 @@ def init_db():
             models.OrderStatus,
             (
                 ("PENDING", "Order is awaiting processing"),
+                ("PROCESSING", "Order is currently being processed"),
                 ("APPROVED", "Order has been approved"),
                 ("SHIPPED", "Order has been shipped"),
                 ("DELIVERED", "Order has been delivered"),

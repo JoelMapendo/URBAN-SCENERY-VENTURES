@@ -49,6 +49,13 @@ export default {
         sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
         heading: ['"Space Grotesk"', '"Plus Jakarta Sans"', 'sans-serif'],
       },
+      spacing: {
+        '4.5': '1.125rem',
+        '18': '4.5rem',
+      },
+      scale: {
+        '102': '1.02',
+      },
     },
   },
   plugins: [],
