@@ -3,16 +3,6 @@ import {
   Search,
   Sparkles,
   ArrowRight,
-  Headphones,
-  Smartphone,
-  Watch,
-  Cpu,
-  Zap,
-  Tag,
-  Shield,
-  Truck,
-  RotateCcw,
-  Headset,
 } from 'lucide-react';
 
 interface HeroBannerProps {
@@ -38,50 +28,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       onSearch(searchInput.trim());
     }
   };
-
-  const quickCategories = [
-    {
-      id: 'Audio',
-      title: 'Audio',
-      subtitle: 'Premium Sound',
-      icon: Headphones,
-      query: 'audio',
-      color: 'from-pink-500 to-rose-500',
-    },
-    {
-      id: 'Smart Home',
-      title: 'Smart Devices',
-      subtitle: 'Smarter Living',
-      icon: Smartphone,
-      query: 'phone',
-      color: 'from-amber-500 to-yellow-500',
-    },
-    {
-      id: 'Wearables',
-      title: 'Wearables',
-      subtitle: 'Track. Achieve.',
-      icon: Watch,
-      query: 'watch',
-      color: 'from-brand-500 to-purple-600',
-    },
-    {
-      id: 'Accessories',
-      title: 'Accessories',
-      subtitle: 'Designed for You',
-      icon: Cpu,
-      query: 'accessories',
-      color: 'from-blue-500 to-indigo-500',
-    },
-    {
-      id: 'Sale',
-      title: 'Deals',
-      subtitle: 'Top Deals Today',
-      icon: Tag,
-      query: 'sale',
-      color: 'from-brand-600 to-accent-500',
-      isHot: true,
-    },
-  ];
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100/70 dark:from-urban-darker dark:via-urban-dark dark:to-urban-darker transition-colors duration-300">
@@ -249,93 +195,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <div className="absolute top-4 right-4 z-20 w-16 h-16 rounded-full bg-gradient-to-tr from-brand-500 to-accent-500 text-white flex flex-col items-center justify-center text-center shadow-xl shadow-brand-500/30 rotate-12 pointer-events-none">
                 <span className="text-[10px] font-extrabold uppercase leading-none">New</span>
                 <span className="text-[9px] font-medium leading-none">Arrivals</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Category Jump Cards Row (5 Cards directly matching Reference 2) */}
-        <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-          {quickCategories.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (onSelectCategory) {
-                    onSelectCategory(item.id);
-                  } else {
-                    onSearch(item.query);
-                  }
-                }}
-                className={`group p-4 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 hover:border-brand-500/50 dark:hover:border-brand-500/50 shadow-sm hover:shadow-md transition-all text-left flex items-center justify-between ${
-                  item.isHot ? 'ring-1 ring-brand-500/30' : ''
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-500/10 text-slate-700 dark:text-slate-300 group-hover:text-brand-500 flex items-center justify-center transition-colors">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-slate-900 dark:text-white">
-                      {item.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                      {item.subtitle}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 group-hover:bg-brand-500 text-slate-400 group-hover:text-white flex items-center justify-center transition-colors shadow-sm">
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Trust & Guarantee Banner (Reference 2: 4 Pillars) */}
-      <div className="border-t border-b border-slate-200 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/40 py-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400">
-                <Truck className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Global Delivery</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">Automated order fulfillment</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <Shield className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Secure Payments</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">100% safe & multi-rail checkout</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-accent-50 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400">
-                <RotateCcw className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">30-Day Returns</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">Hassle-free guarantee</div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
-                <Headset className="w-5 h-5" />
-              </div>
-              <div>
-                <div className="text-xs font-bold text-slate-900 dark:text-white">Premium Support</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400">24/7 autonomous & live support</div>
               </div>
             </div>
           </div>
