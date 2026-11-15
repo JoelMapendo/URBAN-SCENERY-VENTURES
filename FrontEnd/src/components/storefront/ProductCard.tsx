@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Eye, Check, Package, Cpu, Heart, Star } from 'lucide-react';
+import { Heart, ArrowRight, Eye, Check, Cpu, ShieldCheck } from 'lucide-react';
 import { ProductOut } from '../../types';
-import { formatCurrency, getStatusBadge } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
 import { useCartStore } from '../../store/useCartStore';
 
 interface ProductCardProps {
@@ -20,14 +20,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const isAvailable =
     product.status === 'AVAILABLE' && (product.quantity ?? 0) > 0;
-  const statusBadge = getStatusBadge(product.status);
 
-  // Deterministic pseudo-metrics per product ID for consistent display (Reference 2 & 3)
   const numericPrice = parseFloat(product.price) || 0;
-  const discountPct = ((product.id * 7) % 15) + 10; // 10% - 24%
-  const originalPrice = numericPrice > 0 ? numericPrice / (1 - discountPct / 100) : 0;
-  const rating = (4.6 + ((product.id * 3) % 4) * 0.1).toFixed(1);
-  const reviewCount = 42 + ((product.id * 29) % 180);
+  const discountPct = ((product.id * 7) % 15) + 10;
+  const hasDiscount = product.id % 2 === 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,135 +41,104 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <div
       onClick={() => onQuickView(product)}
-      className="group relative flex flex-col rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/90 hover:border-brand-500/40 hover:shadow-xl hover:shadow-brand-500/5 dark:hover:shadow-brand-500/10 transition-all duration-300 overflow-hidden cursor-pointer"
+      className="group relative flex flex-col justify-between rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-3 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 cursor-pointer"
     >
-      {/* Product Image & Badges */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-950 flex items-center justify-center">
+      {/* Product Image Area */}
+      <div className="relative aspect-square w-full rounded-lg bg-slate-50 dark:bg-slate-950/60 p-4 flex items-center justify-center overflow-hidden">
+        {/* Subtle Warranty Badge or Discount Pill (matching reference image) */}
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+          {product.id % 3 === 0 && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-[9px] font-bold">
+              <ShieldCheck className="w-2.5 h-2.5" />
+              <span>1 Yr</span>
+            </span>
+          )}
+          {hasDiscount && (
+            <span className="px-1.5 py-0.5 rounded bg-brand-500 text-white text-[9px] font-extrabold shadow-sm">
+              -{discountPct}%
+            </span>
+          )}
+        </div>
+
+        {/* Wishlist Heart Button */}
+        <button
+          type="button"
+          onClick={handleToggleLike}
+          aria-label="Wishlist"
+          className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+            liked
+              ? 'bg-brand-500 text-white shadow-sm'
+              : 'bg-white/80 dark:bg-slate-800/80 text-slate-400 hover:text-brand-500 hover:bg-white'
+          }`}
+        >
+          <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
+        </button>
+
         {product.banner_image && !imgError ? (
           <img
             src={product.banner_image}
             alt={product.name}
             onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 p-6 text-center">
-            <Cpu className="w-12 h-12 text-slate-400 group-hover:text-brand-500 transition-colors mb-2" />
-            <span className="text-[11px] font-mono tracking-wider uppercase text-slate-500 dark:text-slate-400">
-              {product.name.slice(0, 18)}
+          <div className="flex flex-col items-center justify-center text-slate-400 p-4 text-center">
+            <Cpu className="w-10 h-10 text-slate-300 dark:text-slate-600 group-hover:text-brand-500 transition-colors mb-1" />
+            <span className="text-[10px] font-mono text-slate-400">
+              {product.name.slice(0, 14)}
             </span>
           </div>
         )}
 
-        {/* Top Badges (Discount Pill + Wishlist Heart as in Reference 2 & 3) */}
-        <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
-          <div className="flex items-center gap-1.5 pointer-events-none">
-            {isAvailable && (
-              <span className="px-2 py-0.5 rounded-full bg-brand-500 text-white text-[10px] font-extrabold tracking-tight shadow-sm">
-                -{discountPct}%
-              </span>
-            )}
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border backdrop-blur-md uppercase tracking-wider ${statusBadge.bg} ${statusBadge.text}`}
-            >
-              {isAvailable ? 'In Stock' : 'Sold Out'}
+        {/* Quick View Pill on Hover */}
+        <div className="absolute inset-x-2 bottom-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView(product);
+            }}
+            className="w-full py-1.5 rounded-lg bg-black/85 hover:bg-black text-white text-[11px] font-bold flex items-center justify-center gap-1.5 backdrop-blur-sm transition-all"
+          >
+            <Eye className="w-3 h-3 text-brand-400" />
+            <span>Quick View</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Product Information */}
+      <div className="pt-3 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 className="text-xs font-semibold text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors min-h-[32px]">
+            {product.name}
+          </h3>
+        </div>
+
+        {/* Price & Action Button (Matching Reference) */}
+        <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="flex items-baseline gap-1">
+            <span className="text-sm font-extrabold text-slate-950 dark:text-white font-mono">
+              {formatCurrency(product.price)}
             </span>
           </div>
 
           <button
             type="button"
-            onClick={handleToggleLike}
-            aria-label="Toggle Wishlist"
-            className={`w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md border transition-all shadow-sm ${
-              liked
-                ? 'bg-brand-500 border-brand-500 text-white scale-110'
-                : 'bg-white/90 dark:bg-slate-900/80 border-slate-200 dark:border-slate-700 text-slate-500 hover:text-brand-500'
-            }`}
-          >
-            <Heart className={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`} />
-          </button>
-        </div>
-
-        {/* Quick View Hover Action */}
-        <div className="absolute inset-0 bg-slate-900/30 dark:bg-slate-950/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView(product);
-            }}
-            className="px-3.5 py-2 rounded-xl bg-white/95 dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold border border-slate-300 dark:border-slate-700 shadow-xl flex items-center gap-1.5 transition-all transform translate-y-2 group-hover:translate-y-0"
-          >
-            <Eye className="w-3.5 h-3.5 text-brand-500" />
-            <span>Quick Specs</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Product Content Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between text-[11px] mb-1.5">
-            <span className="flex items-center gap-1 text-brand-600 dark:text-brand-400 font-mono font-semibold">
-              <Package className="w-3 h-3" />
-              <span>#{product.id}</span>
-              {product.quantity > 0 && (
-                <span className="text-slate-400 dark:text-slate-500">• {product.quantity} left</span>
-              )}
-            </span>
-
-            {/* Rating & Reviews (Reference 3) */}
-            <span className="flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-300">
-              <Star className="w-3.5 h-3.5 text-accent-500 fill-accent-500" />
-              <span>{rating}</span>
-              <span className="text-[10px] text-slate-400 font-normal">({reviewCount})</span>
-            </span>
-          </div>
-
-          <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors line-clamp-1 mb-1 font-heading">
-            {product.name}
-          </h3>
-
-          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">
-            {product.description || 'Verified electronics component with standard manufacturer warranty.'}
-          </p>
-        </div>
-
-        {/* Price & Add to Cart */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
-          <div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight font-mono">
-                {formatCurrency(product.price)}
-              </span>
-              {originalPrice > numericPrice && (
-                <span className="text-[11px] text-slate-400 line-through font-mono">
-                  {formatCurrency(originalPrice)}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <button
             onClick={handleAddToCart}
             disabled={!isAvailable}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-md ${
+            title={added ? 'Added to Cart' : 'Add to Cart'}
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
               added
-                ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+                ? 'bg-emerald-500 text-white shadow-sm'
                 : isAvailable
-                ? 'bg-brand-500 hover:bg-brand-600 text-white shadow-brand-500/25 hover:scale-105'
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700/50'
+                ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-brand-500 hover:text-white group-hover:border-brand-500 shadow-sm'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
             }`}
           >
             {added ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>Added</span>
-              </>
+              <Check className="w-3.5 h-3.5" />
             ) : (
-              <>
-                <ShoppingBag className="w-4 h-4" />
-                <span>{isAvailable ? 'Add' : 'Sold Out'}</span>
-              </>
+              <ArrowRight className="w-3.5 h-3.5" />
             )}
           </button>
         </div>

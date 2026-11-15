@@ -1,105 +1,154 @@
-import React from 'react';
-import { Sparkles, Shield, Cpu, RefreshCw, Heart, Layers, ShieldCheck, Truck, Headphones } from 'lucide-react';
+import React, { useState } from 'react';
+import { Send, Check, ShieldCheck, Mail } from 'lucide-react';
 
 interface FooterProps {
   onOpenUiShowcase?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenUiShowcase }) => {
+export const Footer: React.FC<FooterProps> = () => {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setTimeout(() => {
+        setSubscribed(false);
+        setEmail('');
+      }, 3000);
+    }
+  };
+
   return (
-    <footer className="mt-20 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 text-xs transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand Info */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-500 p-0.5 shadow-sm">
-                <img
-                  src="/urban-scenery-logo.png"
-                  alt="Urban Scenery Ventures"
-                  className="w-full h-full object-cover rounded-[7px] bg-white dark:bg-slate-950"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-              </div>
-              <span className="font-extrabold text-sm text-slate-900 dark:text-white font-heading">
+    <footer className="bg-black text-slate-400 text-xs pt-14 pb-8 border-t border-slate-900 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Top Newsletter Bar (Matching Electro Mart Reference Image) */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-12 border-b border-slate-900">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-black text-white tracking-tight font-heading">
                 URBAN SCENERY
               </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Metropolitan AI-powered e-commerce ecosystem specializing in high-performance electronics, hardware devices, and enterprise business intelligence.
+            <p className="text-xs text-slate-500 mt-1">
+              Curated intelligent electronics and verified consumer hardware.
             </p>
           </div>
 
-          {/* Core Hardware Categories */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase font-mono tracking-wider mb-3">
-              Hardware Systems
-            </h4>
-            <ul className="space-y-2 text-slate-600 dark:text-slate-400">
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Laptops & Workstations</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Smartphones & Handhelds</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Audio & Noise-Cancelling</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Displays & 4K Monitors</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Cables & Power Hubs</li>
-            </ul>
-          </div>
-
-          {/* AI Services */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase font-mono tracking-wider mb-3">
-              Autonomous AI Rails
-            </h4>
-            <ul className="space-y-2 text-slate-600 dark:text-slate-400">
-              <li className="hover:text-brand-500 transition-colors cursor-pointer flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3 text-accent-500" />
-                <span>AI Smart Search</span>
-              </li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Shopping Advisor Agent</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Business Intelligence BI</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Image Studio Generator</li>
-              <li className="hover:text-brand-500 transition-colors cursor-pointer">Social Campaign Publisher</li>
-            </ul>
-          </div>
-
-          {/* Customer Protection & Trust */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase font-mono tracking-wider mb-3">
-              Customer Care & Trust
-            </h4>
-            <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 shadow-sm text-xs">
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span>100% Authentic Guarantee</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <Truck className="w-4 h-4 text-brand-500 flex-shrink-0" />
-                <span>Worldwide Tracked Shipping</span>
-              </div>
-              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <Headphones className="w-4 h-4 text-accent-500 flex-shrink-0" />
-                <span>24/7 Dedicated Support</span>
-              </div>
-            </div>
+          {/* Newsletter Input + Submit */}
+          <div className="w-full md:w-auto min-w-[320px]">
+            <form onSubmit={handleSubscribe} className="relative flex items-center">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter Your Mail"
+                className="w-full pl-4 pr-12 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+              />
+              <button
+                type="submit"
+                aria-label="Subscribe"
+                className="absolute right-1.5 p-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-sm"
+              >
+                {subscribed ? (
+                  <Check className="w-3.5 h-3.5" />
+                ) : (
+                  <Send className="w-3.5 h-3.5" />
+                )}
+              </button>
+            </form>
+            {subscribed && (
+              <p className="text-[11px] text-emerald-400 mt-1.5 animate-in fade-in">
+                Thank you! You are subscribed for exclusive tech discounts.
+              </p>
+            )}
           </div>
         </div>
 
-        <div className="pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
-          <p className="text-slate-500 dark:text-slate-400">
-            © {new Date().getFullYear()} Urban Scenery Ventures. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
-            {onOpenUiShowcase && (
-              <button
-                onClick={onOpenUiShowcase}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-bold transition-colors"
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Platform Interfaces (16)</span>
-              </button>
-            )}
-            <span>Official Electronics Storefront</span>
+        {/* 5-Column Navigation Grid (Matching Electro Mart Reference Image) */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-12 border-b border-slate-900">
+          {/* Column 1: Shop */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3.5">
+              Shop
+            </h4>
+            <ul className="space-y-2 text-slate-400 text-xs">
+              <li className="hover:text-white transition-colors cursor-pointer">Laptops & Workstations</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Smartphones & 5G</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Audio & ANC Headsets</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Displays & 4K Monitors</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Accessories & Cables</li>
+            </ul>
+          </div>
+
+          {/* Column 2: Pages */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3.5">
+              Pages
+            </h4>
+            <ul className="space-y-2 text-slate-400 text-xs">
+              <li className="hover:text-white transition-colors cursor-pointer">Store Home</li>
+              <li className="hover:text-white transition-colors cursor-pointer">All Collections</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Deals & Offers</li>
+              <li className="hover:text-white transition-colors cursor-pointer">AI Hardware Advisor</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Merchant Console</li>
+            </ul>
+          </div>
+
+          {/* Column 3: About Us */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3.5">
+              About Us
+            </h4>
+            <ul className="space-y-2 text-slate-400 text-xs">
+              <li className="hover:text-white transition-colors cursor-pointer">Our Hardware Story</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Verified Inventory</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Wishlist Items</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Track My Order</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Help & FAQs</li>
+            </ul>
+          </div>
+
+          {/* Column 4: Regulations */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3.5">
+              Regulations
+            </h4>
+            <ul className="space-y-2 text-slate-400 text-xs">
+              <li className="hover:text-white transition-colors cursor-pointer">Privacy Policy</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</li>
+              <li className="hover:text-white transition-colors cursor-pointer">30-Day Return Policy</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Hardware Warranty</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Security Compliance</li>
+            </ul>
+          </div>
+
+          {/* Column 5: Services */}
+          <div>
+            <h4 className="text-xs font-bold text-white uppercase tracking-wider mb-3.5">
+              Services
+            </h4>
+            <ul className="space-y-2 text-slate-400 text-xs">
+              <li className="hover:text-white transition-colors cursor-pointer">Express Global Shipping</li>
+              <li className="hover:text-white transition-colors cursor-pointer">24/7 Live Support</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Multi-Rail Payments</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Enterprise Procurement</li>
+              <li className="hover:text-white transition-colors cursor-pointer">Wholesale Supply</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Copyright Bar */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+          <p>© {new Date().getFullYear()} Urban Scenery Ventures. All Rights Reserved.</p>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 text-slate-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>256-Bit SSL Encrypted Checkout</span>
+            </span>
           </div>
         </div>
       </div>

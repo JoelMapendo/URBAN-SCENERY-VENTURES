@@ -161,16 +161,6 @@ export const App: React.FC = () => {
       <main className="flex-1">
         {currentView === 'store' ? (
           <>
-            <HeroBanner
-              onSearch={handleHeroSearch}
-              onOpenShoppingAssistant={() =>
-                setAssistantPrompt('What are your top trending electronics this week?')
-              }
-              onExploreProducts={handleExploreProducts}
-              onSelectCategory={handleCategorySelect}
-              onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
-            />
-
             <ProductGrid
               initialSearchQuery={searchQuery}
               onClearInitialSearch={() => setSearchQuery('')}
