@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Shield, Cpu, RefreshCw, Heart, Layers } from 'lucide-react';
+import { Sparkles, Shield, Cpu, RefreshCw, Heart, Layers, ShieldCheck, Truck, Headphones } from 'lucide-react';
 
 interface FooterProps {
   onOpenUiShowcase?: () => void;
@@ -63,25 +63,23 @@ export const Footer: React.FC<FooterProps> = ({ onOpenUiShowcase }) => {
             </ul>
           </div>
 
-          {/* Operational Status */}
+          {/* Customer Protection & Trust */}
           <div>
             <h4 className="font-bold text-slate-900 dark:text-white text-xs uppercase font-mono tracking-wider mb-3">
-              Cloud Infrastructure
+              Customer Care & Trust
             </h4>
-            <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">Backend API:</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400 font-bold border border-brand-200 dark:border-brand-500/30">
-                  FASTAPI 1.0.0
-                </span>
+            <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5 shadow-sm text-xs">
+              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                <span>100% Authentic Guarantee</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">Host:</span>
-                <span className="text-[10px] font-mono text-slate-700 dark:text-slate-300 font-semibold">Render Cloud</span>
+              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <Truck className="w-4 h-4 text-brand-500 flex-shrink-0" />
+                <span>Worldwide Tracked Shipping</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">Database:</span>
-                <span className="text-[10px] font-mono text-slate-700 dark:text-slate-300 font-semibold">SQLite / PostgreSQL</span>
+              <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                <Headphones className="w-4 h-4 text-accent-500 flex-shrink-0" />
+                <span>24/7 Dedicated Support</span>
               </div>
             </div>
           </div>
@@ -98,10 +96,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenUiShowcase }) => {
                 className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-bold transition-colors"
               >
                 <Layers className="w-3.5 h-3.5" />
-                <span>16 Interfaces Blueprint</span>
+                <span>Platform Interfaces (16)</span>
               </button>
             )}
-            <span>Official Electronics Storefront & Back-Office Hub</span>
+            <span>Official Electronics Storefront</span>
           </div>
         </div>
       </div>

@@ -164,14 +164,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               )}
             </div>
 
-            {/* Multi-Rail & Architecture Tag */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-slate-400 pt-2">
-              <span className="flex items-center gap-1.5 text-brand-600 dark:text-brand-400 font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>FastAPI Direct Grounded</span>
+            {/* Trust Badges & Supported Payment Methods */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400 pt-2">
+              <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Official Brand Warranty</span>
               </span>
               <span className="text-slate-300 dark:text-slate-700">•</span>
-              <span>Supported Rails: Bank Transfer, Mobile Money, Crypto</span>
+              <span>Payment Methods: Bank Transfer, Mobile Money, Crypto</span>
             </div>
           </div>
 

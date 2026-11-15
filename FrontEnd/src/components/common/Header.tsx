@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-urban-darker/95 backdrop-blur-md transition-colors duration-300">
-      {/* Top Banner with Logo Signature Gradient & Showcase Pill */}
+      {/* Top Banner with Logo Signature Gradient */}
       <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -85,16 +85,11 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Urban Scenery Ventures — Intelligent Electronics Grounded in AI</span>
           </div>
 
-          {onOpenUiShowcase && (
-            <button
-              onClick={onOpenUiShowcase}
-              className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold backdrop-blur-sm transition-all"
-            >
-              <Layers className="w-3 h-3 text-accent-200" />
-              <span>UI Showcase (16 Interfaces)</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-300 animate-ping" />
-            </button>
-          )}
+          <div className="hidden sm:flex items-center gap-3 text-[11px] font-medium text-white/90">
+            <span>Free Express Shipping Over $150</span>
+            <span>•</span>
+            <span>24/7 Customer Support</span>
+          </div>
         </div>
       </div>
 
@@ -352,27 +347,17 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>AI Recommend</span>
               </button>
             )}
-
-            {onOpenUiShowcase && (
-              <button
-                onClick={onOpenUiShowcase}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 transition-all whitespace-nowrap shadow-sm ml-1"
-              >
-                <Layers className="w-3.5 h-3.5 text-brand-500" />
-                <span>UI Showcase (16)</span>
-              </button>
-            )}
           </div>
 
-          {/* Live Backend & Multi-Rail Gateway Status Indicator */}
-          <div className="hidden md:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-mono">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="font-semibold text-slate-700 dark:text-slate-300">FastAPI Connected</span>
+          {/* Genuine Guarantee & Multi-Rail Gateway Indicator */}
+          <div className="hidden md:flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>100% Genuine Tech</span>
             </div>
             <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="text-[11px] text-brand-600 dark:text-brand-400 font-bold">
-              Rails: Bank • MoMo • Crypto
+            <span className="text-[11px] text-brand-600 dark:text-brand-400 font-semibold">
+              Bank • Mobile Money • Crypto
             </span>
           </div>
         </div>
@@ -414,18 +399,6 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Sparkles className="w-4 h-4 text-accent-500" />
               <span>AI Recommendation Engine</span>
-            </button>
-          )}
-          {onOpenUiShowcase && (
-            <button
-              onClick={() => {
-                onOpenUiShowcase();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 flex items-center gap-2"
-            >
-              <Layers className="w-4 h-4 text-accent-500" />
-              <span>UI Showcase (16 Interfaces)</span>
             </button>
           )}
           <button

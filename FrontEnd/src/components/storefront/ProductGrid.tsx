@@ -100,7 +100,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     } catch (err: any) {
       console.error('Failed to load products:', err);
       setError(
-        err.message || 'Unable to connect to electronics catalogue backend. Please try again in a few seconds.'
+        err.message || 'Unable to load products. Please check your network connection and try again.'
       );
     } finally {
       setLoading(false);
@@ -344,11 +344,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 flex items-start gap-3 mb-8">
           <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h4 className="text-sm font-bold">API Connection Issue</h4>
+            <h4 className="text-sm font-bold">Unable to Load Products</h4>
             <p className="text-xs mt-1 text-rose-600 dark:text-rose-300/90">{error}</p>
-            <p className="text-[11px] mt-2 text-rose-500 dark:text-rose-300/70">
-              Note: The backend is hosted on Render and may take 20–30s to wake up if inactive.
-            </p>
           </div>
           <button
             onClick={() => fetchProducts()}

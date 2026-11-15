@@ -1071,7 +1071,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       Hardware Catalogue & Stock Inventory
                     </h2>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Live catalogue grounded with API endpoints (`/api/v1/products`)
+                      Live catalogue inventory, pricing, and stock controls
                     </p>
                   </div>
                   <button
@@ -1182,7 +1182,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     Registered Customers & Accounts
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Accounts database from `/api/v1/users`
+                    Customer directory, roles, and administrative privileges
                   </p>
                 </div>
 
@@ -1244,7 +1244,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     Full Orders & Shipping Logistics
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Live customer orders from `/api/v1/orders`
+                    Live customer orders, shipping addresses, and fulfillment pipelines
                   </p>
                 </div>
 
@@ -1350,7 +1350,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     Audited Payment Ledger
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Live transaction gateway records from `/api/v1/payments`
+                    Live transaction gateway records and multi-rail settlements
                   </p>
                 </div>
 

@@ -54,7 +54,7 @@ export const AiRecommendationModal: React.FC<AiRecommendationModalProps> = ({
       setResult(res);
     } catch (err: any) {
       console.error('Failed to get recommendations:', err);
-      setError(err.message || 'Unable to fetch AI recommendations from backend.');
+      setError(err.message || 'Unable to generate recommendations right now. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ export const AiRecommendationModal: React.FC<AiRecommendationModalProps> = ({
                 AI Hardware Recommendation Engine
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Grounded directly in live inventory via <code className="font-mono text-brand-500">/api/v1/ai/recommend</code>
+                Personalized hardware matches tailored to your budget and specifications
               </p>
             </div>
           </div>

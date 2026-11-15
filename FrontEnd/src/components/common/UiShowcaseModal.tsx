@@ -248,9 +248,9 @@ const CodeInterfaceVisual: React.FC<{ id: string }> = ({ id }) => {
               <div className="bg-slate-100 rounded p-1 text-center text-[7px] font-bold">Dock 30W</div>
             </div>
           </div>
-          <div className="flex justify-between items-center text-[8px] pt-1 border-t border-slate-200 text-slate-500 font-mono">
-            <span>Rails: Bank • MoMo • Crypto</span>
-            <span className="text-emerald-600 font-bold">FastAPI Connected</span>
+          <div className="flex justify-between items-center text-[8px] pt-1 border-t border-slate-200 text-slate-500">
+            <span>Bank • Mobile Money • Crypto</span>
+            <span className="text-emerald-600 font-bold">100% Genuine Tech</span>
           </div>
         </div>
       );
