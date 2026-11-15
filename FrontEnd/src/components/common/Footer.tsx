@@ -1,7 +1,11 @@
 import React from 'react';
-import { Sparkles, Shield, Cpu, RefreshCw, Heart } from 'lucide-react';
+import { Sparkles, Shield, Cpu, RefreshCw, Heart, Layers } from 'lucide-react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenUiShowcase?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenUiShowcase }) => {
   return (
     <footer className="mt-20 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 text-xs transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -87,7 +91,16 @@ export const Footer: React.FC = () => {
           <p className="text-slate-500 dark:text-slate-400">
             © {new Date().getFullYear()} Urban Scenery Ventures. All rights reserved.
           </p>
-          <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400">
+            {onOpenUiShowcase && (
+              <button
+                onClick={onOpenUiShowcase}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 font-bold transition-colors"
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>16 Interfaces Blueprint</span>
+              </button>
+            )}
             <span>Official Electronics Storefront & Back-Office Hub</span>
           </div>
         </div>

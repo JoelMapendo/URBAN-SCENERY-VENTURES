@@ -19,6 +19,7 @@ import {
   Sliders,
   Tag,
   Globe,
+  Layers,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
@@ -31,6 +32,7 @@ interface HeaderProps {
   onFocusSearch: () => void;
   onSelectCategory?: (category: string) => void;
   onOpenAiRecommendations?: () => void;
+  onOpenUiShowcase?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -40,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   onFocusSearch,
   onSelectCategory,
   onOpenAiRecommendations,
+  onOpenUiShowcase,
 }) => {
   const { user, isAuthenticated, isAdmin, logout } = useAuthStore();
   const { getTotalItems, setIsOpen: setCartOpen } = useCartStore();
@@ -74,10 +77,25 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-slate-800/80 bg-white/95 dark:bg-urban-darker/95 backdrop-blur-md transition-colors duration-300">
-      {/* Top Banner with Logo Signature Gradient */}
-      <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1 text-center text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-sm">
-        <Sparkles className="w-3.5 h-3.5 animate-pulse text-accent-200" />
-        <span>Urban Scenery Ventures — Intelligent Electronics Grounded in AI</span>
+      {/* Top Banner with Logo Signature Gradient & Showcase Pill */}
+      <div className="bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse text-accent-200" />
+            <span>Urban Scenery Ventures — Intelligent Electronics Grounded in AI</span>
+          </div>
+
+          {onOpenUiShowcase && (
+            <button
+              onClick={onOpenUiShowcase}
+              className="flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold backdrop-blur-sm transition-all"
+            >
+              <Layers className="w-3 h-3 text-accent-200" />
+              <span>UI Showcase (16 Interfaces)</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-300 animate-ping" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Main Header Bar */}
@@ -334,6 +352,16 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>AI Recommend</span>
               </button>
             )}
+
+            {onOpenUiShowcase && (
+              <button
+                onClick={onOpenUiShowcase}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 transition-all whitespace-nowrap shadow-sm ml-1"
+              >
+                <Layers className="w-3.5 h-3.5 text-brand-500" />
+                <span>UI Showcase (16)</span>
+              </button>
+            )}
           </div>
 
           {/* Live Backend & Multi-Rail Gateway Status Indicator */}
@@ -386,6 +414,18 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Sparkles className="w-4 h-4 text-accent-500" />
               <span>AI Recommendation Engine</span>
+            </button>
+          )}
+          {onOpenUiShowcase && (
+            <button
+              onClick={() => {
+                onOpenUiShowcase();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-accent-600 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-500/10 flex items-center gap-2"
+            >
+              <Layers className="w-4 h-4 text-accent-500" />
+              <span>UI Showcase (16 Interfaces)</span>
             </button>
           )}
           <button

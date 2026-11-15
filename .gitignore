@@ -223,6 +223,12 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Archives & OS Junk
+*.zip
+*.tar.gz
+.DS_Store
+Thumbs.db
+
 # Node & Frontend dependencies
 node_modules/
 package-lock.json

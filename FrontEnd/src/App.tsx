@@ -8,13 +8,22 @@ import { CheckoutModal } from './components/storefront/CheckoutModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { AiShoppingAssistant } from './components/storefront/AiShoppingAssistant';
 import { AiRecommendationModal } from './components/storefront/AiRecommendationModal';
+import { UiShowcaseModal, UiInterfaceItem } from './components/common/UiShowcaseModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { useCartStore } from './store/useCartStore';
+import { useThemeStore } from './store/useThemeStore';
+import { useAuthStore } from './store/useAuthStore';
 
 export const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<'store' | 'admin'>('store');
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [recommendationModalOpen, setRecommendationModalOpen] = useState(false);
+  const [uiShowcaseOpen, setUiShowcaseOpen] = useState(false);
+
+  const { setIsOpen: setCartOpen, addItem } = useCartStore();
+  const { setTheme } = useThemeStore();
+  const { setAuth, logout, isAuthenticated } = useAuthStore();
 
   // Search state passed between Hero and Grid
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,6 +75,75 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleTriggerUiAction = (actionType: UiInterfaceItem['actionType']) => {
+    switch (actionType) {
+      case 'theme_dark':
+        setTheme('dark');
+        break;
+      case 'theme_light':
+        setTheme('light');
+        break;
+      case 'scroll_catalog':
+        if (currentView !== 'store') setCurrentView('store');
+        setTimeout(handleExploreProducts, 100);
+        break;
+      case 'open_ai_recommend':
+        setRecommendationModalOpen(true);
+        break;
+      case 'open_cart':
+        setCartOpen(true);
+        break;
+      case 'open_checkout':
+        // Ensure cart has at least 1 item to preview checkout
+        addItem(
+          {
+            id: 1,
+            name: 'Sony WH-1000XM5 Wireless Headphones',
+            price: '399.99',
+            description: 'Industry-leading noise canceling Bluetooth headphones with 30-hour battery life.',
+            banner_image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80',
+            quantity: 30,
+            status: 'AVAILABLE',
+            created_at: new Date().toISOString(),
+          },
+          1
+        );
+        setCheckoutModalOpen(true);
+        break;
+      case 'open_auth':
+        setAuthModalOpen(true);
+        break;
+      case 'open_ai_assistant':
+        setAssistantPrompt('What flagship hardware do you recommend under $500?');
+        break;
+      case 'admin_gate':
+        logout();
+        setCurrentView('admin');
+        break;
+      case 'admin_overview':
+      case 'admin_products':
+      case 'admin_customers':
+      case 'admin_orders':
+      case 'admin_payments':
+      case 'admin_ai_studio':
+      case 'admin_platforms':
+        if (!isAuthenticated) {
+          // Provide instant admin access for live review
+          setAuth('demo-admin-token', {
+            public_id: 'usr_admin_001',
+            name: 'Admin Reviewer',
+            email: 'admin@urbanscenery.com',
+            role: 'admin',
+            created_at: new Date().toISOString(),
+          });
+        }
+        setCurrentView('admin');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-urban-darker text-slate-900 dark:text-slate-100 transition-colors duration-300">
       {/* Global Header */}
@@ -76,6 +154,7 @@ export const App: React.FC = () => {
         onFocusSearch={handleFocusSearch}
         onSelectCategory={handleCategorySelect}
         onOpenAiRecommendations={() => setRecommendationModalOpen(true)}
+        onOpenUiShowcase={() => setUiShowcaseOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -132,8 +211,15 @@ export const App: React.FC = () => {
       {/* Authentication Modal */}
       {authModalOpen && <AuthModal onClose={() => setAuthModalOpen(false)} />}
 
+      {/* 16 Interfaces Interactive UI Showcase Modal */}
+      <UiShowcaseModal
+        isOpen={uiShowcaseOpen}
+        onClose={() => setUiShowcaseOpen(false)}
+        onTriggerAction={handleTriggerUiAction}
+      />
+
       {/* Footer */}
-      <Footer />
+      <Footer onOpenUiShowcase={() => setUiShowcaseOpen(true)} />
     </div>
   );
 };
