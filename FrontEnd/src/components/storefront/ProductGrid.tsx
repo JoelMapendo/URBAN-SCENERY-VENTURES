@@ -704,7 +704,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               >
                 <div className="aspect-square rounded-xl bg-slate-50 dark:bg-slate-950/60 p-4 flex items-center justify-center overflow-hidden mb-4">
                   <img
-                    src={item.banner_image}
+                    src={item.banner_image || undefined}
                     alt={item.name}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                   />

@@ -45,6 +45,8 @@ export interface ProductOut {
   price: string; // Python Decimal serialized as string (e.g. "299.99")
   description?: string | null;
   banner_image?: string | null;
+  category?: string | null;
+  brand?: string | null;
   quantity: number;
   status: 'AVAILABLE' | 'EMPTY' | string;
   created_at?: string | null;
@@ -56,6 +58,8 @@ export interface ProductCreate {
   price: number | string;
   description?: string | null;
   banner_image?: string | null;
+  category?: string | null;
+  brand?: string | null;
   quantity?: number;
   status?: string;
 }
@@ -65,6 +69,8 @@ export interface ProductUpdate {
   price?: number | string | null;
   description?: string | null;
   banner_image?: string | null;
+  category?: string | null;
+  brand?: string | null;
   quantity?: number | null;
   status?: string | null;
 }

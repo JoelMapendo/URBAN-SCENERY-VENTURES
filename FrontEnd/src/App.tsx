@@ -31,7 +31,7 @@ export const App: React.FC = () => {
 
   const { setIsOpen: setCartOpen, addItem } = useCartStore();
   const { setTheme } = useThemeStore();
-  const { setAuth, logout, isAuthenticated } = useAuthStore();
+  const { setAuth, logout, isAuthenticated, isAdmin } = useAuthStore();
 
   // Search state passed between header & shop
   const [searchQuery, setSearchQuery] = useState('');

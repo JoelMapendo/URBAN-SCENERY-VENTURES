@@ -679,7 +679,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 p-1 flex-shrink-0 flex items-center justify-center overflow-hidden">
                             <img
-                              src={p.banner_image}
+                              src={p.banner_image || undefined}
                               alt={p.name}
                               className="w-full h-full object-contain"
                             />
@@ -824,7 +824,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                       >
                         <div className="aspect-square rounded-lg bg-slate-50 dark:bg-slate-950 p-3 flex items-center justify-center overflow-hidden mb-3">
                           <img
-                            src={prod.banner_image}
+                            src={prod.banner_image || undefined}
                             alt={prod.name}
                             className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                           />
