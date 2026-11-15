@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { HomeView } from './components/storefront/HomeView';
@@ -60,6 +60,15 @@ export const App: React.FC = () => {
     addItem(product, 1);
     handleNavigate('checkout');
   };
+
+  useEffect(() => {
+    (window as any).__navigate = handleNavigate;
+    (window as any).__openAuth = () => setAuthModalOpen(true);
+    (window as any).__closeAuth = () => setAuthModalOpen(false);
+    (window as any).__openCart = () => setCartOpen(true);
+    (window as any).__closeCart = () => setCartOpen(false);
+    (window as any).__openProduct = handleOpenProductDetail;
+  }, [isAdmin]);
 
   const handleNavigateToShop = (category?: string) => {
     if (category) {
