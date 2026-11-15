@@ -18,10 +18,7 @@ const getInitialTheme = (): Theme => {
     console.warn('Failed to read theme from localStorage', e);
   }
 
-  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
-  }
-  return 'dark'; // Default to sleek dark mode
+  return 'light'; // Clean light mode with white & black aesthetic
 };
 
 const applyThemeToDocument = (theme: Theme) => {

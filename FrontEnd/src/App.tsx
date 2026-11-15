@@ -68,6 +68,7 @@ export const App: React.FC = () => {
     (window as any).__openCart = () => setCartOpen(true);
     (window as any).__closeCart = () => setCartOpen(false);
     (window as any).__openProduct = handleOpenProductDetail;
+    (window as any).__setTheme = setTheme;
   }, [isAdmin]);
 
   const handleNavigateToShop = (category?: string) => {
