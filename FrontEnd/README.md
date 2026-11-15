@@ -7,9 +7,9 @@ Directly integrated with the live **Agentic Connexa Backend**:
 
 ---
 
-## 🎨 16 Implemented Interfaces & Visual Blueprint
+## 🎨 16 Interfaces & Visual Code Blueprints
 
-All 16 interface screenshots are stored in [`FrontEnd/screenshots/`](./screenshots) and served via [`FrontEnd/public/screenshots/`](./public/screenshots). Users and developers can also explore all 16 interfaces live inside the app by clicking **"UI Showcase (16 Interfaces)"** in the top navigation header or footer.
+All 16 interfaces are implemented in **100% pure React + Tailwind CSS code** (zero static image bloat). Developers and users can inspect and test all 16 interfaces live inside the app by clicking **"UI Showcase (16 Interfaces)"** in the top navigation header or footer.
 
 | # | Interface Name | Code Component | Verified Backend Endpoints |
 |---|---|---|---|
@@ -63,17 +63,13 @@ All 16 interface screenshots are stored in [`FrontEnd/screenshots/`](./screensho
 
 ```
 FrontEnd/
-├── public/                 # Brand logos, favicons, and screenshots
-│   ├── screenshots/        # 16 High-Res interface PNGs
+├── public/                 # Brand logos and favicons
 │   └── urban-scenery-logo.png
-├── screenshots/            # Visual gallery & README for GitHub
-│   ├── 01_storefront_home_light.png ... 16_admin_platforms.png
-│   └── README.md
 ├── src/
 │   ├── components/
 │   │   ├── admin/          # AdminDashboard (Overview, Products, Customers, Orders, Payments, AI, Platforms)
 │   │   ├── auth/           # AuthModal (Sign In & Register)
-│   │   ├── common/         # Header, Footer, UiShowcaseModal
+│   │   ├── common/         # Header, Footer, UiShowcaseModal (16 pure-code visual blueprints)
 │   │   └── storefront/     # HeroBanner, ProductGrid, ProductCard, QuickView, CartDrawer, CheckoutModal, AiRecommendationModal, AiShoppingAssistant
 │   ├── services/
 │   │   └── api.ts          # Strongly-typed fetch API client for OpenAPI backend
