@@ -10,7 +10,6 @@ import { CustomerDashboardView } from './components/storefront/CustomerDashboard
 import { CartDrawer } from './components/storefront/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { UiShowcaseModal, UiInterfaceItem } from './components/common/UiShowcaseModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
 import { DEFAULT_PRODUCTS } from './data/defaultProducts';
 import { useCartStore } from './store/useCartStore';
 import { useThemeStore } from './store/useThemeStore';
@@ -37,6 +36,12 @@ export const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleNavigate = (view: ViewMode, subSection?: string) => {
+    // Merchant Studio removed: route any legacy 'admin' navigation to the seller dashboard
+    if (view === 'admin') {
+      view = 'dashboard';
+      subSection = undefined;
+    }
+
     if (view === 'dashboard' && subSection && ['dashboard', 'favorite', 'payment', 'notifications', 'settings', 'upload_products', 'buyer_orders'].includes(subSection)) {
       setDashboardTab(subSection as any);
     } else if (view === 'dashboard' && !subSection) {
@@ -201,14 +206,6 @@ export const App: React.FC = () => {
             onViewOrderDetails={handleTrackOrder}
             onNavigateToShop={() => handleNavigate('shop')}
             onOpenProductDetail={handleOpenProductDetail}
-          />
-        )}
-
-        {/* 7. ADMIN & MERCHANT DASHBOARD */}
-        {currentView === 'admin' && (
-          <AdminDashboard
-            onBackToStore={() => handleNavigate('home')}
-            onOpenAuth={() => setAuthModalOpen(true)}
           />
         )}
       </main>

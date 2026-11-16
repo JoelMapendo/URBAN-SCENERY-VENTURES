@@ -21,6 +21,8 @@ import {
   Sliders,
   Tag,
   Store,
+  Truck,
+  Settings,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
@@ -214,13 +216,13 @@ export const Header: React.FC<HeaderProps> = ({
 
                         <button
                           onClick={() => {
-                            onNavigate('admin');
+                            onNavigate('dashboard', 'settings');
                             setUserDropdownOpen(false);
                           }}
-                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium flex items-center gap-2 text-slate-800 dark:text-slate-200"
                         >
-                          <Store className="w-4 h-4 text-brand-500" />
-                          <span>Merchant Studio</span>
+                          <Settings className="w-4 h-4 text-slate-400" />
+                          <span>Store Settings</span>
                         </button>
                       </>
                     ) : (
@@ -232,8 +234,8 @@ export const Header: React.FC<HeaderProps> = ({
                           }}
                           className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
                         >
-                          <User className="w-4 h-4 text-brand-500" />
-                          <span>My Purchases (Short)</span>
+                          <Truck className="w-4 h-4 text-brand-500" />
+                          <span>Track My Orders</span>
                         </button>
 
                         <button
@@ -244,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({
                           className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
                         >
                           <Heart className="w-4 h-4 text-brand-500" />
-                          <span>My Wishlist (4)</span>
+                          <span>My Wishlist</span>
                         </button>
 
                         <button
@@ -252,10 +254,21 @@ export const Header: React.FC<HeaderProps> = ({
                             onNavigate('order-status');
                             setUserDropdownOpen(false);
                           }}
-                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium flex items-center gap-2 text-slate-800 dark:text-slate-200"
                         >
                           <MapPin className="w-4 h-4 text-emerald-500" />
-                          <span>Track Live Delivery</span>
+                          <span>Live Delivery Map</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            onNavigate('dashboard', 'settings');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <Settings className="w-4 h-4 text-slate-400" />
+                          <span>Account Settings</span>
                         </button>
                       </>
                     )}
@@ -460,20 +473,6 @@ export const Header: React.FC<HeaderProps> = ({
             <Search className="w-3.5 h-3.5 text-brand-500" />
             <span>Search Products</span>
           </button>
-          {isAdmin && (
-            <button
-              onClick={() => {
-                onNavigate('admin');
-                setMobileMenuOpen(false);
-              }}
-              className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900 flex items-center justify-between"
-            >
-              <span>Merchant Console</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-brand-500 text-white font-mono">
-                Admin
-              </span>
-            </button>
-          )}
         </div>
       )}
     </header>

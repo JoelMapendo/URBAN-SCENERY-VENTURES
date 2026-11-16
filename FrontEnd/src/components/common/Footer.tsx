@@ -210,14 +210,6 @@ export const Footer: React.FC<FooterProps> = ({
                 </li>
                 <li>
                   <button
-                    onClick={() => onNavigate && onNavigate('admin')}
-                    className="hover:text-brand-500 transition-colors text-left"
-                  >
-                    Merchant Console
-                  </button>
-                </li>
-                <li>
-                  <button
                     onClick={() => onOpenAuth && onOpenAuth()}
                     className="hover:text-brand-500 transition-colors text-left"
                   >

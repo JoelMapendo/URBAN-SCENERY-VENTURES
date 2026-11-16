@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   LayoutDashboard,
   Heart,
@@ -26,12 +26,24 @@ import {
   Store,
   RefreshCw,
   ExternalLink,
+  FolderOpen,
+  UploadCloud,
+  Sparkles,
+  Truck,
+  Copy,
+  Check,
+  Wand2,
+  Eye,
+  Sliders,
+  ChevronRight,
+  AlertCircle,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useCartStore } from '../../store/useCartStore';
 import { formatCurrency } from '../../utils/formatters';
 import { ProductOut } from '../../types';
 import { DEFAULT_PRODUCTS } from '../../data/defaultProducts';
+import { NanoBananaAiStudio } from './NanoBananaAiStudio';
 
 interface CustomerDashboardViewProps {
   onViewOrderDetails: (orderId: number) => void;
@@ -72,7 +84,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
   // Checkbox state for admin orders fulfillment table
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
 
-  // Demo Orders List (Matching Image 3: 5/27/15, 1/31/14, 4/4/18)
+  // Demo Orders List with Rich Real-time Tracking (For Buyer Order Tracking Portal)
   const [orders, setOrders] = useState([
     {
       id: 44322,
@@ -80,17 +92,31 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
       date: '5/27/15',
       status: 'Delivered',
       statusColor: 'text-emerald-600 dark:text-emerald-400',
+      statusBg: 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20',
       total: 320.0,
       itemsCount: 2,
+      carrier: 'FedEx Priority Express',
+      trackingNumber: 'USV-FX-99482104',
+      estimatedDelivery: 'Delivered to Front Door',
+      currentStep: 4, // 1: Placed, 2: Inspected, 3: In Transit, 4: Delivered
+      image: 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=500&q=80',
+      destination: 'San Francisco, CA • USA',
     },
     {
       id: 62639,
       product: 'Zackpot Speaker',
       date: '1/31/14',
-      status: 'Processing',
+      status: 'In Transit',
       statusColor: 'text-blue-600 dark:text-blue-400',
+      statusBg: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20',
       total: 800.0,
       itemsCount: 1,
+      carrier: 'DHL Express Worldwide',
+      trackingNumber: 'USV-DHL-44019283',
+      estimatedDelivery: 'Expected Delivery Tomorrow by 3:00 PM',
+      currentStep: 3, // In Transit
+      image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=500&q=80',
+      destination: 'New York, NY • USA',
     },
     {
       id: 14355,
@@ -98,10 +124,27 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
       date: '4/4/18',
       status: 'Canceled',
       statusColor: 'text-rose-600 dark:text-rose-400',
+      statusBg: 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/20',
       total: 800.0,
       itemsCount: 1,
+      carrier: 'UPS Ground Services',
+      trackingNumber: 'USV-UPS-11029482',
+      estimatedDelivery: 'Canceled & 100% Refunded',
+      currentStep: 1,
+      image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500&q=80',
+      destination: 'Austin, TX • USA',
     },
   ]);
+
+  // Buyer Tracking UI State
+  const [buyerFilterStatus, setBuyerFilterStatus] = useState<'all' | 'in_transit' | 'delivered'>('all');
+  const [copiedTrackingId, setCopiedTrackingId] = useState<string | null>(null);
+
+  const copyTracking = (num: string) => {
+    navigator.clipboard?.writeText(num);
+    setCopiedTrackingId(num);
+    setTimeout(() => setCopiedTrackingId(null), 2500);
+  };
 
   // Favorite Items (Matching Image 2: PlayStation, Zackpot, Philips, Nuarb)
   const [favoriteItems, setFavoriteItems] = useState<ProductOut[]>([
@@ -151,17 +194,54 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
     },
   ]);
 
-  // Seller Product Upload State (Urban Scenery Ventures seller feature)
+  // Seller Product Upload State (Urban Scenery Ventures seller feature with File Explorer & Nano Banana AI)
   const [sellerProducts, setSellerProducts] = useState<ProductOut[]>(DEFAULT_PRODUCTS.slice(0, 6));
   const [newProductName, setNewProductName] = useState('');
   const [newProductCategory, setNewProductCategory] = useState('Smart Phones');
   const [newProductPrice, setNewProductPrice] = useState('120.00');
   const [newProductStock, setNewProductStock] = useState('25');
-  const [newProductImage, setNewProductImage] = useState(
+  const [newProductImage, setNewProductImage] = useState<string>(
     'https://images.unsplash.com/photo-1511707171634-5f897ff025a0?w=500&q=80'
   );
   const [newProductDesc, setNewProductDesc] = useState('');
   const [uploadSuccessNotice, setUploadSuccessNotice] = useState<string | null>(null);
+
+  // File Explorer & Nano Banana AI State
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [nanoBananaStudioOpen, setNanoBananaStudioOpen] = useState(false);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const [mockupBadge, setMockupBadge] = useState<string | null>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const res = ev.target?.result as string;
+        setNewProductImage(res);
+        setMockupBadge(null);
+        // Automatically open Nano Banana AI Studio to beautify and create 3D mockup
+        setNanoBananaStudioOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDraggingFile(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const res = ev.target?.result as string;
+        setNewProductImage(res);
+        setMockupBadge(null);
+        setNanoBananaStudioOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleUploadProduct = (e: React.FormEvent) => {
     e.preventDefault();
@@ -266,7 +346,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
               </span>
             </div>
 
-            {/* Navigation Menu (Role-tailored: Diagrams for Admin, Short for Buyer) */}
+            {/* Navigation Menu (Strictly Role-Tailored: Diagrams & Upload for Seller; Order Tracking for Buyer) */}
             <nav className="space-y-1.5 text-xs font-semibold">
               {isAdmin ? (
                 <>
@@ -280,7 +360,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     }`}
                   >
                     <LayoutDashboard className="w-4 h-4 text-brand-500" />
-                    <span>Dashboard & Diagrams</span>
+                    <span>Sales Diagrams & Orders</span>
                   </button>
 
                   <button
@@ -292,7 +372,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     }`}
                   >
                     <PlusCircle className="w-4 h-4 text-emerald-500" />
-                    <span>Upload Products</span>
+                    <span>Upload Electronics</span>
                   </button>
 
                   <button
@@ -316,12 +396,12 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     }`}
                   >
                     <Settings className="w-4 h-4 text-slate-400" />
-                    <span>Settings</span>
+                    <span>Store Settings</span>
                   </button>
                 </>
               ) : (
                 <>
-                  {/* BUYER NAVIGATION (The "Short One") */}
+                  {/* BUYER NAVIGATION (Dedicated Order Tracking Portal) */}
                   <button
                     onClick={() => setActiveTab('buyer_orders')}
                     className={`w-full py-2.5 px-4 rounded-xl flex items-center gap-3 transition-colors ${
@@ -330,8 +410,8 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                         : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                     }`}
                   >
-                    <ShoppingBag className="w-4 h-4 text-brand-500" />
-                    <span>My Purchases (Short)</span>
+                    <Truck className="w-4 h-4 text-brand-500" />
+                    <span>Track My Orders</span>
                   </button>
 
                   <button
@@ -343,7 +423,7 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     }`}
                   >
                     <Heart className="w-4 h-4 text-brand-500" />
-                    <span>Favorite ({favoriteItems.length})</span>
+                    <span>Wishlist ({favoriteItems.length})</span>
                   </button>
 
                   <button
@@ -369,37 +449,6 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                 <span>Log Out</span>
               </button>
             </nav>
-
-            {/* Quick Role Switcher Pill (Lets user switch between Seller & Buyer) */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                    Switch Active Role
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    {isAdmin ? 'Admin' : 'Buyer'}
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight mb-2.5">
-                  {isAdmin
-                    ? 'Currently in Seller mode with full diagrams & inventory upload.'
-                    : 'Currently in Buyer mode with a short, clean purchase history.'}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const nextRole = isAdmin ? 'buyer' : 'admin';
-                    setRole(nextRole);
-                    setActiveTab(nextRole === 'admin' ? 'dashboard' : 'buyer_orders');
-                  }}
-                  className="w-full py-2 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                  <span>{isAdmin ? 'Switch to Buyer (Short View)' : 'Switch to Seller / Admin'}</span>
-                </button>
-              </div>
-            </div>
           </aside>
 
           {/* ========================================================================= */}
@@ -621,18 +670,131 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                       </div>
                     </div>
 
+                    {/* Native File Explorer Browser & Nano Banana AI Engine */}
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                        Product Banner Image URL *
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <FolderOpen className="w-4 h-4 text-brand-500" />
+                          <span>Product Photo (Browse in File Explorer) *</span>
+                        </label>
+                        <span className="text-[11px] text-brand-600 dark:text-brand-400 font-bold flex items-center gap-1">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>Nano Banana AI Mockup Studio</span>
+                        </span>
+                      </div>
+
+                      {/* Hidden native input */}
                       <input
-                        type="url"
-                        required
-                        value={newProductImage}
-                        onChange={(e) => setNewProductImage(e.target.value)}
-                        placeholder="https://images.unsplash.com/..."
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-brand-500"
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/jpg"
+                        onChange={handleFileSelect}
+                        className="hidden"
                       />
+
+                      {/* Dropzone & File Explorer Picker Container */}
+                      <div
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          setIsDraggingFile(true);
+                        }}
+                        onDragLeave={() => setIsDraggingFile(false)}
+                        onDrop={handleFileDrop}
+                        className={`relative border-2 border-dashed rounded-2xl p-5 transition-all ${
+                          isDraggingFile
+                            ? 'border-brand-500 bg-brand-50/20 dark:bg-brand-500/10'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-900/40'
+                        }`}
+                      >
+                        {newProductImage ? (
+                          <div className="flex flex-col sm:flex-row items-center gap-5">
+                            {/* Visual Preview Box */}
+                            <div className="relative w-36 h-36 rounded-2xl bg-white dark:bg-slate-950 p-2.5 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-center overflow-hidden flex-shrink-0 group">
+                              <img
+                                src={newProductImage}
+                                alt="Hardware Preview"
+                                className="w-full h-full object-contain transition-transform group-hover:scale-105"
+                              />
+                              {mockupBadge ? (
+                                <span className="absolute top-1.5 left-1.5 bg-gradient-to-r from-brand-600 to-pink-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-md">
+                                  🍌 4K MOCKUP
+                                </span>
+                              ) : (
+                                <span className="absolute top-1.5 left-1.5 bg-slate-900/80 text-white text-[9px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+                                  Raw Photo
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Controls and AI Beautifier Action */}
+                            <div className="space-y-2.5 flex-1 text-center sm:text-left">
+                              <div>
+                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                    Hardware Photo Selected
+                                  </h4>
+                                  {mockupBadge ? (
+                                    <span className="text-[10px] font-bold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-200 dark:border-brand-500/30">
+                                      ✨ {mockupBadge}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-2 py-0.5 rounded-full font-medium border border-amber-200 dark:border-amber-500/20">
+                                      Ready for AI Mockup Beautification
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                  {mockupBadge
+                                    ? 'Generated with seamless studio lighting, realistic 3D contact shadow, and flagship clarity.'
+                                    : 'Use Nano Banana AI to automatically remove background clutter and render an e-commerce 3D mockup!'}
+                                </p>
+                              </div>
+
+                              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => setNanoBananaStudioOpen(true)}
+                                  className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-pink-500 hover:from-brand-700 hover:to-pink-600 text-white text-xs font-bold shadow-md shadow-brand-500/20 flex items-center gap-1.5 transition-all transform active:scale-95"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5" />
+                                  <span>{mockupBadge ? '🍌 Change 3D Mockup Style' : '🍌 Beautify with Nano Banana AI'}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  className="py-2 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 transition-colors"
+                                >
+                                  <FolderOpen className="w-3.5 h-3.5" />
+                                  <span>Browse Another File</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="py-6 text-center space-y-3">
+                            <div className="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-500/10 text-brand-500 mx-auto flex items-center justify-center">
+                              <UploadCloud className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                Browse Computer Files or Drag & Drop Photo
+                              </h4>
+                              <p className="text-[11px] text-slate-400 mt-0.5">
+                                PNG, JPG, or WEBP • Nano Banana AI automatically creates 3D studio mockups
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="py-2.5 px-4 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-sm inline-flex items-center gap-2"
+                            >
+                              <FolderOpen className="w-3.5 h-3.5" />
+                              <span>Browse from File Explorer</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -710,77 +872,266 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     ))}
                   </div>
                 </div>
+                {/* Nano Banana AI Studio Modal Overlay */}
+                {nanoBananaStudioOpen && newProductImage && (
+                  <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+                    <div className="max-w-4xl w-full my-8">
+                      <NanoBananaAiStudio
+                        sourceImage={newProductImage}
+                        productName={newProductName || 'Electronics Hardware'}
+                        onApplyMockup={(beautified) => {
+                          setNewProductImage(beautified);
+                          setMockupBadge('Nano Banana 4K Studio Mockup');
+                          setNanoBananaStudioOpen(false);
+                          setUploadSuccessNotice('🍌 Nano Banana AI Mockup generated and applied to your product listing!');
+                          setTimeout(() => setUploadSuccessNotice(null), 4000);
+                        }}
+                        onCancel={() => setNanoBananaStudioOpen(false)}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
             {/* ========================================================================= */}
-            {/* VIEW 3: BUYER PURCHASES (The "Short One" for Users/Buyers) */}
+            {/* VIEW 3: BUYER ORDER TRACKING & PURCHASES (Dedicated Buyer Portal) */}
             {/* ========================================================================= */}
             {activeTab === 'buyer_orders' && !isAdmin && (
               <div className="space-y-6 animate-in fade-in">
+                {/* Buyer Order Tracking Overview */}
                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-                  <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
                     <div>
-                      <h3 className="text-base font-bold text-slate-950 dark:text-white">
-                        My Purchases
+                      <h3 className="text-lg font-bold text-slate-950 dark:text-white flex items-center gap-2">
+                        <Truck className="w-5 h-5 text-brand-500" />
+                        <span>Track My Orders & Shipments</span>
                       </h3>
-                      <p className="text-xs text-slate-400">
-                        Recent hardware bought from Urban Scenery Ventures sellers.
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Real-time courier progress and tracking for all your electronics purchases.
                       </p>
                     </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={onNavigateToShop}
+                        className="py-2 px-4 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-colors shadow-sm"
+                      >
+                        Browse Store
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Filter Tabs */}
+                  <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
                     <button
-                      onClick={onNavigateToShop}
-                      className="py-1.5 px-3 rounded-xl bg-black text-white text-xs font-semibold hover:bg-brand-500 transition-colors"
+                      onClick={() => setBuyerFilterStatus('all')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                        buyerFilterStatus === 'all'
+                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white'
+                          : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      }`}
                     >
-                      Browse More Hardware
+                      All Orders ({orders.length})
+                    </button>
+                    <button
+                      onClick={() => setBuyerFilterStatus('in_transit')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                        buyerFilterStatus === 'in_transit'
+                          ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                          : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      In Transit ({orders.filter((o) => o.status === 'In Transit').length})
+                    </button>
+                    <button
+                      onClick={() => setBuyerFilterStatus('delivered')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                        buyerFilterStatus === 'delivered'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                          : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      Delivered ({orders.filter((o) => o.status === 'Delivered').length})
                     </button>
                   </div>
 
-                  {/* Simple card list of orders (No complex admin diagrams!) */}
-                  <div className="space-y-4">
-                    {orders.map((ord) => (
-                      <div
-                        key={ord.id}
-                        className="p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                      >
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-900 p-1 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm flex-shrink-0">
-                            <Package className="w-6 h-6 text-brand-500" />
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold text-slate-900 dark:text-white">
-                                Order #{ord.id}
-                              </span>
-                              <span className={`text-[11px] font-semibold ${ord.statusColor}`}>
-                                • {ord.status}
-                              </span>
+                  {/* Orders Cards with Interactive Tracking Stepper */}
+                  <div className="space-y-6">
+                    {orders
+                      .filter((ord) => {
+                        if (buyerFilterStatus === 'in_transit') return ord.status === 'In Transit';
+                        if (buyerFilterStatus === 'delivered') return ord.status === 'Delivered';
+                        return true;
+                      })
+                      .map((ord) => (
+                        <div
+                          key={ord.id}
+                          className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/60 p-5 sm:p-6 shadow-sm space-y-5 transition-all hover:border-slate-300 dark:hover:border-slate-700"
+                        >
+                          {/* Order Header */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+                            <div>
+                              <div className="flex items-center gap-2.5">
+                                <span className="font-mono text-sm font-black text-slate-900 dark:text-white">
+                                  Order #{ord.id}
+                                </span>
+                                <span
+                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${ord.statusBg} ${ord.statusColor}`}
+                                >
+                                  {ord.status}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-400 font-mono mt-1">
+                                Placed on {ord.date} • Total: {formatCurrency(ord.total)} ({ord.itemsCount} item{ord.itemsCount > 1 ? 's' : ''})
+                              </p>
                             </div>
-                            <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
-                              {ord.product}
-                            </h4>
-                            <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                              Ordered {ord.date} • Total {formatCurrency(ord.total)}
-                            </p>
+
+                            {/* Tracking Code with 1-click Copy */}
+                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 self-start sm:self-auto">
+                              <span className="text-[10px] font-mono font-bold text-slate-500">
+                                {ord.carrier}:
+                              </span>
+                              <span className="text-[11px] font-mono font-black text-slate-900 dark:text-white">
+                                {ord.trackingNumber}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => copyTracking(ord.trackingNumber)}
+                                title="Copy tracking number"
+                                className="p-1 text-slate-400 hover:text-brand-500 transition-colors"
+                              >
+                                {copiedTrackingId === ord.trackingNumber ? (
+                                  <Check className="w-3.5 h-3.5 text-emerald-500" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Visual 4-Step Tracking Stepper (If not canceled) */}
+                          {ord.status !== 'Canceled' ? (
+                            <div className="py-2">
+                              <div className="relative">
+                                {/* Connecting Bar */}
+                                <div className="absolute top-4 left-6 right-6 h-1 bg-slate-100 dark:bg-slate-800 z-0">
+                                  <div
+                                    className="h-full bg-brand-500 transition-all duration-500"
+                                    style={{
+                                      width:
+                                        ord.currentStep === 4
+                                          ? '100%'
+                                          : ord.currentStep === 3
+                                          ? '66%'
+                                          : ord.currentStep === 2
+                                          ? '33%'
+                                          : '0%',
+                                    }}
+                                  />
+                                </div>
+
+                                {/* Step Icons & Labels */}
+                                <div className="relative z-10 flex items-center justify-between">
+                                  {[
+                                    { step: 1, label: 'Order Confirmed', sub: 'Verified by USV' },
+                                    { step: 2, label: 'Quality Checked', sub: 'Packed securely' },
+                                    { step: 3, label: 'In Transit', sub: ord.carrier },
+                                    { step: 4, label: 'Delivered', sub: ord.destination },
+                                  ].map((s) => {
+                                    const isDone = ord.currentStep >= s.step;
+                                    const isCurrent = ord.currentStep === s.step;
+                                    return (
+                                      <div key={s.step} className="flex flex-col items-center text-center">
+                                        <div
+                                          className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all shadow-sm ${
+                                            isDone
+                                              ? 'bg-brand-500 text-white ring-4 ring-brand-500/20'
+                                              : 'bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-400'
+                                          } ${isCurrent && ord.currentStep !== 4 ? 'animate-pulse' : ''}`}
+                                        >
+                                          {isDone ? (
+                                            <Check className="w-4 h-4 stroke-[2.5]" />
+                                          ) : (
+                                            <span>{s.step}</span>
+                                          )}
+                                        </div>
+                                        <span
+                                          className={`text-[11px] font-bold mt-2 ${
+                                            isDone ? 'text-slate-900 dark:text-white' : 'text-slate-400'
+                                          }`}
+                                        >
+                                          {s.label}
+                                        </span>
+                                        <span className="text-[10px] text-slate-400 hidden sm:block">
+                                          {s.sub}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* Estimated Arrival Banner */}
+                              <div className="mt-5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-2">
+                                  <Truck className="w-4 h-4 text-brand-500" />
+                                  <span className="font-semibold text-slate-700 dark:text-slate-300">
+                                    Status: <span className="text-slate-950 dark:text-white font-bold">{ord.estimatedDelivery}</span>
+                                  </span>
+                                </div>
+                                <span className="text-[11px] font-mono text-slate-400">
+                                  Destination: {ord.destination}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-2">
+                              <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
+                              <span>Order was canceled by customer request. Full refund has been returned to payment method.</span>
+                            </div>
+                          )}
+
+                          {/* Item Details and Fast Actions */}
+                          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 p-1 flex items-center justify-center overflow-hidden flex-shrink-0 border border-slate-200/80 dark:border-slate-700">
+                                <img
+                                  src={ord.image}
+                                  alt={ord.product}
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-slate-900 dark:text-white">
+                                  {ord.product}
+                                </h4>
+                                <p className="text-[11px] text-slate-400 mt-0.5">
+                                  Shipped via {ord.carrier} Express Logistics
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 self-end sm:self-center">
+                              <button
+                                type="button"
+                                onClick={() => onViewOrderDetails(ord.id)}
+                                className="py-2 px-3.5 rounded-xl bg-black hover:bg-brand-500 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                              >
+                                <MapPin className="w-3.5 h-3.5" />
+                                <span>Track on Live Map</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={onNavigateToShop}
+                                className="py-2 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors"
+                              >
+                                Buy Again
+                              </button>
+                            </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2 self-end sm:self-center">
-                          <button
-                            onClick={() => onViewOrderDetails(ord.id)}
-                            className="py-1.5 px-3.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-black hover:text-white hover:border-black transition-colors"
-                          >
-                            Track Package
-                          </button>
-                          <button
-                            onClick={onNavigateToShop}
-                            className="py-1.5 px-3.5 rounded-lg bg-black hover:bg-brand-500 text-white text-xs font-bold transition-colors"
-                          >
-                            Buy Again
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
               </div>
