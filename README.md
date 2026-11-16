@@ -1,10 +1,10 @@
-# URBAN-SCENERY-VENTURES
+#  URBAN-SCENERY-VENTURES
 
 Full-stack AI-powered electronics marketplace combining a **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
 
 ---
 
-## Features
+##  Features
 
 - **Electronics Product Catalog**: Live inventory sync between SQLite/PostgreSQL and both the Customer Storefront (`index.html`) and Seller Central (`seller.html`), with stock badges, search, category filtering, and multi-currency display (`UGX`, `USD`, `EUR`, `GBP`).
 - **Checkout & Order Management**: Real-time stock validation, automated total calculation, express checkout modal (`POST /api/v1/orders`), guest order `#ID` lookup, authenticated order history, and Seller Central fulfillment progression (`PENDING` → `APPROVED` → `SHIPPED` → `DELIVERED`).
@@ -85,7 +85,7 @@ npm install
 npm run dev
 ```
 
-Vite proxies `/api/*` and `/health` requests to `http://127.0.0.1:8000` (configurable via `VITE_BACKEND_URL` in `FrontEnd/.env`). If the frontend is opened on another static server, `src/services/api.js` automatically falls back to `http://127.0.0.1:8000/api/v1` via CORS.
+Vite proxies `/api/*` and `/health` requests to `http://127.0.0.1:8000` (configurable via `VITE_BACKEND_URL` in `FrontEnd/.env`). If the frontend is opened on  another static server, `src/services/api.js` automatically falls back to `http://127.0.0.1:8000/api/v1` via CORS.
 
 ---
 
