@@ -20,6 +20,22 @@ class Settings:
     SECRET_KEY: str = os.getenv("SECRET_KEY", "urbanventures-super-secret-jwt-key-2026-change-in-prod")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
+
+    # Free Open-Source AI Photo Studio Service Keys
+    STUDIO_API_KEY: str = os.getenv(
+        "STUDIO_API_KEY",
+        "usv_studio_live_e0af0363507ed365c2d84b45e747a678629f4662c99e2a78",
+    )
+    STUDIO_DEV_KEY: str = os.getenv(
+        "STUDIO_DEV_KEY",
+        "usv_studio_dev_fc1674f0481e7e3bf539f655856f4ce726cf794f8bf0448e",
+    )
+    REQUIRE_STUDIO_API_KEY: bool = os.getenv("REQUIRE_STUDIO_API_KEY", "false").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     
     # Auto-seed initial users and sample electronics on startup if missing
     AUTO_SEED: bool = os.getenv("AUTO_SEED", "true").strip().lower() in ("1", "true", "yes")

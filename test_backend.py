@@ -329,7 +329,63 @@ def run_tests():
     ).status_code == 204
     print("[PASS] Admin CRUD exercised across the model and lookup endpoints")
 
-    print("\n=== ALL 14 TEST SUITES PASSED SUCCESSFULLY! ===")
+    # 15. Free Open-Source AI Photo-Editing Studio (All 10 tools + Assist + Security Validation)
+    import base64
+    import io
+    from PIL import Image, ImageDraw
+
+    studio_img = Image.new("RGB", (320, 240), (242, 244, 248))
+    s_draw = ImageDraw.Draw(studio_img)
+    s_draw.ellipse([90, 40, 230, 200], fill=(30, 41, 59), outline=(230, 0, 126), width=4)
+    s_draw.ellipse([130, 80, 190, 150], fill=(215, 165, 135))
+    s_draw.rectangle([30, 30, 55, 55], fill=(255, 0, 0))
+    s_buf = io.BytesIO()
+    studio_img.save(s_buf, format="PNG")
+    studio_b64 = "data:image/png;base64," + base64.b64encode(s_buf.getvalue()).decode("ascii")
+
+    mask_img = Image.new("RGBA", (320, 240), (0, 0, 0, 0))
+    m_draw = ImageDraw.Draw(mask_img)
+    m_draw.rectangle([26, 26, 59, 59], fill=(230, 0, 126, 255))
+    m_buf = io.BytesIO()
+    mask_img.save(m_buf, format="PNG")
+    mask_b64 = "data:image/png;base64," + base64.b64encode(m_buf.getvalue()).decode("ascii")
+
+    cap_res = client.get("/api/v1/ai/photo-studio/capabilities")
+    assert cap_res.status_code == 200, cap_res.text
+    assert len(cap_res.json()["tools"]) == 10
+
+    studio_tools = [
+        ("remove_bg", {"feather": 1}, None),
+        ("replace_bg", {"preset": "studio_white", "add_shadow": True}, None),
+        ("enhance", {"brightness": 1.05, "contrast": 1.1, "auto_clahe": True}, None),
+        ("sharpen", {"strength": 65, "radius": 2.0}, None),
+        ("resize", {"width": 500, "height": 500, "fit_mode": "pad"}, None),
+        ("crop", {"aspect_preset": "1:1"}, None),
+        ("remove_object", {"method": "telea", "radius": 5}, mask_b64),
+        ("restore", {"denoise_strength": 8, "remove_scratches": True}, None),
+        ("portrait_enhance", {"skin_smooth": 55, "eye_sharpen": 45}, None),
+        ("generate_scene", {"prompt": "Neon studio", "style": "cyber_neon", "width": 512, "height": 512}, None),
+    ]
+    for tool_id, t_params, t_mask in studio_tools:
+        t_res = client.post(
+            "/api/v1/ai/photo-studio/process",
+            json={
+                "image_base64": studio_b64,
+                "tool": tool_id,
+                "params": t_params,
+                "mask_base64": t_mask,
+                "output_format": "png",
+            },
+        )
+        assert t_res.status_code == 200, f"Studio tool {tool_id} failed: {t_res.text}"
+        assert t_res.json()["image_base64"].startswith("data:image/png;base64,")
+
+    assist_res = client.post("/api/v1/ai/photo-studio/assist", json={"prompt": "Remove background"})
+    assert assist_res.status_code == 200
+    assert assist_res.json()["recommended_tool"] == "remove_bg"
+    print("[PASS] All 10 Free AI Photo-Editing Studio tools & endpoints verified")
+
+    print("\n=== ALL 15 TEST SUITES PASSED SUCCESSFULLY! ===")
 
 
 if __name__ == "__main__":

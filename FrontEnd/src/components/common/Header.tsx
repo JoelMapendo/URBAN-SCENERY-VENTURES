@@ -216,6 +216,17 @@ export const Header: React.FC<HeaderProps> = ({
 
                         <button
                           onClick={() => {
+                            onNavigate('dashboard', 'photo_studio');
+                            setUserDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold flex items-center gap-2 text-slate-800 dark:text-slate-200"
+                        >
+                          <Sparkles className="w-4 h-4 text-brand-500" />
+                          <span>AI Photo Studio (Free)</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
                             onNavigate('dashboard', 'settings');
                             setUserDropdownOpen(false);
                           }}

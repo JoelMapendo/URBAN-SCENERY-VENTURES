@@ -1,4 +1,5 @@
 import { useAuthStore } from '../store/useAuthStore';
+import { processPhotoStudioClientFallback } from '../utils/clientPhotoProcessor';
 import {
   UserLogin,
   UserRegister,
@@ -22,6 +23,10 @@ import {
   InstagramImagePost,
   TikTokVideoPost,
   WhatsAppMessage,
+  StudioProcessRequest,
+  StudioProcessResponse,
+  StudioPromptAssistResponse,
+  StudioCapabilitiesResponse,
 } from '../types';
 
 const LOCAL_BACKEND_URL = 'http://127.0.0.1:8000';
@@ -29,6 +34,9 @@ const CLOUD_BACKEND_URL = 'https://agentic-connexa-backend.onrender.com';
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL || LOCAL_BACKEND_URL).replace(/\/+$/, '');
 const FALLBACK_URL = BASE_URL === LOCAL_BACKEND_URL ? CLOUD_BACKEND_URL : LOCAL_BACKEND_URL;
 const API_PREFIX = '/api/v1';
+const STUDIO_API_KEY =
+  import.meta.env.VITE_STUDIO_API_KEY ||
+  'usv_studio_live_e0af0363507ed365c2d84b45e747a678629f4662c99e2a78';
 
 export class ApiError extends Error {
   public status: number;
@@ -51,6 +59,7 @@ async function request<T>(
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-Studio-Key': STUDIO_API_KEY,
     ...(options.headers as Record<string, string>),
   };
 
@@ -329,6 +338,36 @@ export const api = {
     return request<any>('/ai/agents/image-studio/render', {
       method: 'POST',
       body: JSON.stringify(payload),
+    });
+  },
+
+  // ==========================================
+  // Free Open-Source AI Photo Editing Studio
+  // ==========================================
+  async getPhotoStudioCapabilities(): Promise<StudioCapabilitiesResponse> {
+    return request<StudioCapabilitiesResponse>('/ai/photo-studio/capabilities');
+  },
+
+  async processPhotoStudio(payload: StudioProcessRequest): Promise<StudioProcessResponse> {
+    try {
+      return await request<StudioProcessResponse>('/ai/photo-studio/process', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (err: any) {
+      // If the user uploaded an invalid file (>10MB or wrong format), surface the validation error
+      if (err instanceof ApiError && err.status === 400) {
+        throw err;
+      }
+      // If the backend is unreachable or offline, run the 100% free browser CV fallback so sellers with data access never get blocked
+      return processPhotoStudioClientFallback(payload);
+    }
+  },
+
+  async assistPhotoStudioPrompt(prompt: string): Promise<StudioPromptAssistResponse> {
+    return request<StudioPromptAssistResponse>('/ai/photo-studio/assist', {
+      method: 'POST',
+      body: JSON.stringify({ prompt }),
     });
   },
 

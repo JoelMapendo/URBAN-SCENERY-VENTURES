@@ -7,6 +7,7 @@ from .payments import router as payments_router
 from .ai import router as ai_router
 from .lookups import router as lookups_router
 from .ai_interactions import router as ai_interactions_router
+from .photo_studio import router as photo_studio_router
 
 __all__ = [
     "auth_router",
@@ -17,4 +18,5 @@ __all__ = [
     "ai_router",
     "lookups_router",
     "ai_interactions_router",
+    "photo_studio_router",
 ]

@@ -13,6 +13,20 @@ Full-stack AI-powered electronics marketplace combining a **FastAPI + SQLAlchemy
   - Storefront AI Tech Advisor modal & smart search bar connected to `POST /api/v1/ai/recommend` and `GET /api/v1/ai/smart-search`.
   - Visual Search matcher connected to `GET /api/v1/ai/smart-search`.
   - Seller Central AI Product Uploader, Autonomous Dynamic Repricer, TikTok Shop simulator, and persisted AI interaction logs (`/api/v1/ai/interactions`).
+- **100% Free Open-Source AI Photo-Editing Studio**:
+  - Built directly into the Seller Portal (**AI Photo Studio** tab & **Upload Electronics** flow) with zero paid API dependencies (`rembg`, `opencv-python-headless`, `Pillow`, `numpy`, `onnxruntime` + browser CV fallback).
+  - **10 Integrated Editing Tools**:
+    1. **Background Removal (`remove_bg`)**: Salient-object alpha segmentation (`rembg` U2Net ONNX + OpenCV GrabCut) with feathering and alpha threshold control.
+    2. **Background Replacement (`replace_bg`)**: Studio Clean White, 3D Brushed Tech Podium, Urban Cyber Neon, Flagship Glass Reflection, Warm Sandstone, Solid Custom Color, or Custom Uploaded Backdrop with contact drop shadows and bokeh depth blur.
+    3. **Image Enhancement (`enhance`)**: LAB-space CLAHE adaptive contrast, shadow recovery, brightness, contrast, vibrance, and warmth tuning.
+    4. **Image Sharpening (`sharpen`)**: Edge-aware Gaussian Unsharp Masking and OpenCV high-frequency structure detail boost.
+    5. **Image Resizing (`resize`)**: High-precision Lanczos resampling with aspect-ratio lock, smart padding, and 1-click e-commerce presets (`1000×1000`, `1200×900`, `1920×1080`, `1080×1350`).
+    6. **Image Cropping (`crop`)**: Lossless region cropping with interactive selection coordinates and aspect-ratio presets (`1:1`, `4:3`, `16:9`, `4:5`, `Free`).
+    7. **Object Removal (`remove_object`)**: Interactive brush mask canvas on the frontend paired with OpenCV Fast Marching (`INPAINT_TELEA`) and Navier-Stokes (`INPAINT_NS`) texture inpainting.
+    8. **Image Restoration (`restore`)**: Non-Local Means colored denoising (`fastNlMeansDenoisingColored`), morphological dust/scratch repair, Gray-World color cast neutralization, and faded contrast recovery.
+    9. **Portrait Enhancement (`portrait_enhance`)**: YCrCb skin-tone detection with edge-preserving bilateral skin smoothing, eye/hair detail sharpening, and studio fill-light lift.
+    10. **AI Scene Generator (`generate_scene`)**: Free procedural studio lighting & bokeh scene synthesis with optional foreground product compositing.
+  - **Workspace Features**: Drag-and-drop upload (up to 10 MB, JPEG/PNG/WebP validated), natural-language AI command bar, interactive Before/After split slider, multi-step Undo/Redo editing history timeline, and 1-click download (PNG/JPEG/WebP) or direct application to product listings.
 - **Authentication & Role-Based Authorization**:
   - PBKDF2-HMAC-SHA256 password hashing and URL-safe JWT bearer tokens shared across Storefront and Seller Central (`urban:auth_session`).
   - Role hierarchy: `ADMIN`, `CUSTOMER`, and `GUEST`.
@@ -110,6 +124,7 @@ docker compose up --build
 | Orders | `POST/GET /api/v1/orders`, `GET/DELETE /api/v1/orders/{order_id}`, `PATCH /api/v1/orders/{order_id}/status` |
 | Payments | `POST /api/v1/payments/pay`, `GET /api/v1/payments`, `GET/PUT/DELETE /api/v1/payments/{payment_id}`, `GET /api/v1/payments/order/{order_id}` |
 | AI Assistant | `POST /api/v1/ai/recommend`, `GET /api/v1/ai/smart-search`, `POST/GET /api/v1/ai/interactions` |
+| AI Photo Studio | `GET /api/v1/ai/photo-studio/capabilities`, `POST /api/v1/ai/photo-studio/process`, `POST /api/v1/ai/photo-studio/assist` |
 | Lookups | `GET/POST /api/v1/lookups/{resource}`, `GET/PUT/DELETE /api/v1/lookups/{resource}/{lookup_id}` |
 
 ---

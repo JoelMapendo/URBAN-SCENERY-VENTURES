@@ -49,7 +49,7 @@ interface CustomerDashboardViewProps {
   onViewOrderDetails: (orderId: number) => void;
   onNavigateToShop: () => void;
   onOpenProductDetail?: (product: ProductOut) => void;
-  initialTab?: 'dashboard' | 'favorite' | 'payment' | 'notifications' | 'settings' | 'upload_products' | 'buyer_orders';
+  initialTab?: 'dashboard' | 'favorite' | 'payment' | 'notifications' | 'settings' | 'upload_products' | 'photo_studio' | 'buyer_orders';
 }
 
 export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
@@ -373,6 +373,23 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                   >
                     <PlusCircle className="w-4 h-4 text-emerald-500" />
                     <span>Upload Electronics</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('photo_studio')}
+                    className={`w-full py-2.5 px-4 rounded-xl flex items-center justify-between transition-colors ${
+                      activeTab === 'photo_studio'
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white font-bold'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <Wand2 className="w-4 h-4 text-brand-500" />
+                      <span>AI Photo Studio</span>
+                    </span>
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold uppercase">
+                      Free
+                    </span>
                   </button>
 
                   <button
@@ -872,18 +889,18 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     ))}
                   </div>
                 </div>
-                {/* Nano Banana AI Studio Modal Overlay */}
+                {/* AI Photo Studio Modal Overlay inside Upload Products */}
                 {nanoBananaStudioOpen && newProductImage && (
                   <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-                    <div className="max-w-4xl w-full my-8">
+                    <div className="max-w-6xl w-full my-8">
                       <NanoBananaAiStudio
                         sourceImage={newProductImage}
                         productName={newProductName || 'Electronics Hardware'}
                         onApplyMockup={(beautified) => {
                           setNewProductImage(beautified);
-                          setMockupBadge('Nano Banana 4K Studio Mockup');
+                          setMockupBadge('AI Photo Studio Enhanced');
                           setNanoBananaStudioOpen(false);
-                          setUploadSuccessNotice('🍌 Nano Banana AI Mockup generated and applied to your product listing!');
+                          setUploadSuccessNotice('✨ AI Photo Studio edit applied to your product listing!');
                           setTimeout(() => setUploadSuccessNotice(null), 4000);
                         }}
                         onCancel={() => setNanoBananaStudioOpen(false)}
@@ -891,6 +908,28 @@ export const CustomerDashboardView: React.FC<CustomerDashboardViewProps> = ({
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* ========================================================================= */}
+            {/* VIEW 2B: STANDALONE SELLER AI PHOTO-EDITING STUDIO (100% Free Open-Source) */}
+            {/* ========================================================================= */}
+            {activeTab === 'photo_studio' && isAdmin && (
+              <div className="space-y-6 animate-in fade-in">
+                <NanoBananaAiStudio
+                  sourceImage={newProductImage}
+                  productName={newProductName || 'Electronics Hardware'}
+                  standalone={true}
+                  onApplyMockup={(beautified) => {
+                    setNewProductImage(beautified);
+                    setMockupBadge('AI Photo Studio Enhanced');
+                    setActiveTab('upload_products');
+                    setUploadSuccessNotice(
+                      '✨ Edited photo transferred from AI Photo Studio! Ready to publish your product.'
+                    );
+                    setTimeout(() => setUploadSuccessNotice(null), 4500);
+                  }}
+                />
               </div>
             )}
 

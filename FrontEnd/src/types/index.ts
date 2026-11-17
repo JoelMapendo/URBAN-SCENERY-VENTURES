@@ -209,3 +209,73 @@ export interface CartItem {
   quantity: number;
 }
 
+// ==========================================
+// Free Open-Source AI Photo Editing Studio Types
+// ==========================================
+
+export type StudioToolType =
+  | 'remove_bg'
+  | 'replace_bg'
+  | 'enhance'
+  | 'sharpen'
+  | 'resize'
+  | 'crop'
+  | 'remove_object'
+  | 'restore'
+  | 'portrait_enhance'
+  | 'generate_scene';
+
+export interface StudioProcessRequest {
+  image_base64?: string | null;
+  tool: StudioToolType;
+  params?: Record<string, any>;
+  mask_base64?: string | null;
+  custom_bg_base64?: string | null;
+  output_format?: 'png' | 'jpeg' | 'webp';
+}
+
+export interface StudioProcessResponse {
+  status: string;
+  tool: StudioToolType;
+  image_base64: string;
+  width: number;
+  height: number;
+  format: string;
+  processing_ms: number;
+  engine: string;
+  details: Record<string, any>;
+}
+
+export interface StudioPromptAssistResponse {
+  prompt: string;
+  enhanced_prompt: string;
+  recommended_tool: StudioToolType;
+  recommended_params: Record<string, any>;
+  explanation: string;
+  provider: string;
+}
+
+export interface StudioToolCapability {
+  id: StudioToolType;
+  name: string;
+  category: string;
+  description: string;
+  engine: string;
+  cost_tier: string;
+  available: boolean;
+}
+
+export interface StudioCapabilitiesResponse {
+  studio_name: string;
+  zero_cost_enforced: boolean;
+  max_upload_mb: number;
+  allowed_mime_types: string[];
+  rembg_available: boolean;
+  opencv_available: boolean;
+  pillow_available: boolean;
+  gemini_text_assist_configured: boolean;
+  local_diffusion_configured: boolean;
+  tools: StudioToolCapability[];
+}
+
+
