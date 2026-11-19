@@ -1,6 +1,6 @@
 #  URBAN-SCENERY-VENTURES
 
-Full-stack AI-powered electronics marketplace combining a **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
+Full-stack AI-powered electronics marketplace combining the **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
 
 ---
 
