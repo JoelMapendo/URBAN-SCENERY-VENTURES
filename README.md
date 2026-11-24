@@ -6,7 +6,7 @@ Full-stack AI-powered electronics marketplace combining the **FastAPI + SQLAlche
 
 ##  Features
 
-- **Electronics Product Catalog**: Live inventory sync between SQLite/PostgreSQL and both the Customer Storefront (`index.html`) and Seller Central (`seller.html`), with stock badges, search, category filtering, and multi-currency display (`UGX`, `USD`, `EUR`, `GBP`).
+- **Electronics Product Catalog**:  Live  inventory sync between SQLite/PostgreSQL and both the Customer Storefront (`index.html`) and Seller Central (`seller.html`), with stock badges, search, category filtering, and multi-currency display (`UGX`, `USD`, `EUR`, `GBP`).
 - **Checkout & Order Management**: Real-time stock validation, automated total calculation, express checkout modal (`POST /api/v1/orders`), guest order `#ID` lookup, authenticated order history, and Seller Central fulfillment progression (`PENDING` → `APPROVED` → `SHIPPED` → `DELIVERED`).
 - **Payment Processing**: Multi-channel settlement (**Mobile Money**, **Bank Transfer**, **Crypto**) via `POST /api/v1/payments/pay` with instant receipt verification.
 - **AI Electronics Assistant**:
@@ -73,11 +73,11 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-On startup (`AUTO_SEED=true`), the backend initializes lookup tables and seeds default accounts and sample electronics if missing:
+On startup (`AUTO_SEED=true`), the backend initializes lookup tables and seeds  default  accounts and sample electronics if missing:
 - **Admin (Seller Central & Full CRUD)**: `admin@urbanventures.com` / `admin123`
 - **Customer (Storefront Account)**: `customer@example.com` / `customer123`
 
-#### 2. Start the Vite Frontend (`:5173`)
+#### 2. Start the Vite  Frontend (`:5173`)
 
 ```bash
 cd FrontEnd
@@ -89,7 +89,7 @@ Vite proxies `/api/*` and `/health` requests to `http://127.0.0.1:8000` (configu
 
 ---
 
-## Docker Compose (Full Stack)
+## Docker  Compose (Full Stack)
 
 ```bash
 docker compose up --build
