@@ -1,12 +1,12 @@
 #  URBAN-SCENERY-VENTURES
 
-Full-stack AI-powered electronics marketplace combining the **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
+Full-stack AI-powered  electronics marketplace combining the **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
 
 ---
 
 ##  Features
 
-- **Electronics Product Catalog**:  Live  inventory sync between SQLite/PostgreSQL and both the Customer Storefront (`index.html`) and Seller Central (`seller.html`), with stock badges, search, category filtering, and multi-currency display (`UGX`, `USD`, `EUR`, `GBP`).
+- **Electronics Product Catalog**:  Live  inventory sync  between SQLite/PostgreSQL and both the Customer Storefront (`index.html`) and Seller Central (`seller.html`), with stock badges, search, category filtering, and multi-currency display (`UGX`, `USD`, `EUR`, `GBP`).
 - **Checkout & Order Management**: Real-time stock validation, automated total calculation, express checkout modal (`POST /api/v1/orders`), guest order `#ID` lookup, authenticated order history, and Seller Central fulfillment progression (`PENDING` → `APPROVED` → `SHIPPED` → `DELIVERED`).
 - **Payment Processing**: Multi-channel settlement (**Mobile Money**, **Bank Transfer**, **Crypto**) via `POST /api/v1/payments/pay` with instant receipt verification.
 - **AI Electronics Assistant**:
