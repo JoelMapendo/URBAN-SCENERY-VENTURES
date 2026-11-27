@@ -1,6 +1,6 @@
 #  URBAN-SCENERY-VENTURES
 
-Full-stack AI-powered  electronics marketplace combining the **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`).
+Full-stack AI-powered  electronics marketplace combining the **FastAPI + SQLAlchemy 2.0 + Pydantic v2** backend with a **Vite + Tailwind CSS** multi-page storefront and Seller Central dashboard (`FrontEnd/`). 
 
 ---
 
@@ -64,7 +64,7 @@ This creates `.venv` (Python 3.10+) if needed, installs backend and frontend dep
 
 ### Option B: Run Backend & Frontend Separately
 
-#### 1. Start the FastAPI Backend (`:8000`)
+#### 1. Start the FastAPI  Backend (`:8000`)
 
 ```bash
 python3 -m venv .venv
@@ -95,7 +95,7 @@ Vite proxies `/api/*` and `/health` requests to `http://127.0.0.1:8000` (configu
 docker compose up --build
 ```
 
-- **Frontend + Nginx API Proxy**: http://localhost:8080 (Storefront) and http://localhost:8080/seller.html (Seller Central)
+- **Frontend + Nginx API Proxy**: http://localhost:8080 (Storefront)  and http://localhost:8080/seller.html (Seller Central)
 - **FastAPI Backend**: http://localhost:8000/docs
 
 ---
@@ -114,7 +114,7 @@ docker compose up --build
 
 ---
 
-## Verification & Tests
+## Verification &  Tests
 
 ```bash
 # Run backend test suite
